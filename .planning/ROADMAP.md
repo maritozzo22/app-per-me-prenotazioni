@@ -1,0 +1,236 @@
+# Roadmap - App Prenotazioni Airbnb
+
+## Overview
+
+**8 Phases** | **66 Requirements** | Web-first then Android optimization
+
+## Milestone 1: MVP Web Complete
+
+### Phase 1: Foundation & Data Model
+**Goal**: Struttura dati, database locale, e setup base del progetto
+
+**Requirements**: ROOM-01, PLAT-01/02/03/04/05, DATA-01/02/03/04/05, TEST-01
+
+**Success Criteria**:
+1. Flutter project creato con struttura cartelle corretta
+2. Modelli dati definiti (Room, Reservation, Platform, Guest)
+3. Database SQLite configurato e funzionante su web
+4. Unit tests per tutti i modelli dati passano
+5. Repository pattern implementato per accesso dati
+
+**Deliverables**:
+- Project Flutter con dipendenze configurate
+- Modelli: Room, Reservation, Platform, Guest
+- Database helper e repository classes
+- Unit tests per modelli (coverage > 80%)
+- Configurazione piattaforme con colori di default
+
+---
+
+### Phase 2: CRUD Prenotazioni
+**Goal**: Creazione, lettura, modifica, eliminazione prenotazioni con validazione
+
+**Requirements**: ROOM-02/03, RES-01/02/03/04/05/06/07/10, TEST-02/07
+
+**Success Criteria**:
+1. Form creazione prenotazione funzionale con tutti i campi
+2. Validazione date (check-out > check-in)
+3. Blocco sovrapposizioni date per stessa stanza funzionante
+4. Gestione appartamento intero (blocca tutte le stanze)
+5. Widget tests per form prenotazione passano
+6. Integration test per flusso crea→modifica→elimina
+
+**Deliverables**:
+- Form crea/modifica prenotazione
+- Service layer per business logic
+- Validazioni e controllo sovrapposizioni
+- Widget tests per form components
+- Integration test per CRUD operations
+
+---
+
+### Phase 3: Calendario
+**Goal**: Visualizzazione calendario mensile con prenotazioni colorate
+
+**Requirements**: CAL-01/02/03/04/05, PLAT-07, UI-01/02, TEST-03
+
+**Success Criteria**:
+1. Calendario mensile visualizzato correttamente
+2. Giorni con prenotazioni mostrano colore piattaforma
+3. Navigazione mesi funzionale
+4. Click/tap su giorno mostra dettagli prenotazioni
+5. Widget tests per calendario passano
+6. Integration test per visualizzazione prenotazioni
+
+**Deliverables**:
+- Calendar widget con table_calendar o similare
+- Logica colorazione giorni per piattaforma
+- Dettagli prenotazioni per giorno selezionato
+- Widget tests per calendar component
+- Integration test per visualization
+
+---
+
+### Phase 4: Dashboard & Navigation
+**Goal**: Schermata iniziale con panoramica e navigazione completa
+
+**Requirements**: CAL-05, DASH-01/02/03/04/05/06, RES-08/09, UI-04/06, PLATFORM-01/02/03, TEST-04, A11Y-01
+
+**Success Criteria**:
+1. Dashboard mostra stanze occupate oggi
+2. Dashboard mostra prossimi check-in/out (7 giorni)
+3. Dashboard mostra incasi mese corrente
+4. Navigazione bottom bar funzionante
+5. Lista prenotazioni con accesso a modifica/elimina
+6. Design responsive per desktop e mobile
+7. Tutti i test web (unit, widget, integration) passano
+8. App testata completamente su Chrome
+
+**Deliverables**:
+- Dashboard screen con statistiche
+- Bottom navigation bar
+- Lista prenotazioni screen
+- Modify/delete prenotazione screens
+- Responsive layout breakpoints
+- Complete web testing su Chrome
+- Test report documentato
+
+---
+
+### Phase 5: Advanced Features
+**Goal**: Ricerca, piattaforme custom, dark mode, notifiche base
+
+**Requirements**: UI-05/07, PLAT-06, NOT-01/02/03/04/05/06, TEST-06, NOT-08
+
+**Success Criteria**:
+1. Ricerca prenotazioni per nome ospite funzionante
+2. Aggiunta piattaforme custom con colore personalizzato
+3. Dark mode toggle e styling
+4. Notifiche programmabili su web (browser notifications)
+5. Test notifiche passano
+6. UI ottimizzata per dark mode
+
+**Deliverables**:
+- Search functionality
+- Platform management screen
+- Dark mode theme
+- Notification system (web)
+- Notification tests
+
+---
+
+### Phase 6: Android Optimization
+**Goal**: Ottimizzazione per Android, test dispositivo reale
+
+**Requirements**: PLATFORM-04/05, NOT-07, TEST-05, A11Y-02/03
+
+**Success Criteria**:
+1. App funziona su dispositivo Android
+2. Performance fluide su dispositivo medio
+3. Local notifications funzionano su Android
+4. Touch target sizes corretti (48x48dp)
+5. Screen reader labels presenti
+6. Tutti i test passano su Android
+7. Bug individuati durante testing corretti
+
+**Deliverables**:
+- Android-specific optimizations
+- Local notifications plugin configuration
+- Accessibility improvements
+- Android device testing report
+- Bug fixes e improvements
+- Performance optimizations
+
+---
+
+### Phase 7: Polish & Documentation
+**Goal**: Rifiniture, documentazione, preparazione deployment personale
+
+**Requirements**: (nessun nuovo requirement, polish di esistenti)
+
+**Success Criteria**:
+1. Code review e cleanup completato
+2. Documentazione utente scritta
+3. README con istruzioni setup/running
+4. Error handling robusto
+5. Loading states e feedback utente
+6. Animazioni fluide
+
+**Deliverables**:
+- Code refactoring e cleanup
+- User documentation
+- Developer documentation
+- Error handling migliorato
+- UI/UX polish
+- Final bug fixes
+
+---
+
+### Phase 8: Deployment & Verification
+**Goal**: Build Android APK, installazione dispositivo personale, verifica finale
+
+**Requirements**: (deployment)
+
+**Success Criteria**:
+1. Android APK generato con successo
+2. APK installato su dispositivo personale
+3. App verificata con dati reali
+4. Backup dati configurato
+5. Procedura aggiornamento documentata
+
+**Deliverables**:
+- Release APK (non per Play Store)
+- Installation guide
+- Backup/restore procedure
+- Final verification report
+- User guide completo
+
+---
+
+## Phase Summary
+
+| Phase | Name | Requirements | Est. Complexity |
+|-------|------|--------------|-----------------|
+| 1 | Foundation & Data Model | 15 | Medium |
+| 2 | CRUD Prenotazioni | 10 | High |
+| 3 | Calendario | 8 | Medium |
+| 4 | Dashboard & Navigation | 13 | High |
+| 5 | Advanced Features | 8 | Medium |
+| 6 | Android Optimization | 7 | High |
+| 7 | Polish & Documentation | 0 (polish) | Low |
+| 8 | Deployment & Verification | 0 (deployment) | Low |
+
+## Parallelization Strategy
+
+**Parallel-safe combinations**:
+- Phase 1 deve essere completata prima di tutto (foundation)
+- Phase 2 e 3 possono essere sviluppate in parallelo dopo Phase 1
+- Phase 4 dipende da Phase 2 e 3
+- Phase 5 può iniziare dopo Phase 4
+- Phase 6 dipende da tutte le precedenti (Android optimization)
+- Phase 7 e 8 sequenziali alla fine
+
+## Risk Mitigation
+
+**High Risk Areas**:
+1. **Calendar complexity** (Phase 3): Usare libreria table_calendar testata
+2. **Sovrapposizioni date** (Phase 2): Integration tests approfonditi
+3. **Web performance** (Phase 4): Test con dataset grandi (100+ prenotazioni)
+4. **Android differences** (Phase 6): Test early su Android device reale
+
+## Definition of Done
+
+Per ogni phase:
+- [ ] Tutti i requirements implementati
+- [ ] Tutti i test (unit, widget, integration) passano
+- [ ] Code review passata
+- [ ] Documentation aggiornata
+- [ ] Zero bug critici
+- [ ] Performance accettabile
+
+Per il progetto completo:
+- [ ] Tutte le 8 phase completate
+- [ ] Web testing su Chrome completato
+- [ ] Android testing su dispositivo reale completato
+- [ ] Documentazione utente completa
+- [ ] APK installabile su dispositivo personale
