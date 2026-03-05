@@ -276,6 +276,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
   Widget _buildList(List<Reservation> reservations) {
     return ListView.builder(
       itemCount: reservations.length,
+      cacheExtent: 500, // Pre-render 500px worth of items for smoother scrolling
       itemBuilder: (context, index) {
         final reservation = reservations[index];
         return ReservationListTile(
