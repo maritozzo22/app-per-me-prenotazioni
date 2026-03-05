@@ -57,4 +57,10 @@ class ReservationRepositoryImpl implements ReservationRepository {
     final models = await _dataSource.getAllPlatforms();
     return models.map((model) => model.toEntity()).toList();
   }
+
+  @override
+  Future<void> insertReservationsBatch(List<Reservation> reservations) async {
+    final models = reservations.map((r) => r.toModel()).toList();
+    await _dataSource.insertReservationsBatch(models);
+  }
 }

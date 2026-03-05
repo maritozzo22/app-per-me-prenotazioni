@@ -27,4 +27,7 @@ abstract class ReservationRepository {
 
   /// Gets all platforms.
   Future<List<BookingPlatform>> getAllPlatforms();
+
+  /// Inserts multiple reservations in a batch for performance.
+  Future<void> insertReservationsBatch(List<Reservation> reservations);
 }

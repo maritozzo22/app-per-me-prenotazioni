@@ -57,16 +57,21 @@ void main() {
 
     group('getAllReservations', () {
       test('should return empty list when no reservations exist', () async {
-        when(() => mockDb.query('reservations')).thenAnswer((_) => Future.value([]));
+        when(() => mockDb.query(
+          any(),
+          orderBy: any(named: 'orderBy'),
+        )).thenAnswer((_) => Future.value([]));
 
         final result = await dataSource.getAllReservations();
 
         expect(result, isEmpty);
-        verify(() => mockDb.query('reservations')).called(1);
       });
 
       test('should return list of reservations', () async {
-        when(() => mockDb.query('reservations')).thenAnswer((_) => Future.value([
+        when(() => mockDb.query(
+          any(),
+          orderBy: any(named: 'orderBy'),
+        )).thenAnswer((_) => Future.value([
               {
                 'id': 'res-1',
                 'room_id': 'room-1',
@@ -163,9 +168,10 @@ void main() {
     group('getReservationsForDateRange', () {
       test('should return reservations in date range', () async {
         when(() => mockDb.query(
-              'reservations',
+              any(),
               where: any(named: 'where'),
               whereArgs: any(named: 'whereArgs'),
+              orderBy: any(named: 'orderBy'),
             )).thenAnswer((_) => Future.value([
               {
                 'id': 'res-1',

@@ -19,7 +19,10 @@ class ReservationLocalDataSource implements ReservationDataSource {
   @override
   Future<List<ReservationModel>> getAllReservations() async {
     final db = await _databaseHelper.database as Database;
-    final maps = await db.query(DatabaseSchema.tableReservations);
+    final maps = await db.query(
+      DatabaseSchema.tableReservations,
+      orderBy: '${DatabaseSchema.reservationCreatedAt} DESC',
+    );
 
     return maps.map((map) => _mapToReservationModel(map)).toList();
   }
@@ -65,8 +68,12 @@ class ReservationLocalDataSource implements ReservationDataSource {
     final db = await _databaseHelper.database as Database;
     final maps = await db.query(
       DatabaseSchema.tableReservations,
-      where: '${DatabaseSchema.reservationCheckIn} < ? AND ${DatabaseSchema.reservationCheckOut} > ?',
+      where: '''
+        ${DatabaseSchema.reservationCheckIn} <= ? AND
+        ${DatabaseSchema.reservationCheckOut} >= ?
+      ''',
       whereArgs: [end.toIso8601String(), start.toIso8601String()],
+      orderBy: '${DatabaseSchema.reservationCheckIn} ASC',
     );
 
     return maps.map((map) => _mapToReservationModel(map)).toList();
@@ -97,6 +104,22 @@ class ReservationLocalDataSource implements ReservationDataSource {
       isDefault: map[DatabaseSchema.platformIsDefault] == 1,
       createdAt: DateTime.parse(map[DatabaseSchema.platformCreatedAt] as String),
     )).toList();
+  }
+
+  @override
+  Future<void> insertReservationsBatch(List<ReservationModel> reservations) async {
+    final db = await _databaseHelper.database as Database;
+
+    final batch = db.batch();
+    for (final reservation in reservations) {
+      batch.insert(
+        DatabaseSchema.tableReservations,
+        _reservationToMap(reservation),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    await batch.commit(noResult: true);
   }
 
   /// Maps a database row to ReservationModel.

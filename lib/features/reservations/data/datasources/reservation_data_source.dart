@@ -14,4 +14,5 @@ abstract class ReservationDataSource {
   );
   Future<List<RoomModel>> getAllRooms();
   Future<List<PlatformModel>> getAllPlatforms();
+  Future<void> insertReservationsBatch(List<ReservationModel> reservations);
 }
