@@ -3,7 +3,7 @@ class DatabaseSchema {
   DatabaseSchema._();
 
   static const String name = 'reservations.db';
-  static const int version = 4;
+  static const int version = 5;
 
   // Table names
   static const String tableRooms = 'rooms';
@@ -130,5 +130,17 @@ class DatabaseSchema {
   /// SQL to create index on notification_schedules is_sent (version 3 -> 4).
   static const String createNotificationSchedulesIsSentIndex = '''
     CREATE INDEX idx_notification_is_sent ON $tableNotificationSchedules ($notificationScheduleIsSent)
+  ''';
+
+  /// Migration to add performance indexes for reservations (version 4 -> 5).
+  static const String migrationV4ToV5AddIndexes = '''
+    -- Index on reservations check_in for date range queries
+    CREATE INDEX IF NOT EXISTS idx_reservations_check_in ON $tableReservations ($reservationCheckIn);
+
+    -- Index on reservations check_out for date range queries
+    CREATE INDEX IF NOT EXISTS idx_reservations_check_out ON $tableReservations ($reservationCheckOut);
+
+    -- Index on reservations created_at for sorting
+    CREATE INDEX IF NOT EXISTS idx_reservations_created_at ON $tableReservations ($reservationCreatedAt DESC);
   ''';
 }

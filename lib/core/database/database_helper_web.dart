@@ -163,6 +163,10 @@ class DatabaseHelper {
       await db.execute(DatabaseSchema.createNotificationSchedulesScheduledDateIndex);
       await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
     }
+    if (oldVersion < 5) {
+      // Add performance indexes for reservations
+      await db.execute(DatabaseSchema.migrationV4ToV5AddIndexes);
+    }
   }
 
   /// Closes the database connection.
