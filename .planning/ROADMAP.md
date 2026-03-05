@@ -11,6 +11,14 @@
 
 **Requirements**: ROOM-01, PLAT-01/02/03/04/05, DATA-01/02/03/04/05, TEST-01
 
+**Plans**: 4 plans in 4 waves
+
+Plans:
+- [x] 01-01-PLAN.md — Flutter project setup with dependencies (Wave 1)
+- [x] 01-02-PLAN.md — Domain entities with TDD (Wave 2)
+- [x] 01-03-PLAN.md — Data models with freezed + JSON serialization (Wave 3)
+- [x] 01-04-PLAN.md — Database layer and repository pattern (Wave 4)
+
 **Success Criteria**:
 1. Flutter project creato con struttura cartelle corretta
 2. Modelli dati definiti (Room, Reservation, Platform, Guest)
@@ -31,6 +39,12 @@
 **Goal**: Creazione, lettura, modifica, eliminazione prenotazioni con validazione
 
 **Requirements**: ROOM-02/03, RES-01/02/03/04/05/06/07/10, TEST-02/07
+
+**Plans**: 2 plans in 2 waves
+
+Plans:
+- [x] 02-01-PLAN.md — Payment status and validation service (Wave 1)
+- [x] 02-02-PLAN.md — UI components and form (Wave 2)
 
 **Success Criteria**:
 1. Form creazione prenotazione funzionale con tutti i campi
@@ -54,6 +68,14 @@
 
 **Requirements**: CAL-01/02/03/04/05, PLAT-07, UI-01/02, TEST-03
 
+**Plans**: 4 plans in 4 waves
+
+Plans:
+- [ ] 03-01-PLAN.md — State management and date grouping service (Wave 1)
+- [ ] 03-02-PLAN.md — Calendar UI widget with platform colors (Wave 2)
+- [ ] 03-03-PLAN.md — Day details bottom sheet (Wave 3)
+- [ ] 03-04-PLAN.md — Calendar page integration and testing (Wave 4)
+
 **Success Criteria**:
 1. Calendario mensile visualizzato correttamente
 2. Giorni con prenotazioni mostrano colore piattaforma
@@ -61,38 +83,56 @@
 4. Click/tap su giorno mostra dettagli prenotazioni
 5. Widget tests per calendario passano
 6. Integration test per visualizzazione prenotazioni
+7. Funziona su web (Chrome) e Android
 
 **Deliverables**:
-- Calendar widget con table_calendar o similare
+- Calendar widget con table_calendar
+- CalendarProvider con state management
+- CalendarService per raggruppamento date
 - Logica colorazione giorni per piattaforma
-- Dettagli prenotazioni per giorno selezionato
+- Dettagli prenotazioni per giorno selezionato (bottom sheet)
 - Widget tests per calendar component
 - Integration test per visualization
+- CalendarPage come home screen
 
 ---
 
 ### Phase 4: Dashboard & Navigation
 **Goal**: Schermata iniziale con panoramica e navigazione completa
 
-**Requirements**: CAL-05, DASH-01/02/03/04/05/06, RES-08/09, UI-04/06, PLATFORM-01/02/03, TEST-04, A11Y-01
+**Requirements**: CAL-05, DASH-01/02/03/04/05/06, RES-08/09, UI-04/06, TEST-04, A11Y-01
+
+**Plans**: 4 plans in 4 waves
+
+Plans:
+- [ ] 04-01-PLAN.md — Dashboard statistics service and provider (Wave 1)
+- [ ] 04-02-PLAN.md — Dashboard UI with responsive layout (Wave 2)
+- [ ] 04-03-PLAN.md — Reservations list with swipe actions (Wave 3)
+- [ ] 04-04-PLAN.md — Navigation shell and integration (Wave 4)
 
 **Success Criteria**:
 1. Dashboard mostra stanze occupate oggi
 2. Dashboard mostra prossimi check-in/out (7 giorni)
-3. Dashboard mostra incasi mese corrente
+3. Dashboard mostra incassi mese corrente (ricevuto + in attesa)
 4. Navigazione bottom bar funzionante
 5. Lista prenotazioni con accesso a modifica/elimina
-6. Design responsive per desktop e mobile
+6. Design responsive per desktop e mobile (600px breakpoint)
 7. Tutti i test web (unit, widget, integration) passano
 8. App testata completamente su Chrome
 
 **Deliverables**:
-- Dashboard screen con statistiche
-- Bottom navigation bar
-- Lista prenotazioni screen
-- Modify/delete prenotazione screens
-- Responsive layout breakpoints
-- Complete web testing su Chrome
+- DashboardStatisticsService per calcolo statistiche
+- DashboardProvider con state management
+- DashboardPage con room occupancy grid (2x2)
+- IncomeBreakdownCard con breakdown ricevuto/pendente
+- UpcomingReservationsCard per arrivi/partenze
+- CalendarAccessCard per accesso calendario
+- ReservationsListPage con swipe actions (flutter_slidable)
+- EditReservationPage che riusa ReservationForm
+- AppShell con IndexedStack e BottomNavigationBar
+- Responsive layout con LayoutBuilder
+- Widget tests per tutti i componenti
+- Integration tests per navigazione
 - Test report documentato
 
 ---
@@ -176,7 +216,7 @@
 2. APK installato su dispositivo personale
 3. App verificata con dati reali
 4. Backup dati configurato
-5. Procedura aggiornamento documentata
+5. Procedura aggiornamento documentato
 
 **Deliverables**:
 - Release APK (non per Play Store)
@@ -206,7 +246,7 @@
 - Phase 1 deve essere completata prima di tutto (foundation)
 - Phase 2 e 3 possono essere sviluppate in parallelo dopo Phase 1
 - Phase 4 dipende da Phase 2 e 3
-- Phase 5 può iniziare dopo Phase 4
+- Phase 5 puo iniziare dopo Phase 4
 - Phase 6 dipende da tutte le precedenti (Android optimization)
 - Phase 7 e 8 sequenziali alla fine
 
