@@ -93,4 +93,20 @@ class NotificationRepositoryImpl implements NotificationRepository {
         .map((m) => m.toEntity())
         .toList();
   }
+
+  @override
+  Future<void> saveSchedule(NotificationSchedule schedule) async {
+    final model = NotificationScheduleModel.fromEntity(schedule);
+    await _datasource.create(model);
+  }
+
+  @override
+  Future<void> deleteSchedulesForReservation(String reservationId) async {
+    await _datasource.deleteByReservationId(reservationId);
+  }
+
+  @override
+  Future<List<NotificationSchedule>> getSchedulesForReservation(String reservationId) async {
+    return await getByReservationId(reservationId);
+  }
 }

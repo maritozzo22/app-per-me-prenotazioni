@@ -1,5 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/notifications/application/notification_service.dart';
+import 'package:app_prenotazioni/features/notifications/data/repositories/notification_repository_impl.dart';
+import 'package:app_prenotazioni/features/notifications/data/datasources/notification_datasource.dart';
+import 'package:app_prenotazioni/core/database/database_helper.dart';
+
+/// Provider for the notification repository
+final notificationRepositoryProvider = Provider<NotificationRepositoryImpl>((ref) {
+  // Create datasource with database helper
+  final datasource = NotificationDatasource(DatabaseHelper());
+  return NotificationRepositoryImpl(datasource);
+});
 
 /// Provider for the notification service instance.
 final notificationServiceProvider = Provider<NotificationService>((ref) {

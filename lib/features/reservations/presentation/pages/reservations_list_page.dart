@@ -7,6 +7,25 @@ import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_r
 import 'package:app_prenotazioni/features/search/presentation/providers/search_provider.dart';
 import 'package:app_prenotazioni/features/search/presentation/widgets/search_bar_widget.dart';
 import 'package:app_prenotazioni/core/widgets/theme_toggle_button.dart';
+import 'package:app_prenotazioni/core/platform/platform_service.dart';
+import 'package:app_prenotazioni/features/notifications/application/reservation_notification_scheduler.dart';
+import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart';
+import 'package:app_prenotazioni/features/notifications/application/notification_service.dart';
+import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart' show NotificationSchedulerServiceImpl;
+import 'package:app_prenotazioni/features/notifications/presentation/providers/notification_permission_provider.dart';
+
+/// Provider for notification scheduler
+final reservationNotificationSchedulerProvider = Provider<ReservationNotificationScheduler>((ref) {
+  final schedulerService = NotificationSchedulerServiceImpl();
+  final notificationRepository = ref.watch(notificationRepositoryProvider);
+  final notificationService = ref.watch(notificationServiceProvider);
+
+  return ReservationNotificationScheduler(
+    schedulerService: schedulerService,
+    notificationRepository: notificationRepository,
+    notificationService: notificationService,
+  );
+});
 
 /// Page showing list of all reservations with edit/delete actions.
 class ReservationsListPage extends ConsumerStatefulWidget {
@@ -59,6 +78,18 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
   Future<void> _deleteReservation(Reservation reservation) async {
     try {
       final repository = ref.read(reservationRepositoryProvider);
+
+      // Cancel notifications before deleting (Android only)
+      if (PlatformService.notificationsSupported) {
+        try {
+          final scheduler = ref.read(reservationNotificationSchedulerProvider);
+          await scheduler.cancelReservationNotifications(reservation.id);
+        } catch (e) {
+          // Don't fail the delete if notification cancellation fails
+          print('Error cancelling notifications: $e');
+        }
+      }
+
       await repository.deleteReservation(reservation.id);
 
       if (mounted) {

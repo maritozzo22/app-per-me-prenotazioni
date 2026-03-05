@@ -70,4 +70,19 @@ abstract class NotificationRepository {
   ///
   /// Returns a list of pending [NotificationSchedule] objects.
   Future<List<NotificationSchedule>> getPendingSchedules();
+
+  /// Saves a notification schedule (create or update).
+  ///
+  /// Returns void.
+  Future<void> saveSchedule(NotificationSchedule schedule);
+
+  /// Deletes all notification schedules for a specific reservation.
+  ///
+  /// Returns void.
+  Future<void> deleteSchedulesForReservation(String reservationId);
+
+  /// Gets all schedules for a specific reservation (alias for getByReservationId).
+  ///
+  /// Returns a list of [NotificationSchedule] objects for the reservation.
+  Future<List<NotificationSchedule>> getSchedulesForReservation(String reservationId);
 }
