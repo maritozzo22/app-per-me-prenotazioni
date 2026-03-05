@@ -47,6 +47,12 @@ class DatabaseHelper {
     await db.execute(DatabaseSchema.createRoomsTable);
     await db.execute(DatabaseSchema.createPlatformsTable);
     await db.execute(DatabaseSchema.createReservationsTable);
+    await db.execute(DatabaseSchema.createNotificationSchedulesTable);
+
+    // Create indexes
+    await db.execute(DatabaseSchema.createNotificationSchedulesReservationIndex);
+    await db.execute(DatabaseSchema.createNotificationSchedulesScheduledDateIndex);
+    await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
 
     // Insert default data
     await _insertDefaultRooms(db);
@@ -145,6 +151,13 @@ class DatabaseHelper {
       // Add is_system column to platforms
       await db.execute(DatabaseSchema.migrationV2ToV3);
       await db.execute(DatabaseSchema.migrationV2ToV3UpdateSystemPlatforms);
+    }
+    if (oldVersion < 4) {
+      // Create notification_schedules table and indexes
+      await db.execute(DatabaseSchema.createNotificationSchedulesTable);
+      await db.execute(DatabaseSchema.createNotificationSchedulesReservationIndex);
+      await db.execute(DatabaseSchema.createNotificationSchedulesScheduledDateIndex);
+      await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
     }
   }
 

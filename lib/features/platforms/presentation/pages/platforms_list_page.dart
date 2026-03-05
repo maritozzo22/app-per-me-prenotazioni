@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/platforms/presentation/widgets/platform_list_tile.dart';
+import 'package:app_prenotazioni/features/platforms/presentation/pages/platform_form_page.dart';
 
 /// Page for managing platforms
 class PlatformsListPage extends ConsumerStatefulWidget {
@@ -139,16 +140,29 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
     );
   }
 
-  void _navigateToForm(BuildContext context, BookingPlatform? platform) {
-    // Navigation to form page will be implemented in next task
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(platform == null
-            ? 'Nuova piattaforma - Coming soon'
-            : 'Modifica ${platform.name} - Coming soon'),
-        duration: const Duration(seconds: 2),
+  void _navigateToForm(BuildContext context, BookingPlatform? platform) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlatformFormPage(platform: platform),
       ),
     );
+
+    if (result != null) {
+      // TODO: Integrate with PlatformProvider to save/update/delete
+      // For now, just show a success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(platform == null
+                ? 'Piattaforma "${result.name}" creata con successo'
+                : 'Piattaforma "${result.name}" aggiornata con successo'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        setState(() {}); // Refresh the list
+      }
+    }
   }
 
   void _confirmDelete(BuildContext context, BookingPlatform platform) {

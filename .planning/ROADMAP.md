@@ -138,24 +138,33 @@ Plans:
 ---
 
 ### Phase 5: Advanced Features
-**Goal**: Ricerca, piattaforme custom, dark mode, notifiche base
+**Goal**: Ricerca avanzata, gestione piattaforme custom, dark mode, preparazione notifiche
 
-**Requirements**: UI-05/07, PLAT-06, NOT-01/02/03/04/05/06, TEST-06, NOT-08
+**Requirements**: UI-05/07, PLAT-06, NOT-01/02/03/04/05/06, TEST-06
+
+**Plans**: 5 plans in 5 waves
+
+Plans:
+- [x] 05-01-PLAN.md — Platform management & search foundation (Wave 1)
+- [x] 05-02-PLAN.md — Platform management UI (Wave 2)
+- [x] 05-03-PLAN.md — Search UI implementation (Wave 3)
+- [x] 05-04-PLAN.md — Dark mode theme system (Wave 4)
+- [x] 05-05-PLAN.md — Notification scheduling foundation (Wave 5)
 
 **Success Criteria**:
-1. Ricerca prenotazioni per nome ospite funzionante
-2. Aggiunta piattaforme custom con colore personalizzato
-3. Dark mode toggle e styling
-4. Notifiche programmabili su web (browser notifications)
-5. Test notifiche passano
+1. Ricerca prenotazioni funzionante (nome, telefono, note)
+2. Gestione piattaforme completa (aggiungi, modifica, elimina tutte)
+3. Dark mode toggle e styling coerente
+4. Notification scheduling logic implementata (pronta per Android)
+5. Tutti i test passano (47+ tests)
 6. UI ottimizzata per dark mode
 
 **Deliverables**:
-- Search functionality
-- Platform management screen
-- Dark mode theme
-- Notification system (web)
-- Notification tests
+- Search functionality with full-text search
+- Platform management screen (list + form + color picker)
+- Dark mode theme with persistence
+- Notification scheduling service (foundation for Phase 6)
+- 47+ tests (unit, widget, integration)
 
 ---
 

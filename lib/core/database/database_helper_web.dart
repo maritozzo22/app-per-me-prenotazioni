@@ -32,6 +32,7 @@ class DatabaseHelper {
       DatabaseSchema.name,
       version: DatabaseSchema.version,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
     );
 
@@ -50,6 +51,12 @@ class DatabaseHelper {
     await db.execute(DatabaseSchema.createRoomsTable);
     await db.execute(DatabaseSchema.createPlatformsTable);
     await db.execute(DatabaseSchema.createReservationsTable);
+    await db.execute(DatabaseSchema.createNotificationSchedulesTable);
+
+    // Create indexes
+    await db.execute(DatabaseSchema.createNotificationSchedulesReservationIndex);
+    await db.execute(DatabaseSchema.createNotificationSchedulesScheduledDateIndex);
+    await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
 
     // Insert default data
     await _insertDefaultRooms(db);
@@ -135,6 +142,26 @@ class DatabaseHelper {
 
     for (final platform in defaultPlatforms) {
       await db.insert(DatabaseSchema.tablePlatforms, platform);
+    }
+  }
+
+  /// Upgrades the database to a new version.
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add payment_status column
+      await db.execute(DatabaseSchema.migrationV1ToV2);
+    }
+    if (oldVersion < 3) {
+      // Add is_system column to platforms
+      await db.execute(DatabaseSchema.migrationV2ToV3);
+      await db.execute(DatabaseSchema.migrationV2ToV3UpdateSystemPlatforms);
+    }
+    if (oldVersion < 4) {
+      // Create notification_schedules table and indexes
+      await db.execute(DatabaseSchema.createNotificationSchedulesTable);
+      await db.execute(DatabaseSchema.createNotificationSchedulesReservationIndex);
+      await db.execute(DatabaseSchema.createNotificationSchedulesScheduledDateIndex);
+      await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
     }
   }
 
