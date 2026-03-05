@@ -65,4 +65,9 @@ abstract class NotificationRepository {
   ///
   /// Returns the count of unsent notifications.
   Future<int> countUnsent();
+
+  /// Gets all pending notification schedules (not sent and scheduled date is in the future).
+  ///
+  /// Returns a list of pending [NotificationSchedule] objects.
+  Future<List<NotificationSchedule>> getPendingSchedules();
 }

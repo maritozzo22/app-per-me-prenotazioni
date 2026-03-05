@@ -81,4 +81,16 @@ class NotificationRepositoryImpl implements NotificationRepository {
   Future<int> countUnsent() async {
     return await _datasource.countUnsent();
   }
+
+  @override
+  Future<List<NotificationSchedule>> getPendingSchedules() async {
+    final now = DateTime.now();
+    final models = await _datasource.getAll();
+
+    // Filter schedules that are not sent and scheduled for future
+    return models
+        .where((m) => !m.isSent && m.scheduledDate.isAfter(now))
+        .map((m) => m.toEntity())
+        .toList();
+  }
 }

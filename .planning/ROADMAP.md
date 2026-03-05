@@ -173,6 +173,15 @@ Plans:
 
 **Requirements**: PLATFORM-04/05, NOT-07, TEST-05, A11Y-02/03
 
+**Plans**: 5 plans in 5 waves
+
+Plans:
+- [x] 06-01-PLAN.md — Notification foundation (Wave 1)
+- [x] 06-02-PLAN.md — Notification scheduling (Wave 2)
+- [x] 06-03-PLAN.md — Performance optimization (Wave 3)
+- [x] 06-04-PLAN.md — Accessibility implementation (Wave 4)
+- [x] 06-05-PLAN.md — Android testing & bug fixes (Wave 5)
+
 **Success Criteria**:
 1. App funziona su dispositivo Android
 2. Performance fluide su dispositivo medio
@@ -183,12 +192,17 @@ Plans:
 7. Bug individuati durante testing corretti
 
 **Deliverables**:
-- Android-specific optimizations
-- Local notifications plugin configuration
-- Accessibility improvements
-- Android device testing report
+- flutter_local_notifications plugin con Android 13+ permissions
+- NotificationService per Android con scheduling
+- NotificationRepository con batch operations
+- Performance optimizations (database indexes, pagination, RepaintBoundary)
+- APK size optimization (60-75% reduction)
+- Accessibility improvements (48x48dp touch targets, Semantics widgets)
+- PopScope per Android 14+ Predictive Back
+- Android platform integration tests
+- Physical device testing report (37 manual checks)
 - Bug fixes e improvements
-- Performance optimizations
+- 180+ tests passing
 
 ---
 
