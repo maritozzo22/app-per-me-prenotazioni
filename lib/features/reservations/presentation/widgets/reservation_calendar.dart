@@ -52,7 +52,8 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
     return Center(
       child: SizedBox(
         width: calendarWidth,
-        child: TableCalendar(
+        child: RepaintBoundary(
+          child: TableCalendar(
           // Locale settings
           locale: 'it_IT',
 
@@ -200,9 +201,11 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
               }
 
               // Use custom day cell with platform color
-              return ReservationDayCell(
-                day: day,
-                reservations: reservations,
+              return RepaintBoundary(
+                child: ReservationDayCell(
+                  day: day,
+                  reservations: reservations,
+                ),
               );
             },
 
@@ -267,6 +270,7 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
 
           // Week starts on Monday (Italy standard)
           startingDayOfWeek: StartingDayOfWeek.monday,
+        ),
         ),
       ),
     );
