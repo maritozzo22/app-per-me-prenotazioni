@@ -14,6 +14,7 @@ class PlatformModel with _$PlatformModel {
     required String name,
     required int colorValue,
     @Default(false) bool isDefault,
+    @Default(false) bool isSystem,
     required DateTime createdAt,
   }) = _PlatformModel;
 
@@ -28,6 +29,7 @@ extension PlatformModelX on PlatformModel {
         name: name,
         color: Color(colorValue),
         isDefault: isDefault,
+        isSystem: isSystem,
         createdAt: createdAt,
       );
 }
@@ -39,6 +41,7 @@ extension BookingPlatformX on BookingPlatform {
         name: name,
         colorValue: color.value,
         isDefault: isDefault,
+        isSystem: isSystem,
         createdAt: createdAt,
       );
 }

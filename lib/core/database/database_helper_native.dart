@@ -93,6 +93,7 @@ class DatabaseHelper {
         'name': 'Booking',
         'color_value': 0xFF2196F3,
         'is_default': 1,
+        'is_system': 1,
         'created_at': DateTime.now().toIso8601String(),
       },
       {
@@ -100,6 +101,7 @@ class DatabaseHelper {
         'name': 'Airbnb',
         'color_value': 0xFFE91E63,
         'is_default': 1,
+        'is_system': 1,
         'created_at': DateTime.now().toIso8601String(),
       },
       {
@@ -107,6 +109,7 @@ class DatabaseHelper {
         'name': 'WhatsApp',
         'color_value': 0xFF4CAF50,
         'is_default': 1,
+        'is_system': 1,
         'created_at': DateTime.now().toIso8601String(),
       },
       {
@@ -114,6 +117,7 @@ class DatabaseHelper {
         'name': 'Sito Web',
         'color_value': 0xFF9C27B0,
         'is_default': 1,
+        'is_system': 1,
         'created_at': DateTime.now().toIso8601String(),
       },
       {
@@ -121,6 +125,7 @@ class DatabaseHelper {
         'name': 'TikTok',
         'color_value': 0xFF212121,
         'is_default': 1,
+        'is_system': 1,
         'created_at': DateTime.now().toIso8601String(),
       },
     ];
@@ -135,6 +140,11 @@ class DatabaseHelper {
     if (oldVersion < 2) {
       // Add payment_status column
       await db.execute(DatabaseSchema.migrationV1ToV2);
+    }
+    if (oldVersion < 3) {
+      // Add is_system column to platforms
+      await db.execute(DatabaseSchema.migrationV2ToV3);
+      await db.execute(DatabaseSchema.migrationV2ToV3UpdateSystemPlatforms);
     }
   }
 

@@ -3,7 +3,7 @@ class DatabaseSchema {
   DatabaseSchema._();
 
   static const String name = 'reservations.db';
-  static const int version = 2;
+  static const int version = 3;
 
   // Table names
   static const String tableRooms = 'rooms';
@@ -21,6 +21,7 @@ class DatabaseSchema {
   static const String platformName = 'name';
   static const String platformColorValue = 'color_value';
   static const String platformIsDefault = 'is_default';
+  static const String platformIsSystem = 'is_system';
   static const String platformCreatedAt = 'created_at';
 
   // Reservation columns
@@ -54,6 +55,7 @@ class DatabaseSchema {
       $platformName TEXT NOT NULL,
       $platformColorValue INTEGER NOT NULL,
       $platformIsDefault INTEGER NOT NULL DEFAULT 0,
+      $platformIsSystem INTEGER NOT NULL DEFAULT 0,
       $platformCreatedAt TEXT NOT NULL
     )
   ''';
@@ -81,5 +83,15 @@ class DatabaseSchema {
   /// Migration to add payment_status column (version 1 -> 2).
   static const String migrationV1ToV2 = '''
     ALTER TABLE $tableReservations ADD COLUMN $reservationPaymentStatus TEXT NOT NULL DEFAULT 'pending';
+  ''';
+
+  /// Migration to add is_system column to platforms (version 2 -> 3).
+  static const String migrationV2ToV3 = '''
+    ALTER TABLE $tablePlatforms ADD COLUMN $platformIsSystem INTEGER NOT NULL DEFAULT 0;
+  ''';
+
+  /// Migration to mark default platforms as system platforms (version 2 -> 3).
+  static const String migrationV2ToV3UpdateSystemPlatforms = '''
+    UPDATE $tablePlatforms SET $platformIsSystem = 1 WHERE $platformId IN ('booking', 'airbnb', 'whatsapp', 'website', 'tiktok');
   ''';
 }

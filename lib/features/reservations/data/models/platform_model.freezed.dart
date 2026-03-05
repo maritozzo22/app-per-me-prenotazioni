@@ -25,6 +25,7 @@ mixin _$PlatformModel {
   String get name => throw _privateConstructorUsedError;
   int get colorValue => throw _privateConstructorUsedError;
   bool get isDefault => throw _privateConstructorUsedError;
+  bool get isSystem => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
 
   /// Serializes this PlatformModel to a JSON map.
@@ -49,6 +50,7 @@ abstract class $PlatformModelCopyWith<$Res> {
     String name,
     int colorValue,
     bool isDefault,
+    bool isSystem,
     DateTime createdAt,
   });
 }
@@ -72,6 +74,7 @@ class _$PlatformModelCopyWithImpl<$Res, $Val extends PlatformModel>
     Object? name = null,
     Object? colorValue = null,
     Object? isDefault = null,
+    Object? isSystem = null,
     Object? createdAt = null,
   }) {
     return _then(
@@ -91,6 +94,10 @@ class _$PlatformModelCopyWithImpl<$Res, $Val extends PlatformModel>
             isDefault: null == isDefault
                 ? _value.isDefault
                 : isDefault // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isSystem: null == isSystem
+                ? _value.isSystem
+                : isSystem // ignore: cast_nullable_to_non_nullable
                       as bool,
             createdAt: null == createdAt
                 ? _value.createdAt
@@ -116,6 +123,7 @@ abstract class _$$PlatformModelImplCopyWith<$Res>
     String name,
     int colorValue,
     bool isDefault,
+    bool isSystem,
     DateTime createdAt,
   });
 }
@@ -138,6 +146,7 @@ class __$$PlatformModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? colorValue = null,
     Object? isDefault = null,
+    Object? isSystem = null,
     Object? createdAt = null,
   }) {
     return _then(
@@ -158,6 +167,10 @@ class __$$PlatformModelImplCopyWithImpl<$Res>
             ? _value.isDefault
             : isDefault // ignore: cast_nullable_to_non_nullable
                   as bool,
+        isSystem: null == isSystem
+            ? _value.isSystem
+            : isSystem // ignore: cast_nullable_to_non_nullable
+                  as bool,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -175,6 +188,7 @@ class _$PlatformModelImpl implements _PlatformModel {
     required this.name,
     required this.colorValue,
     this.isDefault = false,
+    this.isSystem = false,
     required this.createdAt,
   });
 
@@ -191,11 +205,14 @@ class _$PlatformModelImpl implements _PlatformModel {
   @JsonKey()
   final bool isDefault;
   @override
+  @JsonKey()
+  final bool isSystem;
+  @override
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'PlatformModel(id: $id, name: $name, colorValue: $colorValue, isDefault: $isDefault, createdAt: $createdAt)';
+    return 'PlatformModel(id: $id, name: $name, colorValue: $colorValue, isDefault: $isDefault, isSystem: $isSystem, createdAt: $createdAt)';
   }
 
   @override
@@ -209,14 +226,23 @@ class _$PlatformModelImpl implements _PlatformModel {
                 other.colorValue == colorValue) &&
             (identical(other.isDefault, isDefault) ||
                 other.isDefault == isDefault) &&
+            (identical(other.isSystem, isSystem) ||
+                other.isSystem == isSystem) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, colorValue, isDefault, createdAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    name,
+    colorValue,
+    isDefault,
+    isSystem,
+    createdAt,
+  );
 
   /// Create a copy of PlatformModel
   /// with the given fields replaced by the non-null parameter values.
@@ -238,6 +264,7 @@ abstract class _PlatformModel implements PlatformModel {
     required final String name,
     required final int colorValue,
     final bool isDefault,
+    final bool isSystem,
     required final DateTime createdAt,
   }) = _$PlatformModelImpl;
 
@@ -252,6 +279,8 @@ abstract class _PlatformModel implements PlatformModel {
   int get colorValue;
   @override
   bool get isDefault;
+  @override
+  bool get isSystem;
   @override
   DateTime get createdAt;
 

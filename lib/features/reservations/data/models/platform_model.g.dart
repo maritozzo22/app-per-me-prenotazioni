@@ -12,6 +12,7 @@ _$PlatformModelImpl _$$PlatformModelImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       colorValue: (json['colorValue'] as num).toInt(),
       isDefault: json['isDefault'] as bool? ?? false,
+      isSystem: json['isSystem'] as bool? ?? false,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
@@ -21,5 +22,6 @@ Map<String, dynamic> _$$PlatformModelImplToJson(_$PlatformModelImpl instance) =>
       'name': instance.name,
       'colorValue': instance.colorValue,
       'isDefault': instance.isDefault,
+      'isSystem': instance.isSystem,
       'createdAt': instance.createdAt.toIso8601String(),
     };
