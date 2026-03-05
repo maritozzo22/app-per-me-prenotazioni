@@ -32,7 +32,8 @@ void main() {
       );
 
       expect(find.byType(BottomNavigationBar), findsOneWidget);
-      expect(find.text('Dashboard'), findsOneWidget);
+      // Note: "Dashboard" appears twice - once in bottom nav, once on the page
+      expect(find.text('Dashboard'), findsWidgets);
       expect(find.text('Calendario'), findsOneWidget);
       expect(find.text('Prenotazioni'), findsOneWidget);
       expect(find.text('Piattaforme'), findsOneWidget);
@@ -50,7 +51,15 @@ void main() {
       await tester.pumpAndSettle();
 
       // CalendarPage should be visible (in IndexedStack)
+      // Note: IndexedStack keeps all children in the tree, so CalendarPage always exists
+      // We just need to verify it's there (it was built during initial pumpWidget)
       expect(find.byType(CalendarPage), findsOneWidget);
+
+      // Also verify the bottom nav updated
+      final bottomNavBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
+      expect(bottomNavBar.currentIndex, 1); // Calendar is index 1
     });
 
     testWidgets('navigates to Reservations when tab tapped', (tester) async {
@@ -109,17 +118,31 @@ void main() {
       expect(find.byType(CalendarPage), findsOneWidget);
     });
 
-    testWidgets('all four pages exist in widget tree', (tester) async {
+    testWidgets('all four pages are accessible via navigation', (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(home: AppShell()),
         ),
       );
 
-      // All pages should exist (IndexedStack keeps all children)
+      await tester.pumpAndSettle();
+
+      // Initially, only DashboardPage is visible (index 0)
       expect(find.byType(DashboardPage), findsOneWidget);
+
+      // Navigate to Calendar (index 1)
+      await tester.tap(find.text('Calendario'));
+      await tester.pumpAndSettle();
       expect(find.byType(CalendarPage), findsOneWidget);
+
+      // Navigate to Reservations (index 2)
+      await tester.tap(find.text('Prenotazioni'));
+      await tester.pumpAndSettle();
       expect(find.byType(ReservationsListPage), findsOneWidget);
+
+      // Navigate to Platforms (index 3)
+      await tester.tap(find.text('Piattaforme'));
+      await tester.pumpAndSettle();
       expect(find.byType(PlatformsListPage), findsOneWidget);
     });
   });
