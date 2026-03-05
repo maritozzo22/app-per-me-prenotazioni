@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/dashboard_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
+import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
 
 /// Main navigation shell with bottom navigation bar.
 ///
@@ -25,6 +26,7 @@ class AppShellState extends State<AppShell> {
     ),
     const CalendarPage(),
     const ReservationsListPage(),
+    const PlatformsListPage(),
   ];
 
   /// Navigate to calendar tab programmatically.
@@ -77,6 +79,10 @@ class AppShellState extends State<AppShell> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Prenotazioni',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.hotel),
+            label: 'Piattaforme',
           ),
         ],
       ),
