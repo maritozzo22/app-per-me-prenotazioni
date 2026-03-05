@@ -6,6 +6,7 @@ import 'package:app_prenotazioni/features/reservations/presentation/widgets/rese
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
 import 'package:app_prenotazioni/features/search/presentation/providers/search_provider.dart';
 import 'package:app_prenotazioni/features/search/presentation/widgets/search_bar_widget.dart';
+import 'package:app_prenotazioni/core/widgets/theme_toggle_button.dart';
 
 /// Page showing list of all reservations with edit/delete actions.
 class ReservationsListPage extends ConsumerStatefulWidget {
@@ -102,6 +103,9 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
       appBar: AppBar(
         title: const Text('Prenotazioni'),
         elevation: 2,
+        actions: const [
+          ThemeToggleButton(),
+        ],
       ),
       body: Column(
         children: [
