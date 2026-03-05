@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/guest.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
@@ -12,6 +13,11 @@ void main() {
   group('CalendarNotifier', () {
     late MockReservationRepository mockRepository;
     late CalendarNotifier notifier;
+
+    setUpAll(() async {
+      // Initialize Italian date formatting
+      await initializeDateFormatting('it_IT');
+    });
 
     setUp(() {
       mockRepository = MockReservationRepository();

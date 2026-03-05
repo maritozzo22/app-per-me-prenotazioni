@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_prenotazioni/core/widgets/app_shell.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/dashboard_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
@@ -9,6 +10,10 @@ import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms
 
 void main() {
   group('AppShell', () {
+    setUpAll(() async {
+      // Initialize Italian date formatting for calendar widget
+      await initializeDateFormatting('it_IT');
+    });
     testWidgets('shows DashboardPage initially', (tester) async {
       await tester.pumpWidget(
         const ProviderScope(

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/guest.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
@@ -7,6 +8,11 @@ import 'package:app_prenotazioni/features/reservations/domain/services/calendar_
 void main() {
   group('CalendarService', () {
     late CalendarService service;
+
+    setUpAll(() async {
+      // Initialize Italian date formatting
+      await initializeDateFormatting('it_IT');
+    });
 
     setUp(() {
       service = CalendarService();

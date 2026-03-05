@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_prenotazioni/main.dart';
 import 'package:app_prenotazioni/core/widgets/app_shell.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/dashboard_page.dart';
@@ -17,6 +18,11 @@ class MockReservationRepository extends Mock implements ReservationRepository {}
 void main() {
   group('Dashboard Navigation Integration', () {
     late MockReservationRepository mockRepository;
+
+    setUpAll(() async {
+      // Initialize Italian date formatting for calendar tests
+      await initializeDateFormatting('it_IT');
+    });
 
     setUp(() {
       mockRepository = MockReservationRepository();

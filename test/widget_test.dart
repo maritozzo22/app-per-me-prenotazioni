@@ -17,7 +17,7 @@ void main() {
     Intl.defaultLocale = 'it_IT';
   });
 
-  testWidgets('App loads and displays CalendarPage', (WidgetTester tester) async {
+  testWidgets('App loads and displays Dashboard', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final mockRepository = MockReservationRepository();
     when(() => mockRepository.getAllReservations())
@@ -32,11 +32,13 @@ void main() {
       ),
     );
 
-    // Verify that the calendar page title is displayed.
-    expect(find.text('Calendario Prenotazioni'), findsOneWidget);
+    // Verify that the dashboard title is displayed (app starts on Dashboard)
+    expect(find.text('Dashboard'), findsWidgets);
 
-    // Verify that the info text is displayed.
-    expect(find.text('Seleziona un giorno per vedere le prenotazioni'), findsOneWidget);
-    expect(find.text('Trascina per navigare tra i mesi'), findsOneWidget);
+    // Verify bottom navigation items are present
+    expect(find.text('Dashboard'), findsWidgets);
+    expect(find.text('Calendario'), findsWidgets);
+    expect(find.text('Prenotazioni'), findsWidgets);
+    expect(find.text('Piattaforme'), findsWidgets);
   });
 }
