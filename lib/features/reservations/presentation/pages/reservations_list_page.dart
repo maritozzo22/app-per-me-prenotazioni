@@ -4,6 +4,8 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/reservati
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservations_list/reservation_list_tile.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
+import 'package:app_prenotazioni/features/search/presentation/providers/search_provider.dart';
+import 'package:app_prenotazioni/features/search/presentation/widgets/search_bar_widget.dart';
 
 /// Page showing list of all reservations with edit/delete actions.
 class ReservationsListPage extends ConsumerStatefulWidget {
@@ -94,19 +96,40 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final searchState = ref.watch(searchProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Prenotazioni'),
         elevation: 2,
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadReservations,
-        child: _buildBody(),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SearchBarWidget(
+              onChanged: (query) {
+                // Search is handled by the provider
+              },
+            ),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _loadReservations,
+              child: _buildBody(searchState),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(SearchState searchState) {
+    // Determine which reservations to show
+    final reservationsToShow = searchState.hasQuery
+        ? searchState.results
+        : _reservations;
+
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -117,11 +140,15 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
       return _buildError();
     }
 
-    if (_reservations == null || _reservations!.isEmpty) {
+    if (searchState.hasQuery && searchState.isEmpty) {
+      return _buildSearchEmptyState();
+    }
+
+    if (reservationsToShow == null || reservationsToShow.isEmpty) {
       return _buildEmptyState();
     }
 
-    return _buildList();
+    return _buildList(reservationsToShow);
   }
 
   Widget _buildError() {
@@ -182,11 +209,40 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
     );
   }
 
-  Widget _buildList() {
+  Widget _buildSearchEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: 64,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Nessuna prenotazione trovata',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.grey.shade600,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Prova con altri termini di ricerca',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey.shade500,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildList(List<Reservation> reservations) {
     return ListView.builder(
-      itemCount: _reservations!.length,
+      itemCount: reservations.length,
       itemBuilder: (context, index) {
-        final reservation = _reservations![index];
+        final reservation = reservations[index];
         return ReservationListTile(
           reservation: reservation,
           onEdit: () => _navigateToEdit(reservation),
