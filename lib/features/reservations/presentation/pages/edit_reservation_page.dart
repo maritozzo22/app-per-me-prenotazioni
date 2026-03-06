@@ -25,7 +25,7 @@ final reservationNotificationSchedulerProvider = Provider<ReservationNotificatio
   );
 });
 
-/// Page for editing an existing reservation.
+/// Page for editing an existing reservation with PopScope for Android 14+.
 class EditReservationPage extends ConsumerWidget {
   final Reservation reservation;
 
@@ -39,45 +39,48 @@ class EditReservationPage extends ConsumerWidget {
     final repository = ref.read(reservationRepositoryProvider);
     final validationService = ReservationValidationService(repository);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Modifica Prenotazione'),
-        elevation: 2,
-      ),
-      body: ReservationForm(
-        existingReservation: reservation,
-        rooms: Room.defaultRooms,
-        platforms: BookingPlatform.defaultPlatforms,
-        validationService: validationService,
-        onSubmit: (updatedReservation) async {
-          try {
-            // Save the reservation
-            await repository.saveReservation(updatedReservation);
+    return PopScope(
+      canPop: true, // Allow back navigation for now
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Modifica Prenotazione'),
+          elevation: 2,
+        ),
+        body: ReservationForm(
+          existingReservation: reservation,
+          rooms: Room.defaultRooms,
+          platforms: BookingPlatform.defaultPlatforms,
+          validationService: validationService,
+          onSubmit: (updatedReservation) async {
+            try {
+              // Save the reservation
+              await repository.saveReservation(updatedReservation);
 
-            // Schedule notifications (Android only)
-            if (PlatformService.notificationsSupported) {
-              try {
-                final scheduler = ref.read(reservationNotificationSchedulerProvider);
-                await scheduler.rescheduleReservationNotifications(updatedReservation);
-              } catch (e) {
-                // Don't fail the save if notification scheduling fails
-                print('Error scheduling notifications: $e');
+              // Schedule notifications (Android only)
+              if (PlatformService.notificationsSupported) {
+                try {
+                  final scheduler = ref.read(reservationNotificationSchedulerProvider);
+                  await scheduler.rescheduleReservationNotifications(updatedReservation);
+                } catch (e) {
+                  // Don't fail the save if notification scheduling fails
+                  print('Error scheduling notifications: $e');
+                }
               }
-            }
 
-            return true;
-          } catch (e) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Errore: $e'),
-                  backgroundColor: Colors.red,
-                ),
-              );
+              return true;
+            } catch (e) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Errore: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+              return false;
             }
-            return false;
-          }
-        },
+          },
+        ),
       ),
     );
   }
