@@ -1,0 +1,99 @@
+--------- beginning of main
+03-06 12:33:33.215  5444  6011 D AppSwitchObserverHelper: packageName: app.prenotazioni.app_prenotazioni,com.android.launcher
+03-06 12:33:33.219  4053 15204 W ziparchive: Unable to open '/data/app/~~YMautoK_ar3fPIMpJ2-2tQ==/app.prenotazioni.app_prenotazioni-qweBS0wkdeuFPbicxCWmYw==/base.dm': No such file or directory
+03-06 12:33:33.219  4053 15204 W ziparchive: Unable to open '/data/app/~~YMautoK_ar3fPIMpJ2-2tQ==/app.prenotazioni.app_prenotazioni-qweBS0wkdeuFPbicxCWmYw==/base.dm': No such file or directory
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: app.prenotazioni.app_prenotazionifirst la
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; CpuFgTime = 0 ms; CpuBgTime = 0 ms.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; CpuKernelFgTime = 0 ms; CpuKernelBgTime = 0 ms.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; CpuUserFgTime = 0 ms ; CpuUserBgTime = 0 ms.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; CpuFgPower = 0.0 mAh.; CpuBgPower = 0.0 mAh.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; AlarmFgWakeupCount = 0; AlarmBgWakeupCount = 0
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; JobFgCount = 0; JobBgCount = 0; JobFgTime = 0; JobBgTime = 0
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; SyncFgCount = 0; SyncBgCount = 0; SyncFgTime = 0; SyncBgTime = 0
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; WakeLockFgTime = 0 ms; WakeLockFgPower = 0.0 mAh.; WakeLockBgTime = 0 ms; WakeLockBgPower = 0.0 mAh.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; ScreenFgTime = 0 ms; ScreenFgPower = 0.0 mAh.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgWifiRxBytes = 0 Bytes; BgWifiRxBytes = 0 Bytes; FgWifiTxBytes = 0 Bytes; BgWifiTxBytes = 0 Bytes; FgWifiRxPackets = 0 ; BgWifiRxPackets = 0 ; FgWifiTxPackets = 0 ; BgWifiTxPackets = 0 ; FgWiFiScanTimeMs = 0 ; BgWiFiScanTimeMs = 0 ; FgWiFiBatchScanTimeMs = 0 ; BgWiFiBatchScanTimeMs = 0 
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgWifiRxPacketsPower = 0.0 mAh; BgWifiRxPacketsPower = 0.0 mAh; FgWifiTxPacketsPower = 0.0 mAh; BgWifiTxPacketsPower = 0.0 mAh; FgWifiScanPower = 0.0 mAh; BgWifiScanPower = 0.0 mAh; FgWifiBatchScanPower = 0.0 mAh; BgWifiBatchScanPower = 0.0 mAh; FgWiFiTotalPower = 0.0 mAh; BgWiFiTotalPower = 0.0 mAh.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgGpsTime = 0 ms; BgGpsTime = 0 ms.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgGpsPower = 0.0 mAh; BgGpsPower = 0.0 mAh.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgSensorTime = 0 ms; BgSensorTime = 0 ms.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgSensorPower = 0.0 mAh; BgSensorPower = 0.0 mAh.
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgCameraTime = 0 ms; BgCameraTime = 0 ms
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgCameraPower = 0.0 mAh; BgCameraPower = 0.0 mAh
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgFlashLightTime = 0 ms; BgFlashLightTime = 0 ms
+03-06 12:33:33.273  5444  6011 E Battery : AppStats: Uid = 10289; pkgName = app.prenotazioni.app_prenotazioni; FgFlashLightPower = 0.0 mAh; BgFlashLightPower = 0.0 mAh
+03-06 12:33:34.212   926  1042 I mtkpower@impl: [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:31377
+03-06 12:33:34.212   926  1042 I libPowerHal: [perfLockRel] hdl:31377, idx:-1
+--------- beginning of system
+03-06 12:33:34.612  1674  1792 D OplusFeatureHDREnhanceBrightness: checkIsPlayingHDR isPlayingHDR=0 rotation=0 whiteApp=false battery=100
+03-06 12:33:34.714  9463 15293 D ProfileInstaller: Installing profile for app.prenotazioni.app_prenotazioni
+03-06 12:33:35.191 30602 30602 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.safetynet.service.START pkg=com.google.android.gms }
+03-06 12:33:35.642  1288  1288 I thermal_repeater: [recvMdThermalInfo] ret=28, strLen=127,  2, 32767, -127, 0, 32767, 0
+03-06 12:33:35.840   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:36.043   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:37.034 11059 11059 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.icing.LIGHTWEIGHT_INDEX_SERVICE dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+03-06 12:33:37.215   926  1042 I mtkpower@impl: [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:31378
+03-06 12:33:37.215   926  1042 I libPowerHal: [perfLockRel] hdl:31378, idx:4
+03-06 12:33:37.215   926  1042 I libPowerHal: [PD] MTKPOWER_HINT_EXT_LAUNCH update cmd:1000000, param:-1
+03-06 12:33:37.216   926  1042 I libPowerHal: [PD] MTKPOWER_HINT_EXT_LAUNCH update cmd:2020000 param:1
+03-06 12:33:37.218   926  1042 I libPowerHal: [PD] MTKPOWER_HINT_EXT_LAUNCH update cmd:1408300 param:0
+03-06 12:33:37.219   926  1042 I libPowerHal: [PD] MTKPOWER_HINT_EXT_LAUNCH update cmd:1000000 param:-1
+03-06 12:33:37.271  1674  1742 W libprocessgroup: Failed to open /dev/blkio/background/cgroup.procs: No such file or directory
+03-06 12:33:37.790  1039  1725 D OplusHecate: pixels[207,120]=0xfff7efeb
+03-06 12:33:38.145  1674  1742 W libprocessgroup: Failed to open /dev/blkio/background/cgroup.procs: No such file or directory
+03-06 12:33:38.254   916  1018 E VirtualSensors: pedo minute, step_count = 2418, report_count = 44297 move_statust = 0 ,time_gap = 0 , step_run_count = 1 , step_walk_count = 2417
+03-06 12:33:38.255   916  1018 E power   : ISystemSuspend::getService() failed.
+03-06 12:33:38.255   916  1018 E VirtualSensors: post_events : call
+03-06 12:33:38.263  1674  2000 E AppOps  : attributionTag  not declared in manifest of com.oplus.healthservice
+03-06 12:33:38.265  3436  3436 I StepApp_StepDataPreHandler: (main)onSensorChanged raw data: step=2418.0 state=0.0 minuteDelta=0.0 timestamp=2657926151521822 steprun=1.0 stepwalk=2417.0 formatted data: step=2418 state=0 timestamp=2657926151521822 time=1772796818253 steprun=1 stepwalk=2417
+03-06 12:33:38.267  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)getNewFixedOffsetStep type is STEP
+03-06 12:33:38.268  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)isRebootCountStep:false	 lastRealTimeStamp = 1772796720000	 bootTimestamp = 1770138892101	 mLastModifiedMinuteTime = 2026-03-06-12-32
+03-06 12:33:38.268  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)calOffSet:sensorStep = 2418	 lastModifiedStep = 2418	 offSet = 0
+03-06 12:33:38.268  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)getNewFixedOffsetStep type is RUN
+03-06 12:33:38.269  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)isRebootCountStep:false	 lastRealTimeStamp = 1772796720000	 bootTimestamp = 1770138892101	 mLastModifiedMinuteTime = 2026-03-06-12-32
+03-06 12:33:38.269  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)calOffSet:sensorStep = 1	 lastModifiedStep = 1	 offSet = 0
+03-06 12:33:38.269  1674  2000 E AppOps  : attributionTag  not declared in manifest of com.oplus.healthservice
+03-06 12:33:38.269  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)getNewFixedOffsetStep type is WALK
+03-06 12:33:38.271  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)isRebootCountStep:false	 lastRealTimeStamp = 1772796720000	 bootTimestamp = 1770138892101	 mLastModifiedMinuteTime = 2026-03-06-12-32
+03-06 12:33:38.271  3436 10396 I StepApp_StepDataSaver: (StepDataDispatcher)calOffSet:sensorStep = 2417	 lastModifiedStep = 2417	 offSet = 0
+03-06 12:33:40.914  3486  3486 D OplusPrivacyDotViewController: scheduleUpdate: 
+03-06 12:33:40.916  3486  4409 D OplusPrivacyDotViewController: processNextViewState: 
+03-06 12:33:40.920  3486  4409 D OplusPrivacyDotViewController: resolveState ViewState(systemPrivacyEventIsActive=false, shadeExpanded=false, qsExpanded=false, rtl=false, rotation=0, height=12, x=53, y=66, cornerIndex=1, designatedCorner=android.widget.FrameLayout{ed18354 G.E...... ......ID 0,0-12,12 #7f0b0456 app:id/icons_container}, contentDescription=null, chipAnimationStart=false, preDraw=false) shouldShowDot false
+03-06 12:33:40.920  3486  4409 D OplusPrivacyDotViewController: updatePosition:53:66
+03-06 12:33:40.921  3486  4409 D OplusPrivacyDotViewController: updatePosition:53:66
+03-06 12:33:40.935  1674  5104 V WindowManager: Relayout Window{29aada u0 OplusPrivacyIconTopLeft}: viewVisibility=8, oldvis=8, req=12x12
+03-06 12:33:40.949  1674  5104 V WindowManager: Relayout Window{b7d9ac7 u0 OplusPrivacyIconTopRight}: viewVisibility=8, oldvis=8, req=12x12
+03-06 12:33:40.968   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:41.171   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:43.069  1674  1726 D AES     : AEEIOCTL_GET/SET_SF_STATE IOCTL,cmd= 1074294797, lParam=0. 
+03-06 12:33:43.070  1674  1726 D AES     : AEEIOCTL_RT_MON_Kick IOCTL,cmd= 2147774474, lParam=300. 
+03-06 12:33:43.169 10866 10911 I id.gms.unstable: Explicit concurrent copying GC freed 7177(287KB) AllocSpace objects, 0(0B) LOS objects, 24% free, 4802KB/6403KB, paused 136us,55us total 70.176ms
+03-06 12:33:45.662  1288  1288 I thermal_repeater: [recvMdThermalInfo] ret=28, strLen=127,  2, 32767, -127, 0, 32767, 0
+03-06 12:33:46.074   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:46.267 30602 30602 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsApiService }
+03-06 12:33:46.276   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:51.198   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:51.403   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:51.519   926   958 D power@timer: [mtkPowerTimer] visRead:0
+03-06 12:33:55.180  1047  1062 D ccci_mdinit: (1):monitor_time_update_thread round:70094 ########
+03-06 12:33:55.680  1288  1288 I thermal_repeater: [recvMdThermalInfo] ret=28, strLen=127,  2, 32767, -127, 0, 32767, 0
+03-06 12:33:55.910  9463 15196 I pp_prenotazioni: Background concurrent copying GC freed 95444(4393KB) AllocSpace objects, 5(164KB) LOS objects, 49% free, 3094KB/6188KB, paused 299us,77us total 106.220ms
+03-06 12:33:55.911  9463  9463 W FinalizerDaemon: type=1400 audit(0.0:361877): avc: denied { getopt } for path="/dev/socket/usap_pool_primary" scontext=u:r:untrusted_app:s0:c33,c257,c512,c768 tcontext=u:r:zygote:s0 tclass=unix_stream_socket permissive=0 app=app.prenotazioni.app_prenotazioni
+03-06 12:33:56.317   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:56.522   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:33:58.021 19215 15301 D TrafficStats: tagSocket(125) with statsTag=0xffffffff, statsUid=-1
+03-06 12:33:58.050  4185 15734 D NetworkEvent: OplusNetworkEventCbProxy invoke.....onDnsEvent argslen:8
+03-06 12:34:00.007  5444  5886 D PhoneScreenOnTime: affairType:231
+03-06 12:34:00.011  5444  5886 D Utils   : getLastScrChangeTime: 1772796780009
+03-06 12:34:00.013  5444  5886 D Utils   : getScrOnSeconds: 1879333
+03-06 12:34:00.013  5444  5886 D Utils   : setLastScrChangeTime: 1772796840007
+03-06 12:34:00.017  5444  5886 D Utils   : setScrOnSeconds: 1939331
+03-06 12:34:00.019  5444  5886 D PhoneUsageTime: affairType:231
+03-06 12:34:00.021  5444  5886 D Utils   : getLastChargeTime: 1772796780021
+03-06 12:34:00.021  5444  5886 D Utils   : getLastChargeDurationTime: 1873216
+03-06 12:34:00.070  3486  3486 I OpColorTextView: index:0
+03-06 12:34:00.077  1674  5104 E OplusCustomizeRestrictionManagerService: isBiometricDisabled start
+03-06 12:34:00.078  1674  5101 E OplusCustomizeRestrictionManagerService: isBiometricDisabled start
+03-06 12:34:00.223  4185 15734 D NetworkEvent: OplusNetworkEventCbProxy invoke.....onDnsEvent argslen:8
+03-06 12:34:01.440   879   886 W statsd  : StateTracker not found for state atom 27
+03-06 12:34:01.643   879   886 W statsd  : StateTracker not found for state atom 27

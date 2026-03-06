@@ -11,6 +11,7 @@ import 'package:app_prenotazioni/features/reservations/domain/services/validatio
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/room_dropdown.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/platform_dropdown.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/payment_status_toggle.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 import 'package:uuid/uuid.dart';
 
 class ReservationForm extends StatefulWidget {
@@ -49,6 +50,7 @@ class _ReservationFormState extends State<ReservationForm> {
   // Validation state
   String? _dateError;
   bool _isSubmitting = false;
+  bool _shouldShake = false;
 
   bool get _isEditing => widget.existingReservation != null;
 
@@ -65,11 +67,14 @@ class _ReservationFormState extends State<ReservationForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: FormBuilder(
-        key: _formKey,
-        child: Column(
+    return ShakeAnimation(
+      trigger: _shouldShake,
+      duration: const Duration(milliseconds: 500),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Room selection
@@ -158,11 +163,15 @@ class _ReservationFormState extends State<ReservationForm> {
             ),
             if (_dateError != null) ...[
               const SizedBox(height: 8),
-              Text(
-                _dateError!,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                  fontSize: 12,
+              FadeIn(
+                slide: SlideDirection.down,
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  _dateError!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ],
@@ -294,7 +303,7 @@ class _ReservationFormState extends State<ReservationForm> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   bool _canSubmit() {
@@ -349,7 +358,21 @@ class _ReservationFormState extends State<ReservationForm> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.saveAndValidate()) return;
+    if (!_formKey.currentState!.saveAndValidate()) {
+      // Trigger shake animation for visual feedback
+      setState(() {
+        _shouldShake = true;
+      });
+      // Reset shake trigger after animation
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          setState(() {
+            _shouldShake = false;
+          });
+        }
+      });
+      return;
+    }
 
     setState(() => _isSubmitting = true);
 

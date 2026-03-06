@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Custom day cell widget for calendar with platform-colored background.
 class ReservationDayCell extends StatelessWidget {
@@ -39,22 +40,27 @@ class ReservationDayCell extends StatelessWidget {
 
     final platformColor = _getPlatformColor();
 
-    return Container(
-      margin: const EdgeInsets.all(6.0),
-      decoration: BoxDecoration(
-        color: platformColor.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: platformColor,
-          width: 2,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          '${day.day}',
-          style: TextStyle(
+    return ScaleIn(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOutBack,
+      beginScale: 0.8,
+      child: Container(
+        margin: const EdgeInsets.all(6.0),
+        decoration: BoxDecoration(
+          color: platformColor.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
             color: platformColor,
-            fontWeight: FontWeight.bold,
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            '${day.day}',
+            style: TextStyle(
+              color: platformColor,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

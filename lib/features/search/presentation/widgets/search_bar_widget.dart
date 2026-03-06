@@ -30,40 +30,46 @@ class _SearchBarWidgetState extends ConsumerState<SearchBarWidget> {
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchProvider);
 
-    return TextField(
-      controller: _controller,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: _controller.text.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _controller.clear();
-                  ref.read(searchProvider.notifier).clearSearch();
-                  widget.onChanged?.call('');
-                },
-              )
-            : searchState.isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+    return Semantics(
+      label: widget.hintText,
+      hint: 'Inserisci il testo da cercare',
+      textField: true,
+      child: TextField(
+        controller: _controller,
+        decoration: InputDecoration(
+          hintText: widget.hintText,
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: _controller.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _controller.clear();
+                    ref.read(searchProvider.notifier).clearSearch();
+                    widget.onChanged?.call('');
+                  },
+                  tooltip: 'Cancella ricerca',
+                )
+              : searchState.isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surface,
         ),
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surface,
+        onChanged: (value) {
+          ref.read(searchProvider.notifier).search(value);
+          widget.onChanged?.call(value);
+        },
       ),
-      onChanged: (value) {
-        ref.read(searchProvider.notifier).search(value);
-        widget.onChanged?.call(value);
-      },
     );
   }
 }
