@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/guest.dart';
+import 'package:app_prenotazioni/features/reservations/domain/value_objects/payment_status.dart';
 import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
@@ -74,7 +76,7 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('shows info text below calendar', (tester) async {
+    testWidgets('shows empty state when no reservations', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -88,6 +90,44 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // When there are no reservations, should show empty state
+      expect(find.text('Nessun evento'), findsOneWidget);
+      expect(find.text('Non ci sono prenotazioni in questo periodo'), findsOneWidget);
+    });
+
+    testWidgets('shows info text below calendar when has reservations', (tester) async {
+      // Create a sample reservation with current structure
+      final now = DateTime.now();
+      final reservation = Reservation(
+        id: '1',
+        roomId: 'room-1',
+        platformId: 'airbnb',
+        guest: const Guest(name: 'Mario Rossi'),
+        checkIn: now.add(const Duration(days: 1)),
+        checkOut: now.add(const Duration(days: 3)),
+        amount: 300.0,
+        paymentStatus: PaymentStatus.received,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      when(() => mockRepository.getAllReservations())
+          .thenAnswer((_) async => [reservation]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            reservationRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+          child: const MaterialApp(
+            home: CalendarPage(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // When there are reservations, should show calendar with info text
       expect(find.text('Seleziona un giorno per vedere le prenotazioni'), findsOneWidget);
       expect(find.text('Trascina per navigare tra i mesi'), findsOneWidget);
     });

@@ -69,31 +69,34 @@ class CalendarPage extends ConsumerWidget {
         // Info section below calendar
         Expanded(
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 48,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Seleziona un giorno per vedere le prenotazioni',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Trascina per navigare tra i mesi',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[500],
-                        fontStyle: FontStyle.italic,
-                      ),
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 48,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Seleziona un giorno per vedere le prenotazioni',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Trascina per navigare tra i mesi',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[500],
+                          fontStyle: FontStyle.italic,
+                        ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
