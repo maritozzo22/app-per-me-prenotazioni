@@ -128,6 +128,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
     final searchState = ref.watch(searchProvider);
 
     return Scaffold(
+      key: const Key('reservations_list'),
       appBar: AppBar(
         title: const Text('Prenotazioni'),
         elevation: 2,
@@ -140,6 +141,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SearchBarWidget(
+              key: const Key('search_field'),
               onChanged: (query) {
                 // Search is handled by the provider
               },

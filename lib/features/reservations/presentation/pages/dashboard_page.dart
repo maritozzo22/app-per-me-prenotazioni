@@ -23,6 +23,7 @@ class DashboardPage extends ConsumerWidget {
     final dashboardState = ref.watch(dashboardProvider);
 
     return Scaffold(
+      key: const Key('dashboard_view'),
       appBar: AppBar(
         title: const Text('Dashboard'),
         elevation: 2,
@@ -84,7 +85,10 @@ class DashboardPage extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: 8),
-                RoomOccupancyGrid(roomOccupancy: state.roomOccupancy),
+                RoomOccupancyGrid(
+                  key: const Key('occupancy_grid'),
+                  roomOccupancy: state.roomOccupancy,
+                ),
               ],
             ),
           ),
@@ -95,6 +99,7 @@ class DashboardPage extends ConsumerWidget {
             slide: SlideDirection.up,
             delay: const Duration(milliseconds: 100),
             child: IncomeBreakdownCard(
+              key: const Key('income_card'),
               received: state.statistics?.monthlyIncomeReceived ?? 0,
               pending: state.statistics?.monthlyIncomePending ?? 0,
             ),
@@ -116,6 +121,7 @@ class DashboardPage extends ConsumerWidget {
             slide: SlideDirection.up,
             delay: const Duration(milliseconds: 300),
             child: UpcomingReservationsCard(
+              key: const Key('check_ins_card'),
               title: 'Prossimi Arrivi',
               reservations: state.statistics?.upcomingCheckIns ?? [],
             ),
@@ -127,6 +133,7 @@ class DashboardPage extends ConsumerWidget {
             slide: SlideDirection.up,
             delay: const Duration(milliseconds: 400),
             child: UpcomingReservationsCard(
+              key: const Key('check_outs_card'),
               title: 'Prossime Partenze',
               reservations: state.statistics?.upcomingCheckOuts ?? [],
               showCheckOutDate: true,

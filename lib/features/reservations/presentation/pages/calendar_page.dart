@@ -14,6 +14,7 @@ class CalendarPage extends ConsumerWidget {
     final calendarState = ref.watch(calendarProvider);
 
     return Scaffold(
+      key: const Key('calendar_view'),
       appBar: AppBar(
         title: const Text('Calendario Prenotazioni'),
         elevation: 2,

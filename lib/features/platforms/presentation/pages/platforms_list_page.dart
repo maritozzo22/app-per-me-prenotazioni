@@ -24,11 +24,15 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
     final platforms = platformState.platforms;
 
     return Scaffold(
+      key: const Key('platforms_list'),
       appBar: AppBar(
         title: const Text('Gestione Piattaforme'),
       ),
       body: platformState.isLoading && platforms.isEmpty
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              key: Key('loading_indicator'),
+              child: CircularProgressIndicator(),
+            )
           : platformState.error != null && platforms.isEmpty
               ? ErrorDisplayWidget(
                   error: platformState.error!,
@@ -43,6 +47,7 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
                         await ref.read(platformProvider.notifier).loadPlatforms();
                       },
                       child: ListView.builder(
+                        key: const Key('platforms_list_view'),
                         itemCount: platforms.length,
                         itemBuilder: (context, index) {
                           final platform = platforms[index];
@@ -50,6 +55,7 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
                             slide: SlideDirection.left,
                             delay: Duration(milliseconds: 50 * index),
                             child: PlatformListTile(
+                              key: Key('platform_tile_${platform.id}'),
                               platform: platform,
                               onTap: () {
                                 _showPlatformDetails(context, platform);
@@ -68,6 +74,7 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
                       ),
                     ),
       floatingActionButton: FloatingActionButton.extended(
+        key: const Key('platform_fab'),
         onPressed: () {
           _navigateToForm(context, null);
         },
