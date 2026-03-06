@@ -7,6 +7,7 @@ import 'package:app_prenotazioni/features/reservations/presentation/widgets/dash
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/calendar_access_card.dart';
 import 'package:app_prenotazioni/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Dashboard page showing reservation statistics and overview.
 class DashboardPage extends ConsumerWidget {
@@ -70,41 +71,66 @@ class DashboardPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Room occupancy section
-          Text(
-            'Stanze Oggi',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: Duration.zero,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Stanze Oggi',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
+                const SizedBox(height: 8),
+                RoomOccupancyGrid(roomOccupancy: state.roomOccupancy),
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
-          RoomOccupancyGrid(roomOccupancy: state.roomOccupancy),
           const SizedBox(height: 24),
 
           // Income card
-          IncomeBreakdownCard(
-            received: state.statistics?.monthlyIncomeReceived ?? 0,
-            pending: state.statistics?.monthlyIncomePending ?? 0,
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 100),
+            child: IncomeBreakdownCard(
+              received: state.statistics?.monthlyIncomeReceived ?? 0,
+              pending: state.statistics?.monthlyIncomePending ?? 0,
+            ),
           ),
           const SizedBox(height: 24),
 
           // Calendar access card
-          CalendarAccessCard(
-            onTap: onCalendarTap ?? () {},
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 200),
+            child: CalendarAccessCard(
+              onTap: onCalendarTap ?? () {},
+            ),
           ),
           const SizedBox(height: 24),
 
           // Upcoming check-ins
-          UpcomingReservationsCard(
-            title: 'Prossimi Arrivi',
-            reservations: state.statistics?.upcomingCheckIns ?? [],
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 300),
+            child: UpcomingReservationsCard(
+              title: 'Prossimi Arrivi',
+              reservations: state.statistics?.upcomingCheckIns ?? [],
+            ),
           ),
           const SizedBox(height: 16),
 
           // Upcoming check-outs
-          UpcomingReservationsCard(
-            title: 'Prossime Partenze',
-            reservations: state.statistics?.upcomingCheckOuts ?? [],
-            showCheckOutDate: true,
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 400),
+            child: UpcomingReservationsCard(
+              title: 'Prossime Partenze',
+              reservations: state.statistics?.upcomingCheckOuts ?? [],
+              showCheckOutDate: true,
+            ),
           ),
           const SizedBox(height: 24),
         ],

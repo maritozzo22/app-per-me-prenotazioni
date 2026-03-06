@@ -16,6 +16,7 @@ import 'package:app_prenotazioni/features/notifications/presentation/providers/n
 import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/empty_state_widget.dart';
 import 'package:app_prenotazioni/core/presentation/error/error_snackbar.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Provider for notification scheduler
 final reservationNotificationSchedulerProvider = Provider<ReservationNotificationScheduler>((ref) {
@@ -189,10 +190,14 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
       cacheExtent: 500, // Pre-render 500px worth of items for smoother scrolling
       itemBuilder: (context, index) {
         final reservation = reservations[index];
-        return ReservationListTile(
-          reservation: reservation,
-          onEdit: () => _navigateToEdit(reservation),
-          onDelete: () => _deleteReservation(reservation),
+        return FadeIn(
+          slide: SlideDirection.left,
+          delay: Duration(milliseconds: 50 * index),
+          child: ReservationListTile(
+            reservation: reservation,
+            onEdit: () => _navigateToEdit(reservation),
+            onDelete: () => _deleteReservation(reservation),
+          ),
         );
       },
     );

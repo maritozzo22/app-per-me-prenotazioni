@@ -7,6 +7,7 @@ import 'package:app_prenotazioni/features/platforms/presentation/providers/platf
 import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/empty_state_widget.dart';
 import 'package:app_prenotazioni/core/presentation/error/error_snackbar.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Page for managing platforms
 class PlatformsListPage extends ConsumerStatefulWidget {
@@ -45,19 +46,23 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
                         itemCount: platforms.length,
                         itemBuilder: (context, index) {
                           final platform = platforms[index];
-                          return PlatformListTile(
-                            platform: platform,
-                            onTap: () {
-                              _showPlatformDetails(context, platform);
-                            },
-                            onEdit: () {
-                              _navigateToForm(context, platform);
-                            },
-                            onDelete: platform.isSystem
-                                ? null
-                                : () {
-                                    _confirmDelete(context, platform);
-                                  },
+                          return FadeIn(
+                            slide: SlideDirection.left,
+                            delay: Duration(milliseconds: 50 * index),
+                            child: PlatformListTile(
+                              platform: platform,
+                              onTap: () {
+                                _showPlatformDetails(context, platform);
+                              },
+                              onEdit: () {
+                                _navigateToForm(context, platform);
+                              },
+                              onDelete: platform.isSystem
+                                  ? null
+                                  : () {
+                                      _confirmDelete(context, platform);
+                                    },
+                            ),
                           );
                         },
                       ),
