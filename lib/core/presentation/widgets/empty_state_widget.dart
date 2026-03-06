@@ -100,7 +100,7 @@ class EmptyStates {
   /// Empty state for no platforms
   static Widget noPlatforms({VoidCallback? onAction}) {
     return EmptyStateWidget(
-      icon: Icons.platform_outlined,
+      icon: Icons.hotel_outlined,
       title: 'Nessuna piattaforma configurata',
       message: 'Aggiungi le piattaforme che utilizzi',
       actionLabel: 'Aggiungi piattaforma',
