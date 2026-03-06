@@ -42,7 +42,7 @@ dependencies:
   # Notifications
   flutter_local_notifications: ^17.2.0
   timezone: ^0.9.4
-  flutter_native_timezone: ^2.0.0
+  # flutter_native_timezone: ^2.0.0  # Temporarily disabled due to build issues
 
 dev_dependencies:
   flutter_test:
