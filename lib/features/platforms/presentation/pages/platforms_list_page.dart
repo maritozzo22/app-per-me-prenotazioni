@@ -4,6 +4,9 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/platform.
 import 'package:app_prenotazioni/features/platforms/presentation/widgets/platform_list_tile.dart';
 import 'package:app_prenotazioni/features/platforms/presentation/pages/platform_form_page.dart';
 import 'package:app_prenotazioni/features/platforms/presentation/providers/platform_provider.dart';
+import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
+import 'package:app_prenotazioni/core/presentation/widgets/empty_state_widget.dart';
+import 'package:app_prenotazioni/core/presentation/error/error_snackbar.dart';
 
 /// Page for managing platforms
 class PlatformsListPage extends ConsumerStatefulWidget {
@@ -23,12 +26,17 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
       appBar: AppBar(
         title: const Text('Gestione Piattaforme'),
       ),
-      body: platformState.isLoading
+      body: platformState.isLoading && platforms.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : platformState.error != null
-              ? _buildError(platformState.error!)
+          : platformState.error != null && platforms.isEmpty
+              ? ErrorDisplayWidget(
+                  error: platformState.error!,
+                  onRetry: () => ref.read(platformProvider.notifier).loadPlatforms(),
+                )
               : platforms.isEmpty
-                  ? _buildEmptyState()
+                  ? EmptyStates.noPlatforms(
+                      onAction: () => _navigateToForm(context, null),
+                    )
                   : RefreshIndicator(
                       onRefresh: () async {
                         await ref.read(platformProvider.notifier).loadPlatforms();
@@ -60,56 +68,6 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
         },
         label: const Text('Nuova Piattaforma'),
         icon: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildError(String error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
-          const SizedBox(height: 16),
-          Text(
-            'Errore nel caricamento',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            error,
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () => ref.read(platformProvider.notifier).loadPlatforms(),
-            child: const Text('Riprova'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.hotel_outlined,
-            size: 64,
-            color: Colors.grey,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Nessuna piattaforma configurata',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -189,22 +147,18 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
         // Adding new platform
         await ref.read(platformProvider.notifier).addPlatform(result);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Piattaforma "${result.name}" creata con successo'),
-              duration: const Duration(seconds: 2),
-            ),
+          ErrorSnackbar.showSuccess(
+            context,
+            'Piattaforma "${result.name}" creata con successo',
           );
         }
       } else {
         // Updating existing platform
         await ref.read(platformProvider.notifier).updatePlatform(result);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Piattaforma "${result.name}" aggiornata con successo'),
-              duration: const Duration(seconds: 2),
-            ),
+          ErrorSnackbar.showSuccess(
+            context,
+            'Piattaforma "${result.name}" aggiornata con successo',
           );
         }
       }
@@ -230,11 +184,9 @@ class _PlatformsListPageState extends ConsumerState<PlatformsListPage> {
               // Delete the platform
               await ref.read(platformProvider.notifier).deletePlatform(platform.id);
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Piattaforma "${platform.name}" eliminata'),
-                    duration: const Duration(seconds: 2),
-                  ),
+                ErrorSnackbar.showSuccess(
+                  context,
+                  'Piattaforma "${platform.name}" eliminata',
                 );
               }
             },

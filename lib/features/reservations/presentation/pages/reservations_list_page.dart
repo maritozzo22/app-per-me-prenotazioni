@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservations_list/reservation_list_tile.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_list_skeleton.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
 import 'package:app_prenotazioni/features/search/presentation/providers/search_provider.dart';
 import 'package:app_prenotazioni/features/search/presentation/widgets/search_bar_widget.dart';
@@ -12,6 +13,9 @@ import 'package:app_prenotazioni/features/notifications/application/reservation_
 import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart';
 import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart' show NotificationSchedulerServiceImpl;
 import 'package:app_prenotazioni/features/notifications/presentation/providers/notification_permission_provider.dart';
+import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
+import 'package:app_prenotazioni/core/presentation/widgets/empty_state_widget.dart';
+import 'package:app_prenotazioni/core/presentation/error/error_snackbar.dart';
 
 /// Provider for notification scheduler
 final reservationNotificationSchedulerProvider = Provider<ReservationNotificationScheduler>((ref) {
@@ -92,22 +96,15 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
       await repository.deleteReservation(reservation.id);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Prenotazione di ${reservation.guest.name} eliminata'),
-            backgroundColor: Colors.green,
-          ),
+        ErrorSnackbar.showSuccess(
+          context,
+          'Prenotazione di ${reservation.guest.name} eliminata',
         );
         await _loadReservations();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Errore: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorSnackbar.show(context, 'Errore: $e');
       }
     }
   }
@@ -164,112 +161,26 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
         ? searchState.results
         : _reservations;
 
-    if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+    if (_isLoading && reservationsToShow == null) {
+      return const ReservationListSkeleton();
     }
 
     if (_error != null) {
-      return _buildError();
+      return ErrorDisplayWidget(
+        error: _error!,
+        onRetry: _loadReservations,
+      );
     }
 
     if (searchState.hasQuery && searchState.isEmpty) {
-      return _buildSearchEmptyState();
+      return EmptyStates.noSearchResults();
     }
 
     if (reservationsToShow == null || reservationsToShow.isEmpty) {
-      return _buildEmptyState();
+      return EmptyStates.noReservations();
     }
 
     return _buildList(reservationsToShow);
-  }
-
-  Widget _buildError() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
-          const SizedBox(height: 16),
-          Text(
-            'Errore nel caricamento',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _loadReservations,
-            child: const Text('Riprova'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height - 200,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.inbox_outlined,
-                  size: 64,
-                  color: Colors.grey.shade400,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Nessuna prenotazione',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey.shade600,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Le prenotazioni appariranno qui',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade500,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Nessuna prenotazione trovata',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.grey.shade600,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Prova con altri termini di ricerca',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade500,
-                ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildList(List<Reservation> reservations) {
