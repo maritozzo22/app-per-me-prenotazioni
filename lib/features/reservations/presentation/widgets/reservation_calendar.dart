@@ -40,6 +40,16 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
     final calendarState = ref.watch(calendarProvider);
     final calendarNotifier = ref.read(calendarProvider.notifier);
 
+    // Show error state if there's an error
+    if (calendarState.error != null) {
+      return _buildErrorState(calendarState.error!, calendarNotifier);
+    }
+
+    // Show loading state
+    if (calendarState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     // Update focused day when provider changes
     if (_focusedDay != calendarState.focusedDay) {
       _focusedDay = calendarState.focusedDay;
@@ -271,6 +281,41 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
           // Week starts on Monday (Italy standard)
           startingDayOfWeek: StartingDayOfWeek.monday,
         ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String error, CalendarNotifier notifier) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red.shade300,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Errore nel caricamento',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () => notifier.retry(),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Riprova'),
+            ),
+          ],
         ),
       ),
     );

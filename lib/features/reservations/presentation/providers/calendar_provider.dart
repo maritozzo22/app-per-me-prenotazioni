@@ -10,12 +10,14 @@ class CalendarState {
   final DateTime? selectedDay;
   final Map<DateTime, List<Reservation>> reservationsByDate;
   final bool isLoading;
+  final String? error;
 
   const CalendarState({
     required this.focusedDay,
     this.selectedDay,
     required this.reservationsByDate,
     this.isLoading = false,
+    this.error,
   });
 
   CalendarState copyWith({
@@ -23,12 +25,14 @@ class CalendarState {
     DateTime? selectedDay,
     Map<DateTime, List<Reservation>>? reservationsByDate,
     bool? isLoading,
+    String? error,
   }) {
     return CalendarState(
       focusedDay: focusedDay ?? this.focusedDay,
       selectedDay: selectedDay ?? this.selectedDay,
       reservationsByDate: reservationsByDate ?? this.reservationsByDate,
       isLoading: isLoading ?? this.isLoading,
+      error: error,
     );
   }
 
@@ -39,11 +43,12 @@ class CalendarState {
         other.focusedDay == focusedDay &&
         other.selectedDay == selectedDay &&
         other.isLoading == isLoading &&
+        other.error == error &&
         _mapEquals(other.reservationsByDate, reservationsByDate);
   }
 
   @override
-  int get hashCode => Object.hash(focusedDay, selectedDay, isLoading);
+  int get hashCode => Object.hash(focusedDay, selectedDay, isLoading, error);
 
   bool _mapEquals(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
     if (a.length != b.length) return false;
@@ -75,7 +80,7 @@ class CalendarNotifier extends StateNotifier<CalendarState> {
 
   /// Load all reservations and group them by date
   Future<void> loadReservations() async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, error: null);
     try {
       final reservations = await _repository.getAllReservations();
       final reservationsByDate = _calendarService.groupReservationsByDate(reservations);
@@ -83,10 +88,22 @@ class CalendarNotifier extends StateNotifier<CalendarState> {
         reservationsByDate: reservationsByDate,
         isLoading: false,
       );
-    } catch (e) {
-      state = state.copyWith(isLoading: false);
-      // TODO: Handle error properly in future waves
+    } catch (e, stack) {
+      // Log error for debugging
+      print('Error loading reservations: $e');
+      print('Stack trace: $stack');
+
+      // Set error state with user-friendly message
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Impossibile caricare le prenotazioni. Riprova.',
+      );
     }
+  }
+
+  /// Retry loading reservations
+  Future<void> retry() async {
+    await loadReservations();
   }
 
   /// Select a specific day
