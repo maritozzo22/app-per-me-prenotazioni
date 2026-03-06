@@ -73,23 +73,27 @@ class _ReservationFormState extends State<ReservationForm> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Room selection
-            RoomDropdown(
-              value: _selectedRoomId,
-              rooms: widget.rooms,
-              checkIn: _checkIn,
-              checkOut: _checkOut,
-              availabilityCache: _availabilityCache,
-              onChanged: (value) {
-                setState(() {
-                  _selectedRoomId = value;
-                  if (value == 'apartment' && widget.onApartmentSelected != null) {
-                    widget.onApartmentSelected!();
-                  }
-                  _validateRoomAvailability();
-                });
-              },
-              validator: FormBuilderValidators.required(
-                errorText: 'Seleziona una stanza',
+            Semantics(
+              label: 'Seleziona stanza',
+              hint: 'Scegli la stanza per questa prenotazione',
+              child: RoomDropdown(
+                value: _selectedRoomId,
+                rooms: widget.rooms,
+                checkIn: _checkIn,
+                checkOut: _checkOut,
+                availabilityCache: _availabilityCache,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRoomId = value;
+                    if (value == 'apartment' && widget.onApartmentSelected != null) {
+                      widget.onApartmentSelected!();
+                    }
+                    _validateRoomAvailability();
+                  });
+                },
+                validator: FormBuilderValidators.required(
+                  errorText: 'Seleziona una stanza',
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -98,47 +102,55 @@ class _ReservationFormState extends State<ReservationForm> {
             Row(
               children: [
                 Expanded(
-                  child: FormBuilderDateTimePicker(
-                    name: 'checkIn',
-                    initialValue: _checkIn,
-                    decoration: const InputDecoration(
-                      labelText: 'Check-in',
-                      border: OutlineInputBorder(),
-                    ),
-                    firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                    onChanged: (value) {
-                      setState(() {
-                        _checkIn = value;
-                        _validateDates();
-                        _updateAvailabilityCache();
-                      });
-                    },
-                    validator: FormBuilderValidators.required(
-                      errorText: 'Seleziona data check-in',
+                  child: Semantics(
+                    label: 'Data check-in',
+                    hint: 'Seleziona la data di arrivo',
+                    child: FormBuilderDateTimePicker(
+                      name: 'checkIn',
+                      initialValue: _checkIn,
+                      decoration: const InputDecoration(
+                        labelText: 'Check-in',
+                        border: OutlineInputBorder(),
+                      ),
+                      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                      onChanged: (value) {
+                        setState(() {
+                          _checkIn = value;
+                          _validateDates();
+                          _updateAvailabilityCache();
+                        });
+                      },
+                      validator: FormBuilderValidators.required(
+                        errorText: 'Seleziona data check-in',
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: FormBuilderDateTimePicker(
-                    name: 'checkOut',
-                    initialValue: _checkOut,
-                    decoration: const InputDecoration(
-                      labelText: 'Check-out',
-                      border: OutlineInputBorder(),
-                    ),
-                    firstDate: _checkIn ?? DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                    onChanged: (value) {
-                      setState(() {
-                        _checkOut = value;
-                        _validateDates();
-                        _updateAvailabilityCache();
-                      });
-                    },
-                    validator: FormBuilderValidators.required(
-                      errorText: 'Seleziona data check-out',
+                  child: Semantics(
+                    label: 'Data check-out',
+                    hint: 'Seleziona la data di partenza',
+                    child: FormBuilderDateTimePicker(
+                      name: 'checkOut',
+                      initialValue: _checkOut,
+                      decoration: const InputDecoration(
+                        labelText: 'Check-out',
+                        border: OutlineInputBorder(),
+                      ),
+                      firstDate: _checkIn ?? DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                      onChanged: (value) {
+                        setState(() {
+                          _checkOut = value;
+                          _validateDates();
+                          _updateAvailabilityCache();
+                        });
+                      },
+                      validator: FormBuilderValidators.required(
+                        errorText: 'Seleziona data check-out',
+                      ),
                     ),
                   ),
                 ),
@@ -157,39 +169,51 @@ class _ReservationFormState extends State<ReservationForm> {
             const SizedBox(height: 16),
 
             // Platform
-            PlatformDropdown(
-              value: widget.existingReservation?.platformId,
-              platforms: widget.platforms,
-              onChanged: (value) {},
-              validator: FormBuilderValidators.required(
-                errorText: 'Seleziona una piattaforma',
+            Semantics(
+              label: 'Seleziona piattaforma',
+              hint: 'Scegli la piattaforma di prenotazione',
+              child: PlatformDropdown(
+                value: widget.existingReservation?.platformId,
+                platforms: widget.platforms,
+                onChanged: (value) {},
+                validator: FormBuilderValidators.required(
+                  errorText: 'Seleziona una piattaforma',
+                ),
               ),
             ),
             const SizedBox(height: 16),
 
             // Guest name (mandatory)
-            FormBuilderTextField(
-              name: 'guestName',
-              initialValue: widget.existingReservation?.guest.name,
-              decoration: const InputDecoration(
-                labelText: 'Nome ospite *',
-                border: OutlineInputBorder(),
-              ),
-              validator: FormBuilderValidators.required(
-                errorText: 'Inserisci il nome dell\'ospite',
+            Semantics(
+              label: 'Nome ospite',
+              hint: 'Inserisci il nome completo dell\'ospite',
+              child: FormBuilderTextField(
+                name: 'guestName',
+                initialValue: widget.existingReservation?.guest.name,
+                decoration: const InputDecoration(
+                  labelText: 'Nome ospite *',
+                  border: OutlineInputBorder(),
+                ),
+                validator: FormBuilderValidators.required(
+                  errorText: 'Inserisci il nome dell\'ospite',
+                ),
               ),
             ),
             const SizedBox(height: 16),
 
             // Guest phone (optional)
-            FormBuilderTextField(
-              name: 'guestPhone',
-              initialValue: widget.existingReservation?.guest.phone,
-              decoration: const InputDecoration(
-                labelText: 'Telefono',
-                border: OutlineInputBorder(),
+            Semantics(
+              label: 'Telefono ospite',
+              hint: 'Inserisci il numero di telefono dell\'ospite',
+              child: FormBuilderTextField(
+                name: 'guestPhone',
+                initialValue: widget.existingReservation?.guest.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Telefono',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.phone,
               ),
-              keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 16),
 
@@ -199,16 +223,20 @@ class _ReservationFormState extends State<ReservationForm> {
               children: [
                 Expanded(
                   flex: 2,
-                  child: FormBuilderTextField(
-                    name: 'amount',
-                    initialValue: widget.existingReservation?.amount?.toString(),
-                    decoration: const InputDecoration(
-                      labelText: 'Importo (€)',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    validator: FormBuilderValidators.numeric(
-                      errorText: 'Inserisci un importo valido',
+                  child: Semantics(
+                    label: 'Importo prenotazione',
+                    hint: 'Inserisci l\'importo totale della prenotazione',
+                    child: FormBuilderTextField(
+                      name: 'amount',
+                      initialValue: widget.existingReservation?.amount?.toString(),
+                      decoration: const InputDecoration(
+                        labelText: 'Importo (€)',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      validator: FormBuilderValidators.numeric(
+                        errorText: 'Inserisci un importo valido',
+                      ),
                     ),
                   ),
                 ),
@@ -236,15 +264,19 @@ class _ReservationFormState extends State<ReservationForm> {
             const SizedBox(height: 16),
 
             // Notes (multi-line)
-            FormBuilderTextField(
-              name: 'notes',
-              initialValue: widget.existingReservation?.notes,
-              decoration: const InputDecoration(
-                labelText: 'Note',
-                border: OutlineInputBorder(),
-                alignLabelWithHint: true,
+            Semantics(
+              label: 'Note prenotazione',
+              hint: 'Aggiungi note aggiuntive sulla prenotazione (opzionale)',
+              child: FormBuilderTextField(
+                name: 'notes',
+                initialValue: widget.existingReservation?.notes,
+                decoration: const InputDecoration(
+                  labelText: 'Note',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
             ),
             const SizedBox(height: 24),
 

@@ -13,6 +13,29 @@ class AppTheme {
       ),
       useMaterial3: true,
       brightness: Brightness.light,
+
+      // Accessibility: Enforce 48x48dp minimum touch targets
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        extendedSizeConstraints: const BoxConstraints(
+          minWidth: 48,
+          minHeight: 48,
+        ),
+      ),
     );
   }
 
@@ -25,6 +48,29 @@ class AppTheme {
       ),
       useMaterial3: true,
       brightness: Brightness.dark,
+
+      // Accessibility: Enforce 48x48dp minimum touch targets
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        extendedSizeConstraints: const BoxConstraints(
+          minWidth: 48,
+          minHeight: 48,
+        ),
+      ),
     );
   }
 }

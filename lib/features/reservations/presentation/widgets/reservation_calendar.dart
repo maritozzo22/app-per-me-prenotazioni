@@ -184,8 +184,8 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
-            leftChevronIcon: const Icon(Icons.chevron_left),
-            rightChevronIcon: const Icon(Icons.chevron_right),
+            leftChevronIcon: const Icon(Icons.chevron_left, semanticLabel: 'Mese precedente'),
+            rightChevronIcon: const Icon(Icons.chevron_right, semanticLabel: 'Mese successivo'),
           ),
 
           // Custom builders

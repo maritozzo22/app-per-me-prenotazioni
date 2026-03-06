@@ -50,9 +50,14 @@ class ReservationListTile extends StatelessWidget {
           ),
         ],
       ),
-      child: InkWell(
-        onTap: onEdit,
-        child: _buildContent(context),
+      child: Semantics(
+        button: true,
+        label: 'Prenotazione per ${reservation.guest.name}',
+        hint: 'Tocca per vedere i dettagli della prenotazione, modificare o eliminare',
+        child: InkWell(
+          onTap: onEdit,
+          child: _buildContent(context),
+        ),
       ),
     );
   }

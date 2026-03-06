@@ -48,7 +48,12 @@ class _RoomStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '${room.name}: ${isOccupied ? 'Occupata da ${reservation?.guest.name}' : 'Libera'}',
+      button: isOccupied,
+      label: '${room.name}: ${isOccupied ? "Occupata da ${reservation?.guest.name}" : "Libera"}',
+      hint: isOccupied
+          ? 'Tocca per vedere i dettagli della prenotazione'
+          : 'Stanza libera',
+      value: isOccupied ? 'occupata' : 'libera',
       child: Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
