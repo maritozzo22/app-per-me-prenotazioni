@@ -3,7 +3,6 @@ import 'package:app_prenotazioni/features/reservations/presentation/pages/dashbo
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
 import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
-import 'package:app_prenotazioni/core/widgets/theme_toggle_button.dart';
 
 /// Main navigation shell with bottom navigation bar.
 ///
