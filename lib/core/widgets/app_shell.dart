@@ -3,6 +3,7 @@ import 'package:app_prenotazioni/features/reservations/presentation/pages/dashbo
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
 import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
+import 'package:app_prenotazioni/core/presentation/pages/settings_page.dart';
 
 /// Main navigation shell with bottom navigation bar.
 ///
@@ -27,6 +28,7 @@ class AppShellState extends State<AppShell> {
     const CalendarPage(),
     const ReservationsListPage(),
     const PlatformsListPage(),
+    const SettingsPage(),
   ];
 
   /// Navigate to calendar tab programmatically.
@@ -54,10 +56,12 @@ class AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
+        key: const Key('indexed_stack'),
         index: _currentIndex,
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        key: const Key('bottom_nav'),
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -83,6 +87,10 @@ class AppShellState extends State<AppShell> {
           BottomNavigationBarItem(
             icon: Icon(Icons.hotel),
             label: 'Piattaforme',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Impostazioni',
           ),
         ],
       ),
