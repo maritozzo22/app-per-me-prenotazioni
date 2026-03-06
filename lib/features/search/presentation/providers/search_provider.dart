@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/search/domain/services/search_service.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/core/error/error_handler.dart';
 
 /// Search state
 class SearchState {
@@ -73,10 +74,12 @@ class SearchNotifier extends StateNotifier<SearchState> {
         isLoading: false,
         error: null,
       );
-    } catch (e) {
+    } catch (e, stack) {
+      final errorMessage = ErrorHandler.getErrorMessage(e);
+      ErrorHandler.logError(e, stack);
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: errorMessage,
       );
     }
   }

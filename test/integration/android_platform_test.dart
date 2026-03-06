@@ -6,6 +6,9 @@ import 'package:app_prenotazioni/main.dart';
 import 'package:app_prenotazioni/core/platform/platform_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+// Test navigator key
+final testNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   // Initialize locale data for tests
   setUpAll(() async {
@@ -14,7 +17,7 @@ void main() {
 
   group('Android Platform Integration', () {
     testWidgets('App launches without crashes', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Verify app loaded without crashes

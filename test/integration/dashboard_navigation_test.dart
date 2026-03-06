@@ -13,6 +13,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/guest.dart';
 
+// Test navigator key
+final testNavigatorKey = GlobalKey<NavigatorState>();
+
 class MockReservationRepository extends Mock implements ReservationRepository {}
 
 void main() {
@@ -47,7 +50,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepository),
           ],
-          child: const MyApp(),
+          child: MyApp(navigatorKey: testNavigatorKey),
         ),
       );
 
@@ -112,7 +115,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepository),
           ],
-          child: const MyApp(),
+          child: MyApp(navigatorKey: testNavigatorKey),
         ),
       );
 
@@ -146,7 +149,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepository),
           ],
-          child: const MyApp(),
+          child: MyApp(navigatorKey: testNavigatorKey),
         ),
       );
 

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/core/error/error_handler.dart';
 
 /// Platform state
 class PlatformState {
@@ -43,8 +44,10 @@ class PlatformNotifier extends StateNotifier<PlatformState> {
     try {
       final platforms = await _repository.getAllPlatforms();
       state = state.copyWith(platforms: platforms, isLoading: false);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } catch (e, stack) {
+      final errorMessage = ErrorHandler.getErrorMessage(e);
+      ErrorHandler.logError(e, stack);
+      state = state.copyWith(isLoading: false, error: errorMessage);
     }
   }
 
@@ -56,8 +59,10 @@ class PlatformNotifier extends StateNotifier<PlatformState> {
       // For now, we'll just reload the list
       // In a full implementation, we'd have a dedicated platform repository
       await loadPlatforms();
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } catch (e, stack) {
+      final errorMessage = ErrorHandler.getErrorMessage(e);
+      ErrorHandler.logError(e, stack);
+      state = state.copyWith(isLoading: false, error: errorMessage);
     }
   }
 
@@ -69,8 +74,10 @@ class PlatformNotifier extends StateNotifier<PlatformState> {
       // For now, we'll just reload the list
       // In a full implementation, we'd have a dedicated platform repository
       await loadPlatforms();
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } catch (e, stack) {
+      final errorMessage = ErrorHandler.getErrorMessage(e);
+      ErrorHandler.logError(e, stack);
+      state = state.copyWith(isLoading: false, error: errorMessage);
     }
   }
 
@@ -82,8 +89,10 @@ class PlatformNotifier extends StateNotifier<PlatformState> {
       // For now, we'll just reload the list
       // In a full implementation, we'd have a dedicated platform repository
       await loadPlatforms();
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } catch (e, stack) {
+      final errorMessage = ErrorHandler.getErrorMessage(e);
+      ErrorHandler.logError(e, stack);
+      state = state.copyWith(isLoading: false, error: errorMessage);
     }
   }
 }

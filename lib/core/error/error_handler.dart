@@ -38,7 +38,7 @@ class ErrorHandler {
 
   /// Get user-friendly message for database errors
   static String _getDatabaseErrorMessage(DatabaseException error) {
-    final message = error.message.toLowerCase();
+    final message = error.toString().toLowerCase();
 
     if (message.contains('unique') || message.contains('constraint')) {
       return 'Questo elemento esiste già.';
@@ -56,7 +56,7 @@ class ErrorHandler {
       return 'Errore di accesso al database. Verifica lo spazio disponibile.';
     }
 
-    return 'Errore del database: ${error.message}';
+    return 'Errore del database: ${error.toString()}';
   }
 
   /// Convert any error to an AppError
@@ -73,8 +73,8 @@ class ErrorHandler {
     if (error is DatabaseException) {
       return AppError.database(
         message: message,
-        technicalDetails: error.message,
-        exception: error is Exception ? error : Exception(error.toString()),
+        technicalDetails: error.toString(),
+        exception: null, // DatabaseException is not an Exception
         stackTrace: stackTrace,
       );
     }
@@ -107,19 +107,21 @@ class ErrorHandler {
     }
 
     if (error is TypeError) {
+      // TypeError is not an Exception in Dart, so pass null
       return AppError.validation(
         message: message,
         technicalDetails: error.toString(),
-        exception: error is Exception ? error : Exception(error.toString()),
+        exception: null,
         stackTrace: stackTrace,
       );
     }
 
-    // Unknown error type
+    // Unknown error type - only store if it's actually an Exception
+    final exception = error is Exception ? error : null;
     return AppError.unknown(
       message: message,
       technicalDetails: error.toString(),
-      exception: error is Exception ? error : Exception(error.toString()),
+      exception: exception,
       stackTrace: stackTrace,
     );
   }

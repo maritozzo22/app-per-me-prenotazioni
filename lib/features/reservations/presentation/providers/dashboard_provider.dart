@@ -3,6 +3,7 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/reservati
 import 'package:app_prenotazioni/features/reservations/domain/services/dashboard_statistics_service.dart';
 import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/core/error/error_handler.dart';
 
 /// Dashboard state
 class DashboardState {
@@ -68,8 +69,10 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         roomOccupancy: roomOccupancy,
         isLoading: false,
       );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } catch (e, stack) {
+      final errorMessage = ErrorHandler.getErrorMessage(e);
+      ErrorHandler.logError(e, stack);
+      state = state.copyWith(isLoading: false, error: errorMessage);
     }
   }
 
