@@ -10,7 +10,7 @@ import 'package:app_prenotazioni/features/notifications/data/datasources/notific
 import 'package:app_prenotazioni/core/database/database_helper.dart';
 import 'package:app_prenotazioni/core/platform/platform_service.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
-import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -99,7 +99,7 @@ class _ReservationLoaderPageState extends ConsumerState<_ReservationLoaderPage> 
 
       if (mounted && reservation != null) {
         // Replace this loader page with the edit page
-        NavigatorReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => EditReservationPage(reservation: reservation),

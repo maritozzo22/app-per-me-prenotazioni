@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 
 /// Platform state
 class PlatformState {
@@ -89,6 +90,6 @@ class PlatformNotifier extends StateNotifier<PlatformState> {
 
 /// Platform provider
 final platformProvider = StateNotifierProvider<PlatformNotifier, PlatformState>((ref) {
-  // This will need to be provided from the app
-  throw UnimplementedError('PlatformProvider not implemented');
+  final repository = ref.watch(reservationRepositoryProvider);
+  return PlatformNotifier(repository);
 });

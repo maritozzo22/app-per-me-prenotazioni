@@ -10,7 +10,6 @@ import 'package:app_prenotazioni/core/widgets/theme_toggle_button.dart';
 import 'package:app_prenotazioni/core/platform/platform_service.dart';
 import 'package:app_prenotazioni/features/notifications/application/reservation_notification_scheduler.dart';
 import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart';
-import 'package:app_prenotazioni/features/notifications/application/notification_service.dart';
 import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart' show NotificationSchedulerServiceImpl;
 import 'package:app_prenotazioni/features/notifications/presentation/providers/notification_permission_provider.dart';
 

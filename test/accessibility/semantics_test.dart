@@ -4,6 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:app_prenotazioni/main.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+// Test navigator key
+final testNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   // Initialize locale data for tests
   setUpAll(() async {
@@ -11,7 +14,7 @@ void main() {
   });
 
   testWidgets('App has interactive elements', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pumpAndSettle();
 
     // Verify the app is interactive
@@ -23,7 +26,7 @@ void main() {
   });
 
   testWidgets('Form has labeled input fields', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pumpAndSettle();
 
     // Try to tap FAB to get to form
@@ -43,7 +46,7 @@ void main() {
   });
 
   testWidgets('Room cards in dashboard have semantic labels', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pumpAndSettle();
 
     // Dashboard should have room cards or at least be visible
@@ -57,7 +60,7 @@ void main() {
   });
 
   testWidgets('Calendar has navigation buttons', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pumpAndSettle();
 
     // Navigate to calendar tab
@@ -77,7 +80,7 @@ void main() {
   });
 
   testWidgets('Semantics widgets are present in the app', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pumpAndSettle();
 
     // Find all Semantics widgets
