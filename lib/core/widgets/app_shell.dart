@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:app_prenotazioni/core/utils/animations.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/dashboard_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
