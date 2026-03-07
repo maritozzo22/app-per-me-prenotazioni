@@ -54,7 +54,7 @@ class _FilterSheetState extends State<FilterSheet> {
             children: [
               Text(
                 'Filtri',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               IconButton(
                 icon: const Icon(Icons.close),
@@ -79,7 +79,7 @@ class _FilterSheetState extends State<FilterSheet> {
           // Platform filter
           Text(
             'Piattaforma',
-            style: Theme.of(context).textTheme.subtitle2,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -104,7 +104,7 @@ class _FilterSheetState extends State<FilterSheet> {
           // Room filter
           Text(
             'Camera',
-            style: Theme.of(context).textTheme.subtitle2,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -129,7 +129,7 @@ class _FilterSheetState extends State<FilterSheet> {
           // Payment status filter
           Text(
             'Stato Pagamento',
-            style: Theme.of(context).textTheme.subtitle2,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Wrap(
