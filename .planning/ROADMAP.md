@@ -295,6 +295,14 @@ Plans:
 - Performance test suite (1000+ reservations)
 
 **Estimated Duration**: 3-4 days
+**Plans**: 5 plans in 5 waves
+
+Plans:
+- [ ] 09-01-PLAN.md — Database migration + pagination infrastructure (Wave 1)
+- [ ] 09-02-PLAN.md — Infinite scroll + filter UI (Wave 2)
+- [ ] 09-03-PLAN.md — Calendar lazy loading (Wave 3)
+- [ ] 09-04-PLAN.md — Statistics caching (Wave 4)
+- [ ] 09-05-PLAN.md — Performance testing suite (Wave 5)
 
 ---
 
