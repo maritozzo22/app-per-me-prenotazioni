@@ -3,7 +3,7 @@ class DatabaseSchema {
   DatabaseSchema._();
 
   static const String name = 'reservations.db';
-  static const int version = 5;
+  static const int version = 6;
 
   // Table names
   static const String tableRooms = 'rooms';
@@ -133,14 +133,22 @@ class DatabaseSchema {
   ''';
 
   /// Migration to add performance indexes for reservations (version 4 -> 5).
-  static const String migrationV4ToV5AddIndexes = '''
-    -- Index on reservations check_in for date range queries
-    CREATE INDEX IF NOT EXISTS idx_reservations_check_in ON $tableReservations ($reservationCheckIn);
+  static const String migrationV4ToV5AddCheckInIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_check_in ON $tableReservations ($reservationCheckIn)';
 
-    -- Index on reservations check_out for date range queries
-    CREATE INDEX IF NOT EXISTS idx_reservations_check_out ON $tableReservations ($reservationCheckOut);
+  static const String migrationV4ToV5AddCheckOutIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_check_out ON $tableReservations ($reservationCheckOut)';
 
-    -- Index on reservations created_at for sorting
-    CREATE INDEX IF NOT EXISTS idx_reservations_created_at ON $tableReservations ($reservationCreatedAt DESC);
-  ''';
+  static const String migrationV4ToV5AddCreatedAtIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_created_at ON $tableReservations ($reservationCreatedAt DESC)';
+
+  /// Migration to add additional performance indexes (version 5 -> 6).
+  static const String migrationV5ToV6AddPlatformIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_platform_id ON $tableReservations ($reservationPlatformId)';
+
+  static const String migrationV5ToV6AddRoomIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_room_id ON $tableReservations ($reservationRoomId)';
+
+  static const String migrationV5ToV6AddDateRangeIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_date_range ON $tableReservations ($reservationCheckIn, $reservationCheckOut)';
 }
