@@ -4,7 +4,7 @@ import 'package:app_prenotazioni/features/reservations/presentation/providers/da
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/room_occupancy_grid.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/income_breakdown_card.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/upcoming_reservations_card.dart';
-import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/calendar_access_card.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/next_event_countdown_card.dart';
 import 'package:app_prenotazioni/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
 import 'package:app_prenotazioni/core/widgets/animations.dart';
@@ -106,12 +106,13 @@ class DashboardPage extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
 
-          // Calendar access card
+          // Next event countdown card
           FadeIn(
             slide: SlideDirection.up,
             delay: const Duration(milliseconds: 200),
-            child: CalendarAccessCard(
-              onTap: onCalendarTap ?? () {},
+            child: NextEventCountdownCard(
+              upcomingCheckIns: state.statistics?.upcomingCheckIns ?? [],
+              upcomingCheckOuts: state.statistics?.upcomingCheckOuts ?? [],
             ),
           ),
           const SizedBox(height: 24),
@@ -177,8 +178,9 @@ class DashboardPage extends ConsumerWidget {
           Expanded(
             child: Column(
               children: [
-                CalendarAccessCard(
-                  onTap: onCalendarTap ?? () {},
+                NextEventCountdownCard(
+                  upcomingCheckIns: state.statistics?.upcomingCheckIns ?? [],
+                  upcomingCheckOuts: state.statistics?.upcomingCheckOuts ?? [],
                 ),
                 const SizedBox(height: 24),
                 UpcomingReservationsCard(
