@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/core/providers/theme_provider.dart';
 import 'package:app_prenotazioni/features/backup/presentation/pages/backup_settings_page.dart';
+import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
 
 /// Settings page for app configuration.
 class SettingsPage extends ConsumerWidget {
@@ -28,6 +29,26 @@ class SettingsPage extends ConsumerWidget {
             subtitle: Text(_getThemeLabel(themeMode)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showThemeDialog(context, ref),
+          ),
+
+          const Divider(),
+
+          // Management section
+          _buildSectionHeader(context, 'Gestione'),
+          ListTile(
+            key: const Key('platforms_tile'),
+            leading: const Icon(Icons.hotel_outlined),
+            title: const Text('Piattaforme di prenotazione'),
+            subtitle: const Text('Gestisci le piattaforme di prenotazione'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlatformsListPage(),
+                ),
+              );
+            },
           ),
 
           const Divider(),
