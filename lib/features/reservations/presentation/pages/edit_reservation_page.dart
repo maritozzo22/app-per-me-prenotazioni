@@ -5,6 +5,7 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/domain/services/reservation_validation_service.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_form.dart';
 import 'package:app_prenotazioni/features/notifications/application/reservation_notification_scheduler.dart';
 import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart';
@@ -55,6 +56,10 @@ class EditReservationPage extends ConsumerWidget {
             try {
               // Save the reservation
               await repository.saveReservation(updatedReservation);
+
+              // Invalidate dashboard cache (statistics changed)
+              final cacheService = ref.read(statisticsCacheServiceProvider);
+              await cacheService.invalidateCache();
 
               // Schedule notifications (Android only)
               if (PlatformService.notificationsSupported) {

@@ -3,7 +3,16 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/reservati
 import 'package:app_prenotazioni/features/reservations/domain/services/dashboard_statistics_service.dart';
 import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/features/statistics/domain/services/statistics_cache_service.dart';
+import 'package:app_prenotazioni/features/statistics/data/services/statistics_cache_service_impl.dart';
 import 'package:app_prenotazioni/core/error/error_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// Provider for StatisticsCacheService.
+final statisticsCacheServiceProvider = Provider<StatisticsCacheService>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return StatisticsCacheServiceImpl(prefs);
+});
 
 /// Dashboard state
 class DashboardState {
@@ -38,37 +47,40 @@ class DashboardState {
 class DashboardNotifier extends StateNotifier<DashboardState> {
   final ReservationRepository _repository;
   final DashboardStatisticsService _statisticsService;
+  final StatisticsCacheService _cacheService;
 
-  DashboardNotifier(this._repository)
+  DashboardNotifier(this._repository, this._cacheService)
       : _statisticsService = DashboardStatisticsService(),
         super(const DashboardState()) {
     loadDashboard();
   }
 
-  /// Load dashboard statistics and room occupancy
+  /// Load dashboard statistics (from cache if valid)
   Future<void> loadDashboard() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final reservations = await _repository.getAllReservations();
-      final now = DateTime.now();
+      // Try to load from cache first
+      final cachedStats = await _cacheService.getCachedStatistics();
 
-      // Calculate statistics
-      final statistics = _statisticsService.calculate(
-        reservations: reservations,
-        currentDate: now,
-      );
+      if (cachedStats != null) {
+        // Use cached statistics
+        final reservations = await _repository.getAllReservations();
+        final now = DateTime.now();
+        final roomOccupancy = _statisticsService.getRoomOccupancyToday(
+          reservations: reservations,
+          currentDate: now,
+        );
 
-      // Calculate room occupancy for today
-      final roomOccupancy = _statisticsService.getRoomOccupancyToday(
-        reservations: reservations,
-        currentDate: now,
-      );
+        state = state.copyWith(
+          statistics: cachedStats,
+          roomOccupancy: roomOccupancy,
+          isLoading: false,
+        );
+        return;
+      }
 
-      state = state.copyWith(
-        statistics: statistics,
-        roomOccupancy: roomOccupancy,
-        isLoading: false,
-      );
+      // Cache miss or expired - recalculate
+      await _recalculateAndCache();
     } catch (e, stack) {
       final errorMessage = ErrorHandler.getErrorMessage(e);
       ErrorHandler.logError(e, stack);
@@ -76,8 +88,33 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     }
   }
 
-  /// Refresh dashboard data (call after create/update/delete)
+  Future<void> _recalculateAndCache() async {
+    final reservations = await _repository.getAllReservations();
+    final now = DateTime.now();
+
+    final statistics = _statisticsService.calculate(
+      reservations: reservations,
+      currentDate: now,
+    );
+
+    final roomOccupancy = _statisticsService.getRoomOccupancyToday(
+      reservations: reservations,
+      currentDate: now,
+    );
+
+    // Cache the statistics for future loads
+    await _cacheService.setCachedStatistics(statistics);
+
+    state = state.copyWith(
+      statistics: statistics,
+      roomOccupancy: roomOccupancy,
+      isLoading: false,
+    );
+  }
+
+  /// Refresh dashboard data (invalidate cache and recalculate)
   Future<void> refresh() async {
+    await _cacheService.invalidateCache();
     await loadDashboard();
   }
 }
@@ -86,5 +123,6 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 final dashboardProvider =
     StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
   final repository = ref.watch(reservationRepositoryProvider);
-  return DashboardNotifier(repository);
+  final cacheService = ref.watch(statisticsCacheServiceProvider);
+  return DashboardNotifier(repository, cacheService);
 });

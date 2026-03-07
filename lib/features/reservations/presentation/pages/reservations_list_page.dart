@@ -5,6 +5,7 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/domain/services/reservation_validation_service.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservations_list/reservation_list_tile.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_list_skeleton.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
@@ -99,6 +100,10 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
       }
 
       await repository.deleteReservation(reservation.id);
+
+      // Invalidate dashboard cache (statistics changed)
+      final cacheService = ref.read(statisticsCacheServiceProvider);
+      await cacheService.invalidateCache();
 
       if (mounted) {
         ErrorSnackbar.showSuccess(
@@ -252,6 +257,10 @@ class _AddReservationPage extends ConsumerWidget {
           try {
             // Save the new reservation
             await repository.saveReservation(newReservation);
+
+            // Invalidate dashboard cache (statistics changed)
+            final cacheService = ref.read(statisticsCacheServiceProvider);
+            await cacheService.invalidateCache();
 
             // Schedule notifications (Android only)
             if (PlatformService.notificationsSupported) {
