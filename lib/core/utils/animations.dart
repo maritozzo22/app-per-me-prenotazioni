@@ -24,6 +24,29 @@ class AppAnimations {
   static const Curve easeInOutCubic = Curves.easeInOutCubic;
   static const Curve easeOutBack = Curves.easeOutBack;
   static const Curve easeInOutBack = Curves.easeInOutBack;
+
+  /// Whether animations should be reduced based on accessibility settings
+  static bool shouldReduceMotion(BuildContext context) {
+    return MediaQuery.of(context).disableAnimations ||
+        MediaQuery.of(context).accessibleNavigation;
+  }
+
+  /// Returns appropriate duration based on accessibility settings.
+  ///
+  /// When reduce motion is enabled, returns [Duration.zero].
+  static Duration adaptiveDuration(BuildContext context, Duration duration) {
+    if (shouldReduceMotion(context)) {
+      return Duration.zero;
+    }
+    return duration;
+  }
+
+  /// Creates a staggered delay for list items.
+  ///
+  /// [index] is the item index in the list.
+  static Duration staggeredDelay(int index) {
+    return Duration(milliseconds: index * staggerDelay.inMilliseconds);
+  }
 }
 
 /// Extension to check if reduced motion is enabled

@@ -153,6 +153,18 @@ class DashboardSkeleton extends StatelessWidget {
         ? Colors.grey.shade100
         : Colors.grey.shade600;
 
+    // Respect reduce motion accessibility setting
+    if (MediaQuery.of(context).disableAnimations ||
+        MediaQuery.of(context).accessibleNavigation) {
+      return Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: baseColor,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+      );
+    }
+
     return Container(
       height: height,
       decoration: BoxDecoration(

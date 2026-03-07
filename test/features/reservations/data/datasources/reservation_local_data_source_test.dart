@@ -166,7 +166,10 @@ void main() {
     });
 
     group('getReservationsForDateRange', () {
-      test('should return reservations in date range', () async {
+      test('should return reservations overlapping with date range', () async {
+        // Query: check_in <= end AND check_out >= start
+        // Range: June 15-30
+        // Reservation: June 20-25 (overlaps)
         when(() => mockDb.query(
               any(),
               where: any(named: 'where'),
@@ -194,6 +197,167 @@ void main() {
         );
 
         expect(result.length, 1);
+        // Verify the query was called with correct arguments (where clause contains the expected logic)
+        final captured = verify(() => mockDb.query(
+              'reservations',
+              where: any(named: 'where'),
+              whereArgs: captureAny(named: 'whereArgs'),
+              orderBy: 'check_in ASC',
+            )).captured.single as List;
+
+        // Verify date args: end date first, start date second
+        expect(captured[0], DateTime(2024, 6, 30).toIso8601String());
+        expect(captured[1], DateTime(2024, 6, 15).toIso8601String());
+      });
+
+      test('should return empty list when no reservations overlap', () async {
+        // Range: June 15-30
+        // No reservations in this period
+        when(() => mockDb.query(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) => Future.value([]));
+
+        final result = await dataSource.getReservationsForDateRange(
+          DateTime(2024, 6, 15),
+          DateTime(2024, 6, 30),
+        );
+
+        expect(result, isEmpty);
+      });
+
+      test('should return reservations that start before range and end within it', () async {
+        // Range: June 20-25
+        // Reservation: June 18-22 (starts before, ends within)
+        when(() => mockDb.query(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) => Future.value([
+              {
+                'id': 'res-1',
+                'room_id': 'room-1',
+                'platform_id': 'booking',
+                'guest_name': 'Mario Rossi',
+                'guest_phone': null,
+                'check_in': '2024-06-18T00:00:00.000Z',
+                'check_out': '2024-06-22T00:00:00.000Z',
+                'amount': null,
+                'notes': null,
+                'created_at': '2024-06-01T00:00:00.000Z',
+                'updated_at': '2024-06-01T00:00:00.000Z',
+              }
+            ]));
+
+        final result = await dataSource.getReservationsForDateRange(
+          DateTime(2024, 6, 20),
+          DateTime(2024, 6, 25),
+        );
+
+        expect(result.length, 1);
+      });
+
+      test('should return reservations that start within range and end after it', () async {
+        // Range: June 20-25
+        // Reservation: June 22-28 (starts within, ends after)
+        when(() => mockDb.query(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) => Future.value([
+              {
+                'id': 'res-1',
+                'room_id': 'room-1',
+                'platform_id': 'booking',
+                'guest_name': 'Mario Rossi',
+                'guest_phone': null,
+                'check_in': '2024-06-22T00:00:00.000Z',
+                'check_out': '2024-06-28T00:00:00.000Z',
+                'amount': null,
+                'notes': null,
+                'created_at': '2024-06-01T00:00:00.000Z',
+                'updated_at': '2024-06-01T00:00:00.000Z',
+              }
+            ]));
+
+        final result = await dataSource.getReservationsForDateRange(
+          DateTime(2024, 6, 20),
+          DateTime(2024, 6, 25),
+        );
+
+        expect(result.length, 1);
+      });
+
+      test('should return reservations that completely encompass the range', () async {
+        // Range: June 20-25
+        // Reservation: June 15-30 (starts before, ends after)
+        when(() => mockDb.query(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) => Future.value([
+              {
+                'id': 'res-1',
+                'room_id': 'room-1',
+                'platform_id': 'booking',
+                'guest_name': 'Mario Rossi',
+                'guest_phone': null,
+                'check_in': '2024-06-15T00:00:00.000Z',
+                'check_out': '2024-06-30T00:00:00.000Z',
+                'amount': null,
+                'notes': null,
+                'created_at': '2024-06-01T00:00:00.000Z',
+                'updated_at': '2024-06-01T00:00:00.000Z',
+              }
+            ]));
+
+        final result = await dataSource.getReservationsForDateRange(
+          DateTime(2024, 6, 20),
+          DateTime(2024, 6, 25),
+        );
+
+        expect(result.length, 1);
+      });
+
+      test('should not return reservations that end before range starts', () async {
+        // Range: June 20-25
+        // Reservation: June 15-19 (ends before range)
+        when(() => mockDb.query(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) => Future.value([]));
+
+        final result = await dataSource.getReservationsForDateRange(
+          DateTime(2024, 6, 20),
+          DateTime(2024, 6, 25),
+        );
+
+        expect(result, isEmpty);
+      });
+
+      test('should not return reservations that start after range ends', () async {
+        // Range: June 20-25
+        // Reservation: June 26-30 (starts after range)
+        when(() => mockDb.query(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) => Future.value([]));
+
+        final result = await dataSource.getReservationsForDateRange(
+          DateTime(2024, 6, 20),
+          DateTime(2024, 6, 25),
+        );
+
+        expect(result, isEmpty);
       });
     });
 
