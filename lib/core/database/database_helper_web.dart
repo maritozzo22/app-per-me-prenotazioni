@@ -164,8 +164,10 @@ class DatabaseHelper {
       await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
     }
     if (oldVersion < 5) {
-      // Add performance indexes for reservations
-      await db.execute(DatabaseSchema.migrationV4ToV5AddIndexes);
+      // Add performance indexes for reservations (check_in, check_out, created_at)
+      await db.execute(DatabaseSchema.migrationV4ToV5AddCheckInIndex);
+      await db.execute(DatabaseSchema.migrationV4ToV5AddCheckOutIndex);
+      await db.execute(DatabaseSchema.migrationV4ToV5AddCreatedAtIndex);
     }
   }
 

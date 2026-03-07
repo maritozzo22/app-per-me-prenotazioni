@@ -106,7 +106,7 @@ class _CustomAnimatedBuilderState extends State<_CustomAnimatedBuilder>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animation,
-      builder: (context) => widget.builder(widget.child, _animation),
+      builder: (context, _) => widget.builder(widget.child, _animation),
     );
   }
 }

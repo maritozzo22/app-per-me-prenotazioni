@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/guest.dart';
 import 'package:app_prenotazioni/features/reservations/domain/value_objects/payment_status.dart';
 
 /// Statistics calculated for the dashboard.
@@ -21,6 +23,81 @@ class DashboardStatistics {
 
   double get occupancyRate => totalRooms > 0 ? occupiedRoomsToday / totalRooms : 0;
   double get totalMonthlyIncome => monthlyIncomeReceived + monthlyIncomePending;
+
+  /// Serialize to JSON for caching.
+  Map<String, dynamic> toJson() => {
+        'occupiedRoomsToday': occupiedRoomsToday,
+        'totalRooms': totalRooms,
+        'monthlyIncomeReceived': monthlyIncomeReceived,
+        'monthlyIncomePending': monthlyIncomePending,
+        'upcomingCheckIns': upcomingCheckIns
+            .map((r) => {
+                  'id': r.id,
+                  'roomId': r.roomId,
+                  'platformId': r.platformId,
+                  'guest': {'name': r.guest.name, 'phone': r.guest.phone},
+                  'checkIn': r.checkIn.toIso8601String(),
+                  'checkOut': r.checkOut.toIso8601String(),
+                  'amount': r.amount,
+                  'paymentStatus': r.paymentStatus.name,
+                  'notes': r.notes,
+                  'createdAt': r.createdAt.toIso8601String(),
+                  'updatedAt': r.updatedAt.toIso8601String(),
+                })
+            .toList(),
+        'upcomingCheckOuts': upcomingCheckOuts
+            .map((r) => {
+                  'id': r.id,
+                  'roomId': r.roomId,
+                  'platformId': r.platformId,
+                  'guest': {'name': r.guest.name, 'phone': r.guest.phone},
+                  'checkIn': r.checkIn.toIso8601String(),
+                  'checkOut': r.checkOut.toIso8601String(),
+                  'amount': r.amount,
+                  'paymentStatus': r.paymentStatus.name,
+                  'notes': r.notes,
+                  'createdAt': r.createdAt.toIso8601String(),
+                  'updatedAt': r.updatedAt.toIso8601String(),
+                })
+            .toList(),
+      };
+
+  /// Deserialize from JSON.
+  factory DashboardStatistics.fromJson(Map<String, dynamic> json) =>
+      DashboardStatistics(
+        occupiedRoomsToday: json['occupiedRoomsToday'] as int,
+        totalRooms: json['totalRooms'] as int,
+        monthlyIncomeReceived: (json['monthlyIncomeReceived'] as num).toDouble(),
+        monthlyIncomePending: (json['monthlyIncomePending'] as num).toDouble(),
+        upcomingCheckIns: (json['upcomingCheckIns'] as List)
+            .map((r) => _parseReservation(r as Map<String, dynamic>))
+            .toList(),
+        upcomingCheckOuts: (json['upcomingCheckOuts'] as List)
+            .map((r) => _parseReservation(r as Map<String, dynamic>))
+            .toList(),
+      );
+
+  static Reservation _parseReservation(Map<String, dynamic> json) {
+    return Reservation(
+      id: json['id'] as String,
+      roomId: json['roomId'] as String,
+      platformId: json['platformId'] as String,
+      guest: Guest(
+        name: (json['guest'] as Map<String, dynamic>)['name'] as String,
+        phone: (json['guest'] as Map<String, dynamic>)['phone'] as String?,
+      ),
+      checkIn: DateTime.parse(json['checkIn'] as String),
+      checkOut: DateTime.parse(json['checkOut'] as String),
+      amount: json['amount'] as double?,
+      paymentStatus: PaymentStatus.values.firstWhere(
+        (e) => e.name == json['paymentStatus'],
+        orElse: () => PaymentStatus.pending,
+      ),
+      notes: json['notes'] as String?,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+    );
+  }
 }
 
 /// Service for calculating dashboard statistics.
