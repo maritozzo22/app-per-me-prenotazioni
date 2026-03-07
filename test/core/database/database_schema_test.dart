@@ -69,7 +69,7 @@ void main() {
       await db.insert(
         DatabaseSchema.tableReservations,
         {
-          DatabaseSchema.reservationId: 'test-1',
+          DatabaseSchema.reservationId: 'test-date-range-1',
           DatabaseSchema.reservationRoomId: 'room-1',
           DatabaseSchema.reservationPlatformId: 'booking',
           DatabaseSchema.reservationGuestName: 'Test Guest',
