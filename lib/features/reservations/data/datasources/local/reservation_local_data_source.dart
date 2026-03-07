@@ -5,6 +5,7 @@ import 'package:app_prenotazioni/features/reservations/data/models/reservation_m
 import 'package:app_prenotazioni/features/reservations/data/models/room_model.dart';
 import 'package:app_prenotazioni/features/reservations/data/models/platform_model.dart';
 import 'package:app_prenotazioni/features/reservations/data/models/guest_model.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/reservation_filter.dart';
 import 'package:app_prenotazioni/features/reservations/domain/value_objects/payment_status.dart';
 import 'package:sqflite_common/sqflite.dart';
 import 'package:sqflite/sqflite.dart' show Sqflite;
@@ -140,6 +141,56 @@ class ReservationLocalDataSource implements ReservationDataSource {
       'SELECT COUNT(*) as count FROM ${DatabaseSchema.tableReservations}',
     );
     return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  @override
+  Future<List<ReservationModel>> getReservationsFiltered(
+    ReservationFilter filter,
+    int limit,
+    int offset,
+  ) async {
+    final db = await _databaseHelper.database as Database;
+
+    final whereClauses = <String>[];
+    final whereArgs = <dynamic>[];
+
+    if (filter.platformId != null) {
+      whereClauses.add('${DatabaseSchema.reservationPlatformId} = ?');
+      whereArgs.add(filter.platformId);
+    }
+
+    if (filter.roomId != null) {
+      whereClauses.add('${DatabaseSchema.reservationRoomId} = ?');
+      whereArgs.add(filter.roomId);
+    }
+
+    if (filter.startDate != null && filter.endDate != null) {
+      // Reservations that overlap with filter range
+      whereClauses.add(
+        '${DatabaseSchema.reservationCheckIn} <= ? AND ${DatabaseSchema.reservationCheckOut} >= ?',
+      );
+      whereArgs.add(filter.endDate!.toIso8601String());
+      whereArgs.add(filter.startDate!.toIso8601String());
+    }
+
+    if (filter.paymentStatus != null) {
+      whereClauses.add('${DatabaseSchema.reservationPaymentStatus} = ?');
+      whereArgs.add(filter.paymentStatus!.name);
+    }
+
+    final whereClause = whereClauses.isEmpty
+        ? ''
+        : 'WHERE ${whereClauses.join(' AND ')}';
+
+    final maps = await db.rawQuery(
+      'SELECT * FROM ${DatabaseSchema.tableReservations} '
+      '$whereClause '
+      'ORDER BY ${DatabaseSchema.reservationCheckIn} ASC '
+      'LIMIT ? OFFSET ?',
+      [...whereArgs, limit, offset],
+    );
+
+    return maps.map((map) => _mapToReservationModel(map)).toList();
   }
 
   /// Maps a database row to ReservationModel.
