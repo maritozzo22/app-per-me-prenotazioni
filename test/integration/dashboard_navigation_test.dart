@@ -159,7 +159,7 @@ void main() {
       expect(find.text('Dashboard'), findsWidgets);
       expect(find.text('Calendario'), findsWidgets);
       expect(find.text('Prenotazioni'), findsWidgets);
-      expect(find.text('Piattaforme'), findsWidgets);
+      expect(find.text('Statistiche'), findsWidgets);
 
       // Verify semantic labels exist for accessibility
       // (BottomNavigationBarItem provides these via label property)
@@ -170,7 +170,7 @@ void main() {
       expect(bottomNavBar.items[0].label, 'Dashboard');
       expect(bottomNavBar.items[1].label, 'Calendario');
       expect(bottomNavBar.items[2].label, 'Prenotazioni');
-      expect(bottomNavBar.items[3].label, 'Piattaforme');
+      expect(bottomNavBar.items[3].label, 'Statistiche');
     });
   });
 }
