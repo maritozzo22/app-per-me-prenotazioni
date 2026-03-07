@@ -39,32 +39,63 @@ class ReservationDayCell extends StatelessWidget {
     }
 
     final platformColor = _getPlatformColor();
+    final platform = BookingPlatform.defaultPlatforms.firstWhere(
+      (p) => p.id == reservations.first.platformId,
+      orElse: () => BookingPlatform.defaultPlatforms.first,
+    );
 
-    return ScaleIn(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOutBack,
-      beginScale: 0.8,
-      child: Container(
-        margin: const EdgeInsets.all(6.0),
-        decoration: BoxDecoration(
-          color: platformColor.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: platformColor,
-            width: 2,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            '${day.day}',
-            style: TextStyle(
+    // Build semantic label for screen readers
+    final semanticLabel = _buildSemanticLabel(platform);
+
+    return Semantics(
+      label: semanticLabel,
+      hint: 'Tocca per vedere i dettagli delle prenotazioni',
+      button: true,
+      child: ScaleIn(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutBack,
+        beginScale: 0.8,
+        child: Container(
+          margin: const EdgeInsets.all(6.0),
+          decoration: BoxDecoration(
+            color: platformColor.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
               color: platformColor,
-              fontWeight: FontWeight.bold,
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '${day.day}',
+              style: TextStyle(
+                color: platformColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// Build semantic label for accessibility
+  String _buildSemanticLabel(BookingPlatform platform) {
+    final dateStr = '${day.day} ${_getMonthName(day.month)}';
+    if (reservations.length == 1) {
+      return '$dateStr, ${reservations.first.guest.name}, ${platform.name}';
+    } else {
+      return '$dateStr, ${reservations.length} prenotazioni, prima: ${reservations.first.guest.name}';
+    }
+  }
+
+  /// Get month name in Italian
+  String _getMonthName(int month) {
+    const months = [
+      'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+      'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'
+    ];
+    return months[month - 1];
   }
 
   /// Check if this cell should be rendered (has reservations).

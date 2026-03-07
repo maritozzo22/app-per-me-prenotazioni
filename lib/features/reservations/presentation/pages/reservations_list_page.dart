@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
+import 'package:app_prenotazioni/features/reservations/domain/services/reservation_validation_service.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservations_list/reservation_list_tile.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_list_skeleton.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_form.dart';
 import 'package:app_prenotazioni/features/search/presentation/providers/search_provider.dart';
 import 'package:app_prenotazioni/features/search/presentation/widgets/search_bar_widget.dart';
 import 'package:app_prenotazioni/core/widgets/theme_toggle_button.dart';
@@ -123,6 +127,19 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
     }
   }
 
+  Future<void> _navigateToAdd() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const _AddReservationPage(),
+      ),
+    );
+
+    if (result == true && mounted) {
+      await _loadReservations();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchProvider);
@@ -154,6 +171,12 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        key: const Key('add_reservation_fab'),
+        onPressed: _navigateToAdd,
+        tooltip: 'Aggiungi Prenotazione',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -202,6 +225,59 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Page for adding a new reservation
+class _AddReservationPage extends ConsumerWidget {
+  const _AddReservationPage();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.read(reservationRepositoryProvider);
+    final validationService = ReservationValidationService(repository);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Nuova Prenotazione'),
+        elevation: 2,
+      ),
+      body: ReservationForm(
+        existingReservation: null,
+        rooms: Room.defaultRooms,
+        platforms: BookingPlatform.defaultPlatforms,
+        validationService: validationService,
+        onSubmit: (newReservation) async {
+          try {
+            // Save the new reservation
+            await repository.saveReservation(newReservation);
+
+            // Schedule notifications (Android only)
+            if (PlatformService.notificationsSupported) {
+              try {
+                final scheduler = ref.read(reservationNotificationSchedulerProvider);
+                await scheduler.scheduleReservationNotifications(newReservation);
+              } catch (e) {
+                // Don't fail the save if notification scheduling fails
+                print('Error scheduling notifications: $e');
+              }
+            }
+
+            return true;
+          } catch (e) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Errore: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+            return false;
+          }
+        },
+      ),
     );
   }
 }
