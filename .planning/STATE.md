@@ -6,15 +6,15 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 **Core value:** Visibilità immediata delle stanze occupate con colori per piattaforma
 **Current milestone:** Milestone 2 - Performance & Feature Expansion
-**Current focus:** Ready to start Phase 9 (Performance Optimization)
+**Current focus:** Phase 11 Statistics Feature in Progress
 
 ## Project Status
 
-**Status**: 🟡 Milestone 2 Planning Complete - Ready to Start Phase 9
+**Status**: 🔄 Phase 11 Statistics Feature - Plan 01 Complete
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
-**Current Phase**: None (planning complete, ready to start Phase 9)
-**Progress**: Milestone 1 at Phase 7 Wave 2/5 (parallel work), Milestone 2 planning 100% complete
+**Current Phase**: Phase 11 - Statistics Feature (Plan 01/05 complete)
+**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 Plan 01 complete
 
 ## Milestone 2 Context
 
@@ -36,6 +36,43 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `share_plus: ^7.2.1` (for CSV export)
 
 ## Recent Activity
+
+### 2026-03-08: Phase 11 Plan 01 Complete - Statistics Domain Layer
+
+**Completed**:
+- [x] Added FL Chart ^0.66.2 and intl ^0.20.0 dependencies
+- [x] Created PeriodFilter enum (month, quarter, year, custom)
+- [x] Created StatisticsFilter entity with dateRange extension
+- [x] Created PlatformRevenue entity for platform breakdown
+- [x] Created MonthlyRevenue entity with monthIndex/year extensions
+- [x] Created YearOverYearComparison entity with maxRevenue/growthPercentage extensions
+- [x] Created AggregateStatistics entity for comprehensive stats
+- [x] Created StatisticsRepository interface
+- [x] 29 tests passing (all entity tests)
+
+**Commits**:
+- `4ef03e9` chore(11-01): add FL Chart and intl dependencies
+- `abde45e` feat(11-01): add PeriodFilter enum and StatisticsFilter entity
+- `2361b57` feat(11-01): add PlatformRevenue entity
+- `74a249b` feat(11-01): add MonthlyRevenue entity
+- `e0d6d85` feat(11-01): add YearOverYearComparison entity
+- `4c73d92` feat(11-01): add StatisticsRepository interface and AggregateStatistics entity
+
+**Files Created** (11 files):
+- `lib/features/statistics/domain/entities/period_filter.dart`
+- `lib/features/statistics/domain/entities/statistics_filter.dart`
+- `lib/features/statistics/domain/entities/platform_revenue.dart`
+- `lib/features/statistics/domain/entities/monthly_revenue.dart`
+- `lib/features/statistics/domain/entities/year_over_year_comparison.dart`
+- `lib/features/statistics/domain/entities/aggregate_statistics.dart`
+- `lib/features/statistics/domain/repositories/statistics_repository.dart`
+- 4 test files for all entities
+
+**Files Modified**:
+- `pubspec.yaml`
+
+**Next Steps**:
+- Plan 11-02: Statistics Data Layer (SQL queries, repository implementation)
 
 ### 2026-03-07: Phase 10 Plan 03 Complete - Settings Gestione Section
 
@@ -193,7 +230,7 @@ All v1 requirements active - see REQUIREMENTS.md
 All Milestone 2 requirements active - see REQUIREMENTS.md
 - Phase 9: ⏸️ Not Started (CRITICAL - 5 requirements)
 - Phase 10: ⏸️ Not Started (4 requirements)
-- Phase 11: ⏸️ Not Started (8 requirements)
+- Phase 11: 🔄 In Progress (Plan 01/05 complete, 8 requirements)
 - Phase 12: ⏸️ Not Started (3 requirements)
 - Phase 13: ⏸️ Not Started (4 requirements)
 - Phase 14: ⏸️ Not Started (2 requirements)
@@ -220,7 +257,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 |-------|--------|----------|---------------|
 | 9: Performance Optimization | ✅ Complete | CRITICAL | 3-4 days |
 | 10: UI/UX Restructuring | 🔄 In Progress | HIGH | 1-2 days |
-| 11: Statistics Feature | ⏸️ Not Started | HIGH | 5-7 days |
+| 11: Statistics Feature | 🔄 In Progress | HIGH | 5-7 days |
 | 12: Calendar Enhancements | ⏸️ Not Started | MEDIUM | 1 day |
 | 13: Notifications 2.0 | ⏸️ Not Started | MEDIUM | 2-3 days |
 | 14: Data Export | ⏸️ Not Started | LOW | 1 day |
@@ -266,9 +303,9 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 
 ## Last Updated
 
-**Date**: 2026-03-07
-**Trigger**: Milestone 2 planning complete
-**Updated by**: GSD new-milestone workflow
+**Date**: 2026-03-08
+**Trigger**: Phase 11 Plan 01 complete - Statistics Domain Layer
+**Updated by**: GSD execute-phase
 
 ---
 
