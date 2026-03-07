@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app_prenotazioni/core/database/database_helper.dart';
 import 'package:app_prenotazioni/features/reservations/data/datasources/local/reservation_local_data_source.dart';
 import 'package:app_prenotazioni/features/reservations/data/repositories/reservation_repository_impl.dart';
@@ -19,4 +20,11 @@ final reservationDataSourceProvider = Provider<ReservationLocalDataSource>((ref)
 final reservationRepositoryProvider = Provider<ReservationRepository>((ref) {
   final dataSource = ref.watch(reservationDataSourceProvider);
   return ReservationRepositoryImpl(dataSource: dataSource);
+});
+
+/// Provider for SharedPreferences
+///
+/// Must be overridden in main.dart with actual SharedPreferences instance.
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError('Override in main.dart with SharedPreferences instance');
 });
