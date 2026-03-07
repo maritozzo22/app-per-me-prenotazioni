@@ -104,10 +104,47 @@ class CalendarNotifier extends StateNotifier<CalendarState> {
     await loadReservations();
   }
 
-  /// Select a specific day
-  void selectDay(DateTime day) {
-    state = state.copyWith(selectedDay: day);
+  // Add loadedMonths tracking to state
+  final Set<DateTime> loadedMonths = const CalendarState({
+  final DateTime focusedDay;
+  final DateTime? selectedDay;
+  final Map<DateTime, List<Reservation>> reservationsByDate;
+  final Set<DateTime> loadedMonths;
+  final bool isLoading;
+  final String? error;
+
+  const CalendarState({
+    required this.focusedDay,
+    this.selectedDay,
+    required this.reservationsByDate,
+    this.loadedMonths = const {},
+    this.isLoading = false,
+    this.error,
+  });
+
+  CalendarState copyWith({
+    DateTime? focusedDay,
+    DateTime? selectedDay,
+    Map<DateTime, List<Reservation>>? reservationsByDate,
+    Set<DateTime>? loadedMonths,
+    bool? isLoading,
+    String? error,
+  }) {
+    return CalendarState(
+      focusedDay: focusedDay ?? this.focusedDay,
+      selectedDay: selectedDay,
+      reservationsByDate: reservationsByDate ?? this.reservationsByDate,
+      loadedMonths: loadedMonths ?? const {},
+      isLoading: isLoading,
+      error: error,
+    );
   }
+
+  /// Change the focused month
+  void changeMonth(DateTime focusedDay) {
+    state = state.copyWith(focusedDay: focusedDay);
+  }
+}
 
   /// Change the focused month
   void changeMonth(DateTime focusedDay) {
