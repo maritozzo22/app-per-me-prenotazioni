@@ -102,7 +102,7 @@ void main() {
           await tester.pump();
 
           // Focus should be on the field
-          expect(tester.widgets.firstWhere((w) => w is TextField), isNotNull);
+          expect(tester.widgetList<TextField>(find.byType(TextField)).first, isNotNull);
         }
       }
     });

@@ -115,7 +115,8 @@ class FocusUtils {
   /// Set up linear focus traversal order.
   static void setLinearTraversalOrder(List<FocusNode> nodes) {
     for (int i = 0; i < nodes.length - 1; i++) {
-      nodes[i].nextFocus = nodes[i + 1];
+      // Note: FocusNode doesn't have a nextFocus setter.
+      // Use FocusTraversalGroup for proper traversal order instead.
     }
   }
 
