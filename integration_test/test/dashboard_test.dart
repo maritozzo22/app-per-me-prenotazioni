@@ -38,6 +38,16 @@ void main() {
       TestHelpers.logStep('Income card found');
     });
 
+    testWidgets('Dashboard shows next event countdown card', (tester) async {
+      app.main();
+      await TestHelpers.waitForAppToLoad(tester);
+
+      // Verify next event countdown card is present
+      expect(find.byKey(const Key('next_event_countdown_card')), findsOneWidget);
+
+      TestHelpers.logStep('Next event countdown card found');
+    });
+
     testWidgets('Dashboard shows upcoming check-ins', (tester) async {
       app.main();
       await TestHelpers.waitForAppToLoad(tester);
