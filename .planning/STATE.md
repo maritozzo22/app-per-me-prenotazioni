@@ -2,21 +2,68 @@
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-03-04)
+See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 **Core value:** Visibilità immediata delle stanze occupate con colori per piattaforma
-**Current focus:** Phase 7 - Polish & Documentation (Wave 2 complete)
+**Current milestone:** Milestone 2 - Performance & Feature Expansion
+**Current focus:** Ready to start Phase 9 (Performance Optimization)
 
 ## Project Status
 
-**Status**: 🟢 Phase 7 in Progress - Wave 2 Complete
+**Status**: 🟡 Milestone 2 Planning Complete - Ready to Start Phase 9
 
-**Milestone**: MVP Web Complete
-**Current Phase**: Phase 7 (Polish & Documentation)
-**Current Wave**: 07-02 (Loading States & Error UI) - ✅ Complete
-**Progress**: Phase 6 complete, Phase 7 Wave 2 of 5 complete
+**Milestone**: Milestone 2: Performance & Feature Expansion
+**Current Phase**: None (planning complete, ready to start Phase 9)
+**Progress**: Milestone 1 at Phase 7 Wave 2/5 (parallel work), Milestone 2 planning 100% complete
+
+## Milestone 2 Context
+
+**Started**: 2026-03-07 (planning phase)
+**Phases**: 9-14 (6 phases total)
+**Requirements**: 42 new requirements
+**Focus**: Scale to 1000+ reservations, statistics with charts, UX improvements
+
+**Critical Path**:
+1. Phase 9: Performance Optimization (CRITICAL) - 3-4 days
+2. Phase 10: UI/UX Restructuring - 1-2 days
+3. Phase 11: Statistics Feature - 5-7 days
+4. Phase 12-14: Calendar, Notifications, Export (can be parallel) - 4-5 days
+
+**Total Estimated Duration**: 13-18 days
+
+**New Dependencies**:
+- `fl_chart: ^0.66.0` (for statistics charts)
+- `share_plus: ^7.2.1` (for CSV export)
 
 ## Recent Activity
+
+### 2026-03-07: Milestone 2 Planning Complete
+
+**Completed**:
+- [x] Analyzed PRIORITY_FEATURES_TASK.md requirements
+- [x] Created Milestone 2 REQUIREMENTS.md (42 requirements across 6 phases)
+- [x] Created Milestone 2 ROADMAP.md (phases 9-14)
+- [x] Updated PROJECT.md with Milestone 2 goals and context
+- [x] Reset STATE.md for new milestone
+- [x] Defined success criteria and performance targets
+
+**Documents Updated**:
+- `.planning/REQUIREMENTS.md` - Added 42 requirements for Milestone 2
+- `.planning/ROADMAP.md` - Added 6 phases (9-14) for Milestone 2
+- `.planning/PROJECT.md` - Added Milestone 2 context and decisions
+- `.planning/STATE.md` - Reset for new milestone
+
+**Next Steps**:
+1. Add dependencies to pubspec.yaml (fl_chart, share_plus)
+2. Start Phase 9: Performance Optimization
+3. Create performance test data generator (1000+ reservations)
+4. Implement lazy loading for reservations list
+5. Implement intelligent period filters
+6. Optimize calendar queries
+7. Add database indexes
+8. Implement statistics caching
+
+### Milestone 1 History (Preserved)
 
 ### 2026-03-06: Phase 7 Wave 2 Complete - Loading States & Error UI
 
@@ -100,13 +147,18 @@ See: `.planning/PROJECT.md` (updated 2026-03-04)
 
 ## Requirements Status
 
-### Validated (0)
+### Milestone 1: MVP Web Complete (66 requirements)
+
+**Validated (0)**:
 *None yet - ship to validate*
 
-### Active (66)
+**Active (66)**:
 All v1 requirements active - see REQUIREMENTS.md
+- Phase 1-6: ✅ Complete
+- Phase 7: 🔄 In Progress (Wave 2/5)
+- Phase 8: ⏸️ Not Started
 
-### Out of Scope (6)
+**Out of Scope (6)**:
 - Multi-user authentication
 - Play Store/App Store publishing
 - API integration with Booking/Airbnb
@@ -114,7 +166,24 @@ All v1 requirements active - see REQUIREMENTS.md
 - Reviews system
 - Channel manager integration
 
+### Milestone 2: Performance & Feature Expansion (42 requirements)
+
+**Validated (0)**:
+*None yet - planning complete, execution not started*
+
+**Active (42)**:
+All Milestone 2 requirements active - see REQUIREMENTS.md
+- Phase 9: ⏸️ Not Started (CRITICAL - 5 requirements)
+- Phase 10: ⏸️ Not Started (4 requirements)
+- Phase 11: ⏸️ Not Started (8 requirements)
+- Phase 12: ⏸️ Not Started (3 requirements)
+- Phase 13: ⏸️ Not Started (4 requirements)
+- Phase 14: ⏸️ Not Started (2 requirements)
+- Cross-cutting: ⏸️ Not Started (2 requirements)
+
 ## Phase Status
+
+### Milestone 1 Phases (1-8)
 
 | Phase | Status | Started | Completed |
 |-------|--------|---------|-----------|
@@ -126,6 +195,17 @@ All v1 requirements active - see REQUIREMENTS.md
 | 6: Android Optimization | ✅ Complete | 2026-03-06 | 2026-03-06 |
 | 7: Polish & Documentation | 🔄 In Progress | 2026-03-06 | Wave 2/5 complete |
 | 8: Deployment & Verification | ⏸️ Not Started | - | - |
+
+### Milestone 2 Phases (9-14)
+
+| Phase | Status | Priority | Est. Duration |
+|-------|--------|----------|---------------|
+| 9: Performance Optimization | ⏸️ Ready to Start | CRITICAL | 3-4 days |
+| 10: UI/UX Restructuring | ⏸️ Not Started | HIGH | 1-2 days |
+| 11: Statistics Feature | ⏸️ Not Started | HIGH | 5-7 days |
+| 12: Calendar Enhancements | ⏸️ Not Started | MEDIUM | 1 day |
+| 13: Notifications 2.0 | ⏸️ Not Started | MEDIUM | 2-3 days |
+| 14: Data Export | ⏸️ Not Started | LOW | 1 day |
 
 ## Blockers
 
@@ -168,9 +248,9 @@ All v1 requirements active - see REQUIREMENTS.md
 
 ## Last Updated
 
-**Date**: 2026-03-06
-**Trigger**: Phase 7 Wave 2 completion
-**Updated by**: GSD Executor
+**Date**: 2026-03-07
+**Trigger**: Milestone 2 planning complete
+**Updated by**: GSD new-milestone workflow
 
 ---
 
