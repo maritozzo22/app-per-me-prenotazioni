@@ -386,5 +386,72 @@ void main() {
         expect(result, isNotEmpty);
       });
     });
+
+    group('getReservationsPaginated', () {
+      test('should return paginated reservations with limit and offset', () async {
+        when(() => mockDb.rawQuery(any(), any()))
+            .thenAnswer((_) => Future.value([
+                  {
+                    'id': 'res-1',
+                    'room_id': 'room-1',
+                    'platform_id': 'booking',
+                    'guest_name': 'Mario Rossi',
+                    'guest_phone': '+39123456789',
+                    'check_in': '2024-06-20T00:00:00.000Z',
+                    'check_out': '2024-06-25T00:00:00.000Z',
+                    'amount': 500.00,
+                    'notes': 'Late arrival',
+                    'created_at': '2024-06-01T00:00:00.000Z',
+                    'updated_at': '2024-06-01T00:00:00.000Z',
+                  }
+                ]));
+
+        final result = await dataSource.getReservationsPaginated(20, 0);
+
+        expect(result.length, 1);
+        expect(result.first.id, 'res-1');
+        verify(() => mockDb.rawQuery(any(), any())).called(1);
+      });
+
+      test('should return empty list when no reservations exist', () async {
+        when(() => mockDb.rawQuery(any(), any()))
+            .thenAnswer((_) => Future.value([]));
+
+        final result = await dataSource.getReservationsPaginated(20, 0);
+
+        expect(result, isEmpty);
+      });
+
+      test('should use correct offset for second page', () async {
+        when(() => mockDb.rawQuery(any(), any()))
+            .thenAnswer((_) => Future.value([]));
+
+        await dataSource.getReservationsPaginated(20, 20);
+
+        final captured = verify(() => mockDb.rawQuery(any(), captureAny())).captured.single as List;
+        expect(captured[0], 20); // limit
+        expect(captured[1], 20); // offset
+      });
+    });
+
+    group('getTotalReservationsCount', () {
+      test('should return total count of reservations', () async {
+        when(() => mockDb.rawQuery(any()))
+            .thenAnswer((_) => Future.value([{'count': 100}]));
+
+        final result = await dataSource.getTotalReservationsCount();
+
+        expect(result, 100);
+      });
+
+      test('should return 0 when no reservations exist', () async {
+        when(() => mockDb.rawQuery(any()))
+            .thenAnswer((_) => Future.value([{'count': 0}]));
+
+        final result = await dataSource.getTotalReservationsCount();
+
+        expect(result, 0);
+      });
+    });
   });
 }

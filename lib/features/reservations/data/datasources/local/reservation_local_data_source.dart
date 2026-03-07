@@ -7,6 +7,7 @@ import 'package:app_prenotazioni/features/reservations/data/models/platform_mode
 import 'package:app_prenotazioni/features/reservations/data/models/guest_model.dart';
 import 'package:app_prenotazioni/features/reservations/domain/value_objects/payment_status.dart';
 import 'package:sqflite_common/sqflite.dart';
+import 'package:sqflite/sqflite.dart' show Sqflite;
 
 /// Local data source implementation using SQLite.
 class ReservationLocalDataSource implements ReservationDataSource {
@@ -109,7 +110,6 @@ class ReservationLocalDataSource implements ReservationDataSource {
   @override
   Future<void> insertReservationsBatch(List<ReservationModel> reservations) async {
     final db = await _databaseHelper.database as Database;
-
     final batch = db.batch();
     for (final reservation in reservations) {
       batch.insert(
@@ -118,8 +118,28 @@ class ReservationLocalDataSource implements ReservationDataSource {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
-
     await batch.commit(noResult: true);
+  }
+
+  @override
+  Future<List<ReservationModel>> getReservationsPaginated(int limit, int offset) async {
+    final db = await _databaseHelper.database as Database;
+    final maps = await db.rawQuery(
+      'SELECT * FROM ${DatabaseSchema.tableReservations} '
+      'ORDER BY ${DatabaseSchema.reservationCreatedAt} DESC '
+      'LIMIT ? OFFSET ?',
+      [limit, offset],
+    );
+    return maps.map((map) => _mapToReservationModel(map)).toList();
+  }
+
+  @override
+  Future<int> getTotalReservationsCount() async {
+    final db = await _databaseHelper.database as Database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM ${DatabaseSchema.tableReservations}',
+    );
+    return Sqflite.firstIntValue(result) ?? 0;
   }
 
   /// Maps a database row to ReservationModel.
