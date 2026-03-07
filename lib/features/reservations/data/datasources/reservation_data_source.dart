@@ -37,4 +37,9 @@ abstract class ReservationDataSource {
     int limit,
     int offset,
   );
+
+  /// Gets the total count of reservations matching the filter.
+  ///
+  /// [filter] - Filter criteria (only non-null values are applied).
+  Future<int> getFilteredReservationsCount(ReservationFilter filter);
 }

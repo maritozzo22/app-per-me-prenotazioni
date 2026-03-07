@@ -7,6 +7,7 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/paginated_result.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/reservation_filter.dart';
 
 /// Implementation of ReservationRepository using local data source.
 class ReservationRepositoryImpl implements ReservationRepository {
@@ -73,6 +74,24 @@ class ReservationRepositoryImpl implements ReservationRepository {
     final offset = (page - 1) * pageSize;
     final models = await _dataSource.getReservationsPaginated(pageSize, offset);
     final totalCount = await _dataSource.getTotalReservationsCount();
+
+    return PaginatedResult<Reservation>(
+      items: models.map((model) => model.toEntity()).toList(),
+      totalCount: totalCount,
+      currentPage: page,
+      pageSize: pageSize,
+    );
+  }
+
+  @override
+  Future<PaginatedResult<Reservation>> getReservationsFiltered({
+    required ReservationFilter filter,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    final offset = (page - 1) * pageSize;
+    final models = await _dataSource.getReservationsFiltered(filter, pageSize, offset);
+    final totalCount = await _dataSource.getFilteredReservationsCount(filter);
 
     return PaginatedResult<Reservation>(
       items: models.map((model) => model.toEntity()).toList(),
