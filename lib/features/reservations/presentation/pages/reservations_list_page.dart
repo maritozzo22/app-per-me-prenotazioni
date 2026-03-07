@@ -5,9 +5,11 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/domain/services/reservation_validation_service.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_list_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservations_list/reservation_list_tile.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_list_skeleton.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/filter_sheet.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_form.dart';
 import 'package:app_prenotazioni/features/search/presentation/providers/search_provider.dart';
@@ -45,43 +47,17 @@ class ReservationsListPage extends ConsumerStatefulWidget {
 }
 
 class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
-  List<Reservation>? _reservations;
-  bool _isLoading = true;
-  String? _error;
-
   @override
   void initState() {
     super.initState();
-    _loadReservations();
+    // Load initial reservations using the provider
+    Future.microtask(() {
+      ref.read(reservationListProvider.notifier).loadInitial();
+    });
   }
 
-  Future<void> _loadReservations() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final repository = ref.read(reservationRepositoryProvider);
-      final reservations = await repository.getAllReservations();
-
-      // Sort by check-in date ascending (nearest first)
-      reservations.sort((a, b) => a.checkIn.compareTo(b.checkIn));
-
-      if (mounted) {
-        setState(() {
-          _reservations = reservations;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = e.toString();
-          _isLoading = false;
-        });
-      }
-    }
+  Future<void> _refreshReservations() async {
+    await ref.read(reservationListProvider.notifier).loadInitial();
   }
 
   Future<void> _deleteReservation(Reservation reservation) async {
@@ -95,7 +71,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           await scheduler.cancelReservationNotifications(reservation.id);
         } catch (e) {
           // Don't fail the delete if notification cancellation fails
-          print('Error cancelling notifications: $e');
+          debugPrint('Error cancelling notifications: $e');
         }
       }
 
@@ -110,7 +86,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           context,
           'Prenotazione di ${reservation.guest.name} eliminata',
         );
-        await _loadReservations();
+        await _refreshReservations();
       }
     } catch (e) {
       if (mounted) {
@@ -128,7 +104,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
     );
 
     if (result == true && mounted) {
-      await _loadReservations();
+      await _refreshReservations();
     }
   }
 
@@ -141,21 +117,43 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
     );
 
     if (result == true && mounted) {
-      await _loadReservations();
+      await _refreshReservations();
     }
+  }
+
+  void _openFilterSheet() {
+    final state = ref.read(reservationListProvider);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => FilterSheet(
+        initialFilter: state.activeFilter,
+        platforms: BookingPlatform.defaultPlatforms,
+        rooms: Room.defaultRooms,
+        onApply: (filter) {
+          ref.read(reservationListProvider.notifier).applyFilter(filter);
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchProvider);
+    final listState = ref.watch(reservationListProvider);
 
     return Scaffold(
       key: const Key('reservations_list'),
       appBar: AppBar(
         title: const Text('Prenotazioni'),
         elevation: 2,
-        actions: const [
-          ThemeToggleButton(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: _openFilterSheet,
+            tooltip: 'Filtri',
+          ),
+          const ThemeToggleButton(),
         ],
       ),
       body: Column(
@@ -171,8 +169,8 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           ),
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _loadReservations,
-              child: _buildBody(searchState),
+              onRefresh: _refreshReservations,
+              child: _buildBody(searchState, listState),
             ),
           ),
         ],
@@ -186,43 +184,62 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
     );
   }
 
-  Widget _buildBody(SearchState searchState) {
+  Widget _buildBody(SearchState searchState, ReservationListState listState) {
     // Determine which reservations to show
     final reservationsToShow = searchState.hasQuery
         ? searchState.results
-        : _reservations;
+        : listState.reservations;
 
-    if (_isLoading && reservationsToShow == null) {
+    // Show loading skeleton for initial load
+    if (listState.isLoading && reservationsToShow.isEmpty) {
       return const ReservationListSkeleton();
     }
 
-    if (_error != null) {
+    // Show error state
+    if (listState.error != null && reservationsToShow.isEmpty) {
       return ErrorDisplayWidget(
-        error: _error!,
-        onRetry: _loadReservations,
+        error: listState.error!,
+        onRetry: _refreshReservations,
       );
     }
 
+    // Show empty search results
     if (searchState.hasQuery && searchState.isEmpty) {
       return EmptyStates.noSearchResults();
     }
 
-    if (reservationsToShow == null || reservationsToShow.isEmpty) {
+    // Show empty state
+    if (reservationsToShow.isEmpty) {
       return EmptyStates.noReservations();
     }
 
-    return _buildList(reservationsToShow);
+    return _buildList(reservationsToShow, listState.hasMore, listState.isLoadingMore);
   }
 
-  Widget _buildList(List<Reservation> reservations) {
+  Widget _buildList(List<Reservation> reservations, bool hasMore, bool isLoadingMore) {
+    // Add 1 to item count for loading indicator if more pages exist
+    final itemCount = reservations.length + (hasMore ? 1 : 0);
+
     return ListView.builder(
-      itemCount: reservations.length,
+      itemCount: itemCount,
       cacheExtent: 500, // Pre-render 500px worth of items for smoother scrolling
       itemBuilder: (context, index) {
+        // Show loading indicator at the bottom
+        if (index == reservations.length) {
+          // Trigger load more when reaching the bottom
+          Future.microtask(() {
+            ref.read(reservationListProvider.notifier).loadMore();
+          });
+          return const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
         final reservation = reservations[index];
         return FadeIn(
           slide: SlideDirection.left,
-          delay: Duration(milliseconds: 50 * index),
+          delay: Duration(milliseconds: 50 * (index % 20)), // Cap delay for infinite scroll
           child: ReservationListTile(
             reservation: reservation,
             onEdit: () => _navigateToEdit(reservation),
@@ -269,7 +286,7 @@ class _AddReservationPage extends ConsumerWidget {
                 await scheduler.scheduleReservationNotifications(newReservation);
               } catch (e) {
                 // Don't fail the save if notification scheduling fails
-                print('Error scheduling notifications: $e');
+                debugPrint('Error scheduling notifications: $e');
               }
             }
 
