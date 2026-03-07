@@ -15,4 +15,13 @@ abstract class ReservationDataSource {
   Future<List<RoomModel>> getAllRooms();
   Future<List<PlatformModel>> getAllPlatforms();
   Future<void> insertReservationsBatch(List<ReservationModel> reservations);
+
+  /// Gets a paginated list of reservations.
+  ///
+  /// [limit] - Maximum number of items to return.
+  /// [offset] - Number of items to skip (for pagination).
+  Future<List<ReservationModel>> getReservationsPaginated(int limit, int offset);
+
+  /// Gets the total count of reservations.
+  Future<int> getTotalReservationsCount();
 }
