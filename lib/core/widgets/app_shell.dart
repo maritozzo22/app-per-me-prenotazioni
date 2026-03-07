@@ -4,7 +4,7 @@ import 'package:app_prenotazioni/core/utils/animations.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/dashboard_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
-import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:app_prenotazioni/core/presentation/pages/settings_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
@@ -36,7 +36,7 @@ class AppShellState extends ConsumerState<AppShell> {
     ),
     const CalendarPage(),
     const ReservationsListPage(),
-    const PlatformsListPage(),
+    const StatisticsPage(),
     const SettingsPage(),
   ];
 
@@ -127,8 +127,8 @@ class AppShellState extends ConsumerState<AppShell> {
               label: 'Prenotazioni',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.hotel, semanticLabel: 'Piattaforme'),
-              label: 'Piattaforme',
+              icon: Icon(Icons.bar_chart, semanticLabel: 'Statistiche'),
+              label: 'Statistiche',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings, semanticLabel: 'Impostazioni'),
