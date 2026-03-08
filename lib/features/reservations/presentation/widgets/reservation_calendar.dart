@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
-import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_day_cell.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/day_detail_bottom_sheet.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/multi_reservation_indicator.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
 
 /// Calendar widget showing reservations with platform-colored days.
@@ -234,30 +234,25 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
 
             // Marker builder for multiple reservations
             markerBuilder: (context, day, events) {
-              if (events.length <= 1) return const SizedBox.shrink();
+              if (events.isEmpty) return const SizedBox.shrink();
 
               final reservations = events as List<Reservation>;
 
-              // Show colored dots for additional platforms (max 3)
+              // Only show indicator if more than 1 reservation
+              // (single reservation is shown via day cell background)
+              if (reservations.length <= 1) return const SizedBox.shrink();
+
               return Positioned(
                 bottom: 4,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: reservations.take(3).map((reservation) {
-                    final platform = BookingPlatform.defaultPlatforms.firstWhere(
-                      (p) => p.id == reservation.platformId,
-                      orElse: () => BookingPlatform.defaultPlatforms.first,
-                    );
-                    return Container(
-                      width: 6,
-                      height: 6,
-                      margin: const EdgeInsets.symmetric(horizontal: 1),
-                      decoration: BoxDecoration(
-                        color: platform.color,
-                        shape: BoxShape.circle,
-                      ),
-                    );
-                  }).toList(),
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: MultiReservationIndicator(
+                    reservations: reservations,
+                    maxDots: 4,
+                    dotSize: 5.0,
+                    spacing: 1.0,
+                  ),
                 ),
               );
             },
