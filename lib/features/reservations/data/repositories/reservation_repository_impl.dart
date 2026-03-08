@@ -8,14 +8,21 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/platform.
 import 'package:app_prenotazioni/features/reservations/domain/repositories/reservation_repository.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/paginated_result.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation_filter.dart';
+import 'package:app_prenotazioni/features/statistics/domain/services/statistics_cache_service.dart';
 
 /// Implementation of ReservationRepository using local data source.
+///
+/// Includes cache invalidation hooks to ensure statistics stay fresh
+/// when reservations are modified.
 class ReservationRepositoryImpl implements ReservationRepository {
   final ReservationDataSource _dataSource;
+  final StatisticsCacheService? _cacheService;
 
   ReservationRepositoryImpl({
     required ReservationDataSource dataSource,
-  }) : _dataSource = dataSource;
+    StatisticsCacheService? cacheService,
+  })  : _dataSource = dataSource,
+        _cacheService = cacheService;
 
   @override
   Future<List<Reservation>> getAllReservations() async {
@@ -32,11 +39,15 @@ class ReservationRepositoryImpl implements ReservationRepository {
   @override
   Future<void> saveReservation(Reservation reservation) async {
     await _dataSource.saveReservation(reservation.toModel());
+    // Invalidate statistics cache when reservations change
+    await _cacheService?.invalidateCache();
   }
 
   @override
   Future<void> deleteReservation(String id) async {
     await _dataSource.deleteReservation(id);
+    // Invalidate statistics cache when reservations are deleted
+    await _cacheService?.invalidateCache();
   }
 
   @override
@@ -64,6 +75,8 @@ class ReservationRepositoryImpl implements ReservationRepository {
   Future<void> insertReservationsBatch(List<Reservation> reservations) async {
     final models = reservations.map((r) => r.toModel()).toList();
     await _dataSource.insertReservationsBatch(models);
+    // Invalidate statistics cache when batch insert completes
+    await _cacheService?.invalidateCache();
   }
 
   @override
