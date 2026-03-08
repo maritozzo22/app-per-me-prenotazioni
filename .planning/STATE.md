@@ -10,11 +10,11 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 ## Project Status
 
-**Status**: 🔄 Phase 11 Statistics Feature - Plan 03 Complete
+**Status**: 🔄 Phase 11 Statistics Feature - Plan 04 Complete
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
-**Current Phase**: Phase 11 - Statistics Feature (Plan 03/05 complete)
-**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 Plans 01-03 complete
+**Current Phase**: Phase 11 - Statistics Feature (Plan 04/05 complete)
+**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 Plans 01-04 complete
 
 ## Milestone 2 Context
 
@@ -36,6 +36,45 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `share_plus: ^7.2.1` (for CSV export)
 
 ## Recent Activity
+
+### 2026-03-08: Phase 11 Plan 04 Complete - Chart Widgets
+
+**Completed**:
+- [x] Created YearOverYearChart widget (grouped bar chart, 2 years x 12 months)
+- [x] Created PlatformRevenueChart widget (pie chart with platform breakdown)
+- [x] Created MonthlyTrendChart widget (curved line chart with gradient fill)
+- [x] Created PlatformBookingsChart widget (bar chart sorted by booking count)
+- [x] Integrated all 4 charts into StatisticsPage with responsive layout
+- [x] All charts handle empty data gracefully
+- [x] All charts use platform colors from entity
+- [x] All charts have tooltips on tap/hover
+- [x] Fixed deprecated withOpacity to withValues
+- [x] 29 new widget tests + 4 new page tests passing (58 total)
+
+**Commits**:
+- `ccdfe4e` feat(11-04): implement YearOverYearChart widget
+- `a004bab` feat(11-04): implement PlatformRevenueChart widget
+- `7d4bdfb` feat(11-04): implement MonthlyTrendChart widget
+- `843975a` feat(11-04): implement PlatformBookingsChart widget
+- `9e3eb04` feat(11-04): integrate all 4 charts into StatisticsPage
+- `26d1c3c` fix(11-04): replace deprecated withOpacity with withValues
+
+**Files Created** (8 files):
+- `lib/features/statistics/presentation/widgets/year_over_year_chart.dart`
+- `lib/features/statistics/presentation/widgets/platform_revenue_chart.dart`
+- `lib/features/statistics/presentation/widgets/monthly_trend_chart.dart`
+- `lib/features/statistics/presentation/widgets/platform_bookings_chart.dart`
+- `test/features/statistics/presentation/widgets/year_over_year_chart_test.dart`
+- `test/features/statistics/presentation/widgets/platform_revenue_chart_test.dart`
+- `test/features/statistics/presentation/widgets/monthly_trend_chart_test.dart`
+- `test/features/statistics/presentation/widgets/platform_bookings_chart_test.dart`
+
+**Files Modified**:
+- `lib/features/statistics/presentation/pages/statistics_page.dart`
+- `test/features/statistics/presentation/pages/statistics_page_test.dart`
+
+**Next Steps**:
+- Plan 11-05: Integration testing and performance verification
 
 ### 2026-03-08: Phase 11 Plan 03 Complete - Statistics Presentation Layer
 
@@ -266,7 +305,7 @@ All v1 requirements active - see REQUIREMENTS.md
 All Milestone 2 requirements active - see REQUIREMENTS.md
 - Phase 9: ⏸️ Not Started (CRITICAL - 5 requirements)
 - Phase 10: ⏸️ Not Started (4 requirements)
-- Phase 11: 🔄 In Progress (Plan 01/05 complete, 8 requirements)
+- Phase 11: 🔄 In Progress (Plan 04/05 complete, 8 requirements)
 - Phase 12: ⏸️ Not Started (3 requirements)
 - Phase 13: ⏸️ Not Started (4 requirements)
 - Phase 14: ⏸️ Not Started (2 requirements)
@@ -340,7 +379,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 ## Last Updated
 
 **Date**: 2026-03-08
-**Trigger**: Phase 11 Plan 01 complete - Statistics Domain Layer
+**Trigger**: Phase 11 Plan 04 complete - Chart Widgets
 **Updated by**: GSD execute-phase
 
 ---
