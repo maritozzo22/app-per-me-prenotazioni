@@ -8,11 +8,13 @@ import 'package:app_prenotazioni/core/widgets/animations.dart';
 class DayDetailBottomSheet extends StatelessWidget {
   final DateTime day;
   final List<Reservation> reservations;
+  final void Function(Reservation)? onReservationTap;
 
   const DayDetailBottomSheet({
     super.key,
     required this.day,
     required this.reservations,
+    this.onReservationTap,
   });
 
   /// Show the bottom sheet for a specific day.
@@ -20,6 +22,7 @@ class DayDetailBottomSheet extends StatelessWidget {
     BuildContext context, {
     required DateTime day,
     required List<Reservation> reservations,
+    void Function(Reservation)? onReservationTap,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -30,6 +33,7 @@ class DayDetailBottomSheet extends StatelessWidget {
       builder: (context) => DayDetailBottomSheet(
         day: day,
         reservations: reservations,
+        onReservationTap: onReservationTap,
       ),
     );
   }
@@ -163,6 +167,9 @@ class DayDetailBottomSheet extends StatelessWidget {
                       curve: Curves.easeOut,
                       child: ReservationDayCard(
                         reservation: reservations[index],
+                        onTap: onReservationTap != null
+                            ? () => onReservationTap!(reservations[index])
+                            : null,
                       ),
                     );
                   },
