@@ -10,11 +10,11 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 ## Project Status
 
-**Status**: 🔄 Phase 12 Calendar Enhancements - Plan 01 Complete
+**Status**: Phase 12 Calendar Enhancements - Plan 02 Complete
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
-**Current Phase**: Phase 12 - Calendar Enhancements (Plan 01 complete)
-**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 complete, Phase 12 Plan 01 complete
+**Current Phase**: Phase 12 - Calendar Enhancements (Plan 02 complete)
+**Progress**: Phase 9 complete, Phase 10 complete, Phase 11 complete, Phase 12 Plan 02 complete
 
 ## Milestone 2 Context
 
@@ -36,6 +36,37 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `share_plus: ^7.2.1` (for CSV export)
 
 ## Recent Activity
+
+### 2026-03-08: Phase 12 Plan 02 Complete - Multi-Reservation Indicators
+
+**Completed**:
+- [x] Created MultiReservationIndicator widget with configurable parameters
+- [x] Shows up to 4 colored dots instead of previous 3
+- [x] Shows "+X" indicator when more than 4 reservations
+- [x] Updated markerBuilder in reservation_calendar.dart
+- [x] Updated ReservationDayCell to show indicator below day number
+- [x] Fixed existing tests to use pumpAndSettle for animation completion
+- [x] Fixed deprecated withOpacity to withValues
+- [x] 15 tests passing (7 widget tests + 4 integration tests + 4 day cell tests)
+
+**Commits**:
+- `1f2546e` feat(12-02): create MultiReservationIndicator widget
+- `4bfd868` feat(12-02): update markerBuilder to use MultiReservationIndicator
+- `931d6a7` feat(12-02): update ReservationDayCell to show multi-reservation indicator
+- `9b5b352` fix(12-02): replace deprecated withOpacity with withValues
+
+**Files Created** (3 files):
+- `lib/features/reservations/presentation/widgets/multi_reservation_indicator.dart`
+- `test/features/reservations/presentation/widgets/multi_reservation_indicator_test.dart`
+- `test/features/reservations/presentation/widgets/reservation_calendar_indicator_test.dart`
+
+**Files Modified** (3 files):
+- `lib/features/reservations/presentation/widgets/reservation_calendar.dart`
+- `lib/features/reservations/presentation/widgets/reservation_day_cell.dart`
+- `test/features/reservations/presentation/widgets/reservation_day_cell_test.dart`
+
+**Next Steps**:
+- Continue with remaining Phase 12 plans
 
 ### 2026-03-08: Phase 12 Plan 01 Complete - Tappable Reservation Cards
 
@@ -332,7 +363,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 - Phase 9: ✅ Complete (5 requirements)
 - Phase 10: ✅ Complete (4 requirements)
 - Phase 11: ✅ Complete (8 requirements)
-- Phase 12: 🔄 In Progress (Plan 01 complete, 3 requirements)
+- Phase 12: In Progress (Plan 02 complete, 3 requirements)
 - Phase 13: ⏸️ Not Started (4 requirements)
 - Phase 14: ⏸️ Not Started (2 requirements)
 - Cross-cutting: ⏸️ Not Started (2 requirements)
@@ -405,7 +436,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 ## Last Updated
 
 **Date**: 2026-03-08
-**Trigger**: Phase 12 Plan 01 complete - Tappable Reservation Cards
+**Trigger**: Phase 12 Plan 02 complete - Multi-Reservation Indicators
 **Updated by**: GSD execute-phase
 
 ---
