@@ -64,6 +64,11 @@ class DatabaseHelper {
     await db.execute(DatabaseSchema.migrationV5ToV6AddRoomIndex);
     await db.execute(DatabaseSchema.migrationV5ToV6AddDateRangeIndex);
 
+    // Create notification settings and logs tables (V6->V7)
+    await db.execute(DatabaseSchema.createNotificationSettingsTable);
+    await db.execute(DatabaseSchema.createNotificationLogsTable);
+    await db.execute(DatabaseSchema.createNotificationLogsSentAtIndex);
+
     // Insert default data
     await _insertDefaultRooms(db);
     await _insertDefaultPlatforms(db);
@@ -180,6 +185,12 @@ class DatabaseHelper {
       await db.execute(DatabaseSchema.migrationV5ToV6AddPlatformIndex);
       await db.execute(DatabaseSchema.migrationV5ToV6AddRoomIndex);
       await db.execute(DatabaseSchema.migrationV5ToV6AddDateRangeIndex);
+    }
+    if (oldVersion < 7) {
+      // Create notification_settings and notification_logs tables
+      await db.execute(DatabaseSchema.createNotificationSettingsTable);
+      await db.execute(DatabaseSchema.createNotificationLogsTable);
+      await db.execute(DatabaseSchema.createNotificationLogsSentAtIndex);
     }
   }
 

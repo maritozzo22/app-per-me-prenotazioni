@@ -11,9 +11,22 @@ typedef NotificationNavigationHandler = Future<void> Function(String reservation
 /// Global navigation handler (set from main.dart)
 NotificationNavigationHandler? _notificationNavigationHandler;
 
+/// Global notification service instance (initialized in main.dart)
+NotificationService? _notificationServiceInstance;
+
 /// Set the navigation handler for notification taps
 void setNotificationNavigationHandler(NotificationNavigationHandler handler) {
   _notificationNavigationHandler = handler;
+}
+
+/// Set the global notification service instance (called from main.dart after initialization)
+void setNotificationServiceInstance(NotificationService service) {
+  _notificationServiceInstance = service;
+}
+
+/// Get the global notification service instance
+NotificationService? getNotificationServiceInstance() {
+  return _notificationServiceInstance;
 }
 
 /// Abstract interface for platform-specific notification services.
@@ -23,6 +36,11 @@ abstract class NotificationService {
   Future<void> cancelNotification(String id);
   Future<void> cancelAllNotifications();
   Future<bool> requestPermissions();
+
+  /// Sends a test notification immediately.
+  ///
+  /// Returns true if notification was sent successfully.
+  Future<bool> sendTestNotification();
 }
 
 /// Android implementation of local notifications.
@@ -100,6 +118,33 @@ class AndroidNotificationService implements NotificationService {
     return granted ?? false;
   }
 
+  @override
+  Future<bool> sendTestNotification() async {
+    try {
+      const androidDetails = AndroidNotificationDetails(
+        'reservation_reminders',
+        'Promemoria Prenotazioni',
+        channelDescription: 'Notifiche per i promemoria delle prenotazioni',
+        importance: Importance.high,
+        priority: Priority.high,
+      );
+
+      const notificationDetails = NotificationDetails(android: androidDetails);
+
+      await _plugin.show(
+        DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
+        'Notifica di Test',
+        'Le notifiche funzionano correttamente!',
+        notificationDetails,
+      );
+
+      return true;
+    } catch (e) {
+      print('Error sending test notification: $e');
+      return false;
+    }
+  }
+
   String _buildMessage(NotificationSchedule schedule, String guestName, String roomLabel) {
     final typeLabel = switch (schedule.type) {
       NotificationType.fiveDays => '5 giorni prima',
@@ -163,6 +208,12 @@ class WebNotificationService implements NotificationService {
   @override
   Future<bool> requestPermissions() async {
     return false; // Notifications not supported on web
+  }
+
+  @override
+  Future<bool> sendTestNotification() async {
+    // Notifications not supported on web
+    return false;
   }
 }
 

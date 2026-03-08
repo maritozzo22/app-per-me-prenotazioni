@@ -13,12 +13,23 @@ import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_r
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Global navigation key for notification tap navigation
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize SharedPreferences for web support
+  SharedPreferences prefs;
+  if (PlatformService.isWeb) {
+    // Web requires SharedPreferencesAsync to be registered
+    SharedPreferences.setPrefix('app_prenotazioni_');
+    prefs = await SharedPreferences.getInstance();
+  } else {
+    prefs = await SharedPreferences.getInstance();
+  }
 
   // Initialize locale data for Italian
   await initializeDateFormatting('it_IT');
@@ -32,12 +43,18 @@ void main() async {
 
     await initializeNotifications(notificationService, notificationRepository);
 
+    // Store the initialized service globally for use in providers/pages
+    setNotificationServiceInstance(notificationService);
+
     // Set up notification navigation handler
     _setupNotificationNavigation();
   }
 
   runApp(
     ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
       child: MyApp(navigatorKey: navigatorKey),
     ),
   );

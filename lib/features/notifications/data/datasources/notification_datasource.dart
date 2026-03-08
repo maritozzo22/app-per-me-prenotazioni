@@ -182,4 +182,118 @@ class NotificationDatasource {
 
     return Sqflite.firstIntValue(result) ?? 0;
   }
+
+  // ==================== Notification Settings ====================
+
+  /// Gets notification settings (single row).
+  Future<Map<String, dynamic>?> getNotificationSettings() async {
+    final db = await _databaseHelper.database;
+    final results = await db.query(
+      DatabaseSchema.tableNotificationSettings,
+      where: '${DatabaseSchema.notificationSettingsId} = ?',
+      whereArgs: [1],
+    );
+
+    if (results.isEmpty) return null;
+
+    final row = results.first;
+    return {
+      'enabled': row[DatabaseSchema.notificationSettingsEnabled] == 1,
+      'days_before': row[DatabaseSchema.notificationSettingsDaysBefore] as String,
+      'notification_hour': row[DatabaseSchema.notificationSettingsHour] as int,
+      'notification_minute': row[DatabaseSchema.notificationSettingsMinute] as int,
+      'updated_at': row[DatabaseSchema.notificationSettingsUpdatedAt] as String,
+    };
+  }
+
+  /// Saves notification settings (insert or replace).
+  Future<void> saveNotificationSettings(Map<String, dynamic> settings) async {
+    final db = await _databaseHelper.database;
+    await db.insert(
+      DatabaseSchema.tableNotificationSettings,
+      {
+        DatabaseSchema.notificationSettingsId: 1,
+        DatabaseSchema.notificationSettingsEnabled: settings['enabled'] == true ? 1 : 0,
+        DatabaseSchema.notificationSettingsDaysBefore: settings['days_before'] as String,
+        DatabaseSchema.notificationSettingsHour: settings['notification_hour'] as int,
+        DatabaseSchema.notificationSettingsMinute: settings['notification_minute'] as int,
+        DatabaseSchema.notificationSettingsUpdatedAt: settings['updated_at'] as String,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // ==================== Notification Logs ====================
+
+  /// Inserts a notification log.
+  Future<void> insertNotificationLog(Map<String, dynamic> log) async {
+    final db = await _databaseHelper.database;
+    await db.insert(
+      DatabaseSchema.tableNotificationLogs,
+      log,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  /// Gets notification logs, most recent first.
+  Future<List<Map<String, dynamic>>> getNotificationLogs({
+    int limit = 100,
+    int offset = 0,
+    bool? isTestOnly,
+  }) async {
+    final db = await _databaseHelper.database;
+
+    String? where;
+    List<dynamic>? whereArgs;
+
+    if (isTestOnly != null) {
+      where = '${DatabaseSchema.notificationLogIsTest} = ?';
+      whereArgs = [isTestOnly ? 1 : 0];
+    }
+
+    return await db.query(
+      DatabaseSchema.tableNotificationLogs,
+      where: where,
+      whereArgs: whereArgs,
+      orderBy: '${DatabaseSchema.notificationLogSentAt} DESC',
+      limit: limit,
+      offset: offset,
+    );
+  }
+
+  /// Gets count of notification logs.
+  Future<int> getNotificationLogCount({bool? isTestOnly}) async {
+    final db = await _databaseHelper.database;
+
+    String? where;
+    List<dynamic>? whereArgs;
+
+    if (isTestOnly != null) {
+      where = '${DatabaseSchema.notificationLogIsTest} = ?';
+      whereArgs = [isTestOnly ? 1 : 0];
+    }
+
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM ${DatabaseSchema.tableNotificationLogs}${where != null ? ' WHERE $where' : ''}',
+      whereArgs,
+    );
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  /// Deletes logs older than specified days.
+  Future<int> deleteOldNotificationLogs({int olderThanDays = 30}) async {
+    final db = await _databaseHelper.database;
+    final cutoff = DateTime.now().subtract(Duration(days: olderThanDays));
+    return await db.delete(
+      DatabaseSchema.tableNotificationLogs,
+      where: '${DatabaseSchema.notificationLogSentAt} < ?',
+      whereArgs: [cutoff.toIso8601String()],
+    );
+  }
+
+  /// Clears all notification logs.
+  Future<int> clearAllNotificationLogs() async {
+    final db = await _databaseHelper.database;
+    return await db.delete(DatabaseSchema.tableNotificationLogs);
+  }
 }

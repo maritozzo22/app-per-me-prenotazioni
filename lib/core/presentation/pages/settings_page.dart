@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/core/providers/theme_provider.dart';
 import 'package:app_prenotazioni/features/backup/presentation/pages/backup_settings_page.dart';
 import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
+import 'package:app_prenotazioni/features/notifications/presentation/pages/notification_settings_page.dart';
 
 /// Settings page for app configuration.
 class SettingsPage extends ConsumerWidget {
@@ -29,6 +30,26 @@ class SettingsPage extends ConsumerWidget {
             subtitle: Text(_getThemeLabel(themeMode)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showThemeDialog(context, ref),
+          ),
+
+          const Divider(),
+
+          // Notifications section
+          _buildSectionHeader(context, 'Notifiche'),
+          ListTile(
+            key: const Key('notifications_tile'),
+            leading: const Icon(Icons.notifications_outlined),
+            title: const Text('Notifiche'),
+            subtitle: const Text('Gestisci promemoria e preferenze'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationSettingsPage(),
+                ),
+              );
+            },
           ),
 
           const Divider(),

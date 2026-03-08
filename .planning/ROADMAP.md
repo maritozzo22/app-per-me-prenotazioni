@@ -404,27 +404,35 @@ Plans:
 
 ---
 
-### Phase 13: Notifications 2.0
+### Phase 13: Notifications 2.0 ✅ COMPLETED
 **Goal**: Migliorare sistema notifiche con test e personalizzazione
 
 **Requirements**: NOT-10/11/12/13
 
+**Completed**: 2026-03-08
+
 **Success Criteria**:
-1. Tasto "Test Notifica" funziona
-2. Log notifiche traccia invii
-3. Giorni prima personalizzabili
-4. Orario personalizzabile (9:00-10:00)
-5. Tutte le preferenze salvate
+1. ✅ Tasto "Test Notifica" funziona
+2. ✅ Log notifiche traccia invii
+3. ✅ Giorni prima personalizzabili
+4. ✅ Orario personalizzabile (9:00-10:00)
+5. ✅ Tutte le preferenze salvate
 
 **Deliverables**:
-- NotificationsSettingsPage con test button
-- NotificationLog entity + database table
-- NotificationLogsPage con storico
-- NotificationSettings model
-- UI per personalizzazione giorni e orario
-- Test notifiche end-to-end
+- ✅ NotificationSettingsPage con test button
+- ✅ NotificationLog entity + database table
+- ✅ NotificationLogsPage con storico
+- ✅ NotificationSettings entity
+- ✅ UI per personalizzazione giorni e orario
+- ✅ 57 notification tests passing
 
-**Estimated Duration**: 2-3 days
+**Actual Duration**: 1 day
+**Plans**: 3 plans in 3 waves
+
+Plans:
+- [x] 13-01-PLAN.md — NotificationSettings entity + repository + provider (Wave 1)
+- [x] 13-02-PLAN.md — NotificationLog entity + test notification (Wave 2)
+- [x] 13-03-PLAN.md — Settings UI + logs page + integration (Wave 3)
 
 ---
 
@@ -458,9 +466,9 @@ Plans:
 | 10 | UI/UX Restructuring | 4 | HIGH | ✅ DONE | 1-2 days |
 | 11 | Statistics Feature | 10 | HIGH | ✅ DONE | 2 hours |
 | 12 | Calendar Enhancements | 3 | MEDIUM | ✅ DONE | 1 day |
-| 13 | Notifications 2.0 | 4 | MEDIUM | Pending | 2-3 days |
+| 13 | Notifications 2.0 | 4 | MEDIUM | ✅ DONE | 1 day |
 | 14 | Data Export | 2 | LOW | Pending | 1 day |
-| **Total** | **28 requirements** | | | **4/6 done** | **13-18 days** |
+| **Total** | **28 requirements** | | | **5/6 done** | **13-18 days** |
 
 ---
 
