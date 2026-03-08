@@ -322,49 +322,68 @@ Plans:
 - Dashboard semplificata (remove CalendarAccessCard, add NextEventCountdownCard)
 - Nuova tab Statistiche (placeholder inizialmente)
 - Piattaforme accessibile da Settings
-- Navigazione aggiornata (5 tab invece di 5)
+- Navigazione aggiornata (5 tab)
 
 **Estimated Duration**: 1-2 days
+**Plans**: 3 plans in 3 waves
+
+Plans:
+- [ ] 10-01-PLAN.md — Statistics tab in navigation (Wave 1)
+- [ ] 10-02-PLAN.md — NextEventCountdownCard on dashboard (Wave 2)
+- [ ] 10-03-PLAN.md — Platforms in Settings + verification (Wave 3)
 
 ---
 
-### Phase 11: Statistics Feature
+### Phase 11: Statistics Feature ✅ COMPLETED
 **Goal**: Implementare completa feature statistiche con grafici
 
-**Requirements**: STAT-01/02/03/04/05/06/07/08
+**Requirements**: STAT-01/02/03/04/05/06/07/08/09/10
+
+**Completed**: 2026-03-08
 
 **Success Criteria**:
-1. Entità statistiche definite (DashboardStatistics, PlatformRevenue, etc.)
-2. Repository calcola tutte le metriche correttamente
-3. StatisticsPage con filtri temporali funziona
-4. 4 grafici FL Chart implementati e testati
-5. Year-over-Year comparison funzionante
-6. Platform revenue pie chart corretto
-7. Monthly trend line chart leggibile
-8. Platform bookings bar chart chiaro
-9. Test con dati reali passano
+1. ✅ Entita statistiche definite (DashboardStatistics, PlatformRevenue, etc.)
+2. ✅ Repository calcola tutte le metriche correttamente
+3. ✅ StatisticsPage con filtri temporali funziona
+4. ✅ 4 grafici FL Chart implementati e testati
+5. ✅ Year-over-Year comparison funzionante
+6. ✅ Platform revenue pie chart corretto
+7. ✅ Monthly trend line chart leggibile
+8. ✅ Platform bookings bar chart chiaro
+9. ✅ Test con dati reali passano
+10. ✅ Device verification completata (OnePlus DN2103)
 
 **Deliverables**:
-- Feature `statistics` completa (domain, data, presentation)
-- FL Chart integration
-- 4 chart widgets (YoY bar, pie, line, bar)
-- StatisticsProvider con state management
-- KPI cards (Revenue, Occupancy, Avg Stay, Bookings, Guests)
-- Period filter selector
-- Integration con cache 24h
+- ✅ Feature `statistics` completa (domain, data, presentation)
+- ✅ FL Chart integration (fl_chart ^0.66.2)
+- ✅ 4 chart widgets (YoY bar, pie, line, bar)
+- ✅ StatisticsProvider con state management
+- ✅ KPI cards (Revenue, Occupancy, Avg Stay, Bookings, Guests)
+- ✅ Period filter selector (Mese, Trimestre, Anno, Personalizzato)
+- ✅ Cache invalidation on CRUD operations
+- ✅ Integration tests
+- ✅ Device verification passed
 
-**Estimated Duration**: 5-7 days
+**Actual Duration**: 2 hours (code was already complete)
+**Plans**: 5 plans in 5 waves
+
+Plans:
+- [x] 11-01-PLAN.md — FL Chart integration + Domain entities (Wave 1)
+- [x] 11-02-PLAN.md — Data layer + SQL queries (Wave 2)
+- [x] 11-03-PLAN.md — Presentation layer foundation (Wave 3)
+- [x] 11-04-PLAN.md — Charts implementation (Wave 4)
+- [x] 11-05-PLAN.md — Integration testing + cache hooks (Wave 5)
 
 ---
 
 ### Phase 12: Calendar Enhancements
-**Goal**: Migliorare interattività e feedback visivo calendario
+**Goal**: Migliorare interattivita e feedback visivo calendario
 
 **Requirements**: CAL-10/11/12
 
 **Success Criteria**:
 1. Tap su prenotazione nel bottom sheet apre modifica
-2. Giorni con più prenotazioni mostrano indicatori multipli
+2. Giorni con piu prenotazioni mostrano indicatori multipli
 3. Swipe orizzontale cambia mese
 4. Navigazione fluida
 
@@ -375,6 +394,12 @@ Plans:
 - Test navigazione
 
 **Estimated Duration**: 1 day
+**Plans**: 3 plans in 3 waves
+
+Plans:
+- [x] 12-01-PLAN.md — Tappable bottom sheet (Wave 1)
+- [ ] 12-02-PLAN.md — Multi-reservation indicators (Wave 2)
+- [ ] 12-03-PLAN.md — Swipe gestures and testing (Wave 3)
 
 ---
 
@@ -426,15 +451,15 @@ Plans:
 
 ## Phase Summary - Milestone 2
 
-| Phase | Name | Requirements | Priority | Est. Duration |
-|-------|------|--------------|----------|---------------|
-| 9 | Performance Optimization | 5 | CRITICAL | 3-4 days |
-| 10 | UI/UX Restructuring | 4 | HIGH | 1-2 days |
-| 11 | Statistics Feature | 8 | HIGH | 5-7 days |
-| 12 | Calendar Enhancements | 3 | MEDIUM | 1 day |
-| 13 | Notifications 2.0 | 4 | MEDIUM | 2-3 days |
-| 14 | Data Export | 2 | LOW | 1 day |
-| **Total** | **28 requirements** | | | **13-18 days** |
+| Phase | Name | Requirements | Priority | Status | Duration |
+|-------|------|--------------|----------|--------|----------|
+| 9 | Performance Optimization | 5 | CRITICAL | Pending | 3-4 days |
+| 10 | UI/UX Restructuring | 4 | HIGH | Pending | 1-2 days |
+| 11 | Statistics Feature | 10 | HIGH | ✅ DONE | 2 hours |
+| 12 | Calendar Enhancements | 3 | MEDIUM | Pending | 1 day |
+| 13 | Notifications 2.0 | 4 | MEDIUM | Pending | 2-3 days |
+| 14 | Data Export | 2 | LOW | Pending | 1 day |
+| **Total** | **28 requirements** | | | **1/6 done** | **13-18 days** |
 
 ---
 
@@ -447,7 +472,7 @@ Plans:
 4. **Phases 12, 13, 14** can be developed in parallel after Phase 11
 
 **Recommended Order**:
-- Sequential: 9 → 10 → 11
+- Sequential: 9 -> 10 -> 11
 - Parallel: 12, 13, 14 (after Phase 11 complete)
 
 **Dependencies**:

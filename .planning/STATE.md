@@ -6,15 +6,15 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 **Core value:** Visibilità immediata delle stanze occupate con colori per piattaforma
 **Current milestone:** Milestone 2 - Performance & Feature Expansion
-**Current focus:** Phase 11 Statistics Feature in Progress
+**Current focus:** Phase 12 Calendar Enhancements in Progress
 
 ## Project Status
 
-**Status**: 🔄 Phase 11 Statistics Feature - Plan 04 Complete
+**Status**: 🔄 Phase 12 Calendar Enhancements - Plan 01 Complete
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
-**Current Phase**: Phase 11 - Statistics Feature (Plan 04/05 complete)
-**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 Plans 01-04 complete
+**Current Phase**: Phase 12 - Calendar Enhancements (Plan 01 complete)
+**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 complete, Phase 12 Plan 01 complete
 
 ## Milestone 2 Context
 
@@ -36,6 +36,32 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `share_plus: ^7.2.1` (for CSV export)
 
 ## Recent Activity
+
+### 2026-03-08: Phase 12 Plan 01 Complete - Tappable Reservation Cards
+
+**Completed**:
+- [x] Added onTap callback to ReservationDayCard widget
+- [x] Added onReservationTap callback to DayDetailBottomSheet
+- [x] Wired navigation from calendar to EditReservationPage
+- [x] Bottom sheet closes before navigation
+- [x] 8 new widget tests passing (4 for card, 4 for navigation flow)
+
+**Commits**:
+- `5635095` feat(12-01): add onTap callback to ReservationDayCard
+- `4ab4e74` feat(12-01): add onReservationTap callback to DayDetailBottomSheet
+- `9c70e5b` feat(12-01): wire navigation from calendar to EditReservationPage
+- `8f47a1b` test(12-01): add widget tests for calendar navigation flow
+
+**Files Modified** (3 files):
+- `lib/features/reservations/presentation/widgets/reservation_day_card.dart`
+- `lib/features/reservations/presentation/widgets/day_detail_bottom_sheet.dart`
+- `lib/features/reservations/presentation/widgets/reservation_calendar.dart`
+
+**Files Created** (1 file):
+- `test/features/reservations/presentation/widgets/reservation_calendar_navigation_test.dart`
+
+**Next Steps**:
+- Continue with remaining Phase 12 plans
 
 ### 2026-03-08: Phase 11 Plan 04 Complete - Chart Widgets
 
@@ -303,10 +329,10 @@ All v1 requirements active - see REQUIREMENTS.md
 
 **Active (42)**:
 All Milestone 2 requirements active - see REQUIREMENTS.md
-- Phase 9: ⏸️ Not Started (CRITICAL - 5 requirements)
-- Phase 10: ⏸️ Not Started (4 requirements)
-- Phase 11: 🔄 In Progress (Plan 04/05 complete, 8 requirements)
-- Phase 12: ⏸️ Not Started (3 requirements)
+- Phase 9: ✅ Complete (5 requirements)
+- Phase 10: ✅ Complete (4 requirements)
+- Phase 11: ✅ Complete (8 requirements)
+- Phase 12: 🔄 In Progress (Plan 01 complete, 3 requirements)
 - Phase 13: ⏸️ Not Started (4 requirements)
 - Phase 14: ⏸️ Not Started (2 requirements)
 - Cross-cutting: ⏸️ Not Started (2 requirements)
@@ -331,9 +357,9 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 | Phase | Status | Priority | Est. Duration |
 |-------|--------|----------|---------------|
 | 9: Performance Optimization | ✅ Complete | CRITICAL | 3-4 days |
-| 10: UI/UX Restructuring | 🔄 In Progress | HIGH | 1-2 days |
-| 11: Statistics Feature | 🔄 In Progress | HIGH | 5-7 days |
-| 12: Calendar Enhancements | ⏸️ Not Started | MEDIUM | 1 day |
+| 10: UI/UX Restructuring | ✅ Complete | HIGH | 1-2 days |
+| 11: Statistics Feature | ✅ Complete | HIGH | 5-7 days |
+| 12: Calendar Enhancements | 🔄 In Progress | MEDIUM | 1 day |
 | 13: Notifications 2.0 | ⏸️ Not Started | MEDIUM | 2-3 days |
 | 14: Data Export | ⏸️ Not Started | LOW | 1 day |
 
@@ -379,7 +405,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 ## Last Updated
 
 **Date**: 2026-03-08
-**Trigger**: Phase 11 Plan 04 complete - Chart Widgets
+**Trigger**: Phase 12 Plan 01 complete - Tappable Reservation Cards
 **Updated by**: GSD execute-phase
 
 ---
