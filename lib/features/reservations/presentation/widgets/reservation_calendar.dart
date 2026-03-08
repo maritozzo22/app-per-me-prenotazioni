@@ -6,6 +6,7 @@ import 'package:app_prenotazioni/features/reservations/domain/entities/platform.
 import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_day_cell.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/day_detail_bottom_sheet.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
 
 /// Calendar widget showing reservations with platform-colored days.
 class ReservationCalendar extends ConsumerStatefulWidget {
@@ -97,6 +98,18 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
                 context,
                 day: selectedDay,
                 reservations: reservations,
+                onReservationTap: (reservation) {
+                  // Close bottom sheet first
+                  Navigator.of(context).pop();
+
+                  // Navigate to edit page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditReservationPage(reservation: reservation),
+                    ),
+                  );
+                },
               );
             });
           },
