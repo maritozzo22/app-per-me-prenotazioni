@@ -68,7 +68,7 @@ class MultiReservationIndicator extends StatelessWidget {
               style: TextStyle(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ),
