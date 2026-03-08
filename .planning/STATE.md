@@ -6,15 +6,15 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 **Core value:** Visibilità immediata delle stanze occupate con colori per piattaforma
 **Current milestone:** Milestone 2 - Performance & Feature Expansion
-**Current focus:** Phase 12 Calendar Enhancements in Progress
+**Current focus:** Phase 13 Notifications 2.0 (Phase 12 Complete)
 
 ## Project Status
 
-**Status**: Phase 12 Calendar Enhancements - Plan 02 Complete
+**Status**: Phase 12 Calendar Enhancements - COMPLETE
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
-**Current Phase**: Phase 12 - Calendar Enhancements (Plan 02 complete)
-**Progress**: Phase 9 complete, Phase 10 complete, Phase 11 complete, Phase 12 Plan 02 complete
+**Current Phase**: Phase 12 - Calendar Enhancements (Complete)
+**Progress**: Phase 9 complete, Phase 10 complete, Phase 11 complete, Phase 12 complete
 
 ## Milestone 2 Context
 
@@ -36,6 +36,33 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `share_plus: ^7.2.1` (for CSV export)
 
 ## Recent Activity
+
+### 2026-03-08: Phase 12 Plan 03 Complete - Swipe Gestures and Testing
+
+**Completed**:
+- [x] Added haptic feedback on month change (Android only)
+- [x] Added availableGestures configuration for horizontal swipe
+- [x] Improved calendar page layout with Column + Expanded
+- [x] Updated hint text to "Scorri orizzontalmente per cambiare mese"
+- [x] Created 6 integration tests for calendar navigation
+- [x] Updated ROADMAP with Phase 12 completion
+
+**Commits**:
+- `3b0626c` feat(12-03): add haptic feedback and horizontal swipe to calendar
+- `615773b` feat(12-03): improve calendar page layout for smooth gestures
+- `67802f3` test(12-03): add integration tests for calendar navigation
+- `53fd7c0` docs(12-03): update ROADMAP with Phase 12 completion
+
+**Files Created** (1 file):
+- `integration_test/test/calendar_navigation_test.dart`
+
+**Files Modified** (3 files):
+- `lib/features/reservations/presentation/widgets/reservation_calendar.dart`
+- `lib/features/reservations/presentation/pages/calendar_page.dart`
+- `.planning/ROADMAP.md`
+
+**Next Steps**:
+- Phase 13: Notifications 2.0 or Phase 14: Data Export
 
 ### 2026-03-08: Phase 12 Plan 02 Complete - Multi-Reservation Indicators
 
@@ -363,7 +390,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 - Phase 9: ✅ Complete (5 requirements)
 - Phase 10: ✅ Complete (4 requirements)
 - Phase 11: ✅ Complete (8 requirements)
-- Phase 12: In Progress (Plan 02 complete, 3 requirements)
+- Phase 12: ✅ Complete (3 requirements)
 - Phase 13: ⏸️ Not Started (4 requirements)
 - Phase 14: ⏸️ Not Started (2 requirements)
 - Cross-cutting: ⏸️ Not Started (2 requirements)
@@ -390,7 +417,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 | 9: Performance Optimization | ✅ Complete | CRITICAL | 3-4 days |
 | 10: UI/UX Restructuring | ✅ Complete | HIGH | 1-2 days |
 | 11: Statistics Feature | ✅ Complete | HIGH | 5-7 days |
-| 12: Calendar Enhancements | 🔄 In Progress | MEDIUM | 1 day |
+| 12: Calendar Enhancements | ✅ Complete | MEDIUM | 1 day |
 | 13: Notifications 2.0 | ⏸️ Not Started | MEDIUM | 2-3 days |
 | 14: Data Export | ⏸️ Not Started | LOW | 1 day |
 
@@ -436,7 +463,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 ## Last Updated
 
 **Date**: 2026-03-08
-**Trigger**: Phase 12 Plan 02 complete - Multi-Reservation Indicators
+**Trigger**: Phase 12 Plan 03 complete - Swipe Gestures and Testing (Phase 12 COMPLETE)
 **Updated by**: GSD execute-phase
 
 ---
