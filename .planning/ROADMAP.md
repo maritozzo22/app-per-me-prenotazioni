@@ -376,30 +376,31 @@ Plans:
 
 ---
 
-### Phase 12: Calendar Enhancements
+### Phase 12: Calendar Enhancements ✅ COMPLETED
 **Goal**: Migliorare interattivita e feedback visivo calendario
 
 **Requirements**: CAL-10/11/12
 
+**Completed**: 2026-03-08
+
 **Success Criteria**:
-1. Tap su prenotazione nel bottom sheet apre modifica
-2. Giorni con piu prenotazioni mostrano indicatori multipli
-3. Swipe orizzontale cambia mese
-4. Navigazione fluida
+1. ✅ Tap su prenotazione nel bottom sheet apre modifica
+2. ✅ Giorni con piu prenotazioni mostrano indicatori multipli (4 dots + "+X")
+3. ✅ Swipe orizzontale cambia mese
+4. ✅ Navigazione fluida (haptic feedback su Android)
 
 **Deliverables**:
-- Bottom sheet prenotazioni tappabile
-- Indicatori multipli (fino a 4 dots, poi "+X")
-- Swipe gestures abilitate
-- Test navigazione
+- ✅ Bottom sheet prenotazioni tappabile
+- ✅ Indicatori multipli (fino a 4 dots, poi "+X")
+- ✅ Swipe gestures abilitate con haptic feedback
+- ✅ Integration tests per navigazione
 
-**Estimated Duration**: 1 day
-**Plans**: 3 plans in 3 waves
+**Actual Duration**: 1 day
 
 Plans:
 - [x] 12-01-PLAN.md — Tappable bottom sheet (Wave 1)
-- [ ] 12-02-PLAN.md — Multi-reservation indicators (Wave 2)
-- [ ] 12-03-PLAN.md — Swipe gestures and testing (Wave 3)
+- [x] 12-02-PLAN.md — Multi-reservation indicators (Wave 2)
+- [x] 12-03-PLAN.md — Swipe gestures and testing (Wave 3)
 
 ---
 
@@ -453,13 +454,13 @@ Plans:
 
 | Phase | Name | Requirements | Priority | Status | Duration |
 |-------|------|--------------|----------|--------|----------|
-| 9 | Performance Optimization | 5 | CRITICAL | Pending | 3-4 days |
-| 10 | UI/UX Restructuring | 4 | HIGH | Pending | 1-2 days |
+| 9 | Performance Optimization | 5 | CRITICAL | ✅ DONE | 3-4 days |
+| 10 | UI/UX Restructuring | 4 | HIGH | ✅ DONE | 1-2 days |
 | 11 | Statistics Feature | 10 | HIGH | ✅ DONE | 2 hours |
-| 12 | Calendar Enhancements | 3 | MEDIUM | Pending | 1 day |
+| 12 | Calendar Enhancements | 3 | MEDIUM | ✅ DONE | 1 day |
 | 13 | Notifications 2.0 | 4 | MEDIUM | Pending | 2-3 days |
 | 14 | Data Export | 2 | LOW | Pending | 1 day |
-| **Total** | **28 requirements** | | | **1/6 done** | **13-18 days** |
+| **Total** | **28 requirements** | | | **4/6 done** | **13-18 days** |
 
 ---
 
