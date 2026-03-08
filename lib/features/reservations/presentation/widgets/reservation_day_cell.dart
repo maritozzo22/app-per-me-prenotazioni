@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/core/widgets/animations.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/multi_reservation_indicator.dart';
 
 /// Custom day cell widget for calendar with platform-colored background.
 class ReservationDayCell extends StatelessWidget {
@@ -65,14 +66,30 @@ class ReservationDayCell extends StatelessWidget {
               width: 2,
             ),
           ),
-          child: Center(
-            child: Text(
-              '${day.day}',
-              style: TextStyle(
-                color: platformColor,
-                fontWeight: FontWeight.bold,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Day number
+              Text(
+                '${day.day}',
+                style: TextStyle(
+                  color: platformColor,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
+
+              // Multi-reservation indicator (only if more than 1)
+              if (reservations.length > 1)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: MultiReservationIndicator(
+                    reservations: reservations,
+                    maxDots: 4,
+                    dotSize: 4.0,
+                    spacing: 0.5,
+                  ),
+                ),
+            ],
           ),
         ),
       ),
