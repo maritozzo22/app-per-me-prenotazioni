@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/providers/statistics_provider.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/widgets/kpi_card.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/widgets/period_filter_selector.dart';
-import 'package:app_prenotazioni/features/statistics/domain/entities/statistics_filter.dart';
 import 'package:app_prenotazioni/features/statistics/domain/entities/period_filter.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/full_screen_loading_widget.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/inline_error_message.dart';

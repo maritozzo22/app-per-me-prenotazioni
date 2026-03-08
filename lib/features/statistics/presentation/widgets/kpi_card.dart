@@ -63,7 +63,6 @@ class KpiCard extends StatelessWidget {
       case KpiFormat.days:
         return '${value.toStringAsFixed(1)} giorni';
       case KpiFormat.number:
-      default:
         return NumberFormat.decimalPattern('it_IT').format(value);
     }
   }
