@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
@@ -7,6 +8,7 @@ import 'package:app_prenotazioni/features/reservations/presentation/widgets/rese
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/day_detail_bottom_sheet.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/multi_reservation_indicator.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
+import 'package:app_prenotazioni/core/platform/platform_service.dart';
 
 /// Calendar widget showing reservations with platform-colored days.
 class ReservationCalendar extends ConsumerStatefulWidget {
@@ -27,6 +29,7 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
   late CalendarFormat _calendarFormat;
   late DateTime _selectedDay;
   late DateTime _focusedDay;
+  DateTime? _previousMonth; // Track for haptic feedback
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
     _calendarFormat = CalendarFormat.month;
     _selectedDay = DateTime.now();
     _focusedDay = DateTime.now();
+    _previousMonth = DateTime.now();
   }
 
   @override
@@ -124,6 +128,15 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
 
           // Page navigation
           onPageChanged: (focusedDay) {
+            final newMonth = DateTime(focusedDay.year, focusedDay.month);
+            final oldMonth = _previousMonth ?? DateTime(_focusedDay.year, _focusedDay.month);
+
+            // Trigger haptic feedback on month change (Android only)
+            if (newMonth != oldMonth && PlatformService.isAndroid) {
+              HapticFeedback.lightImpact();
+            }
+
+            _previousMonth = newMonth;
             _focusedDay = focusedDay;
             calendarNotifier.changeMonth(focusedDay);
             widget.onPageChanged?.call();
@@ -288,6 +301,9 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
 
           // Week starts on Monday (Italy standard)
           startingDayOfWeek: StartingDayOfWeek.monday,
+
+          // Enable horizontal swipe only for month navigation
+          availableGestures: AvailableGestures.horizontalSwipe,
         ),
         ),
       ),
