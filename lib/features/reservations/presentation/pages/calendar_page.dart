@@ -23,13 +23,7 @@ class CalendarPage extends ConsumerWidget {
         onRefresh: () {
           return ref.read(calendarProvider.notifier).refresh();
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: _buildBody(context, ref, calendarState),
-          ),
-        ),
+        child: _buildBody(context, ref, calendarState),
       ),
     );
   }
@@ -54,9 +48,9 @@ class CalendarPage extends ConsumerWidget {
 
     return Column(
       children: [
-        // Calendar widget
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
+        // Calendar widget - takes most space
+        Expanded(
+          flex: 3,
           child: ReservationCalendar(
             onDaySelected: (selectedDay, focusedDay) {
               // Bottom sheet is shown automatically by ReservationCalendar
@@ -69,34 +63,39 @@ class CalendarPage extends ConsumerWidget {
 
         // Info section below calendar
         Expanded(
+          flex: 1,
           child: Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 48,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Seleziona un giorno per vedere le prenotazioni',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Trascina per navigare tra i mesi',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[500],
-                          fontStyle: FontStyle.italic,
-                        ),
-                  ),
-                ],
+              physics: const ClampingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 48,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Seleziona un giorno per vedere le prenotazioni',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Scorri orizzontalmente per cambiare mese',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[500],
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
