@@ -121,7 +121,7 @@ class MonthlyTrendChart extends StatelessWidget {
                   ),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   ),
                 ),
               ],
@@ -159,7 +159,7 @@ class MonthlyTrendChart extends StatelessWidget {
               color: Theme.of(context)
                   .colorScheme
                   .onSurfaceVariant
-                  .withOpacity(0.5),
+                  .withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
