@@ -3,10 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/providers/statistics_provider.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/year_over_year_chart.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/platform_revenue_chart.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/monthly_trend_chart.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/platform_bookings_chart.dart';
 import 'package:app_prenotazioni/features/statistics/domain/entities/aggregate_statistics.dart';
 import 'package:app_prenotazioni/features/statistics/domain/entities/statistics_filter.dart';
 import 'package:app_prenotazioni/features/statistics/domain/entities/platform_revenue.dart';
 import 'package:app_prenotazioni/features/statistics/domain/entities/monthly_revenue.dart';
+import 'package:app_prenotazioni/features/statistics/domain/entities/year_over_year_comparison.dart';
 import 'package:app_prenotazioni/core/providers/statistics_providers.dart';
 import 'package:app_prenotazioni/features/statistics/domain/repositories/statistics_repository.dart';
 import 'package:mocktail/mocktail.dart';
@@ -40,15 +45,38 @@ void main() {
             bookingCount: 15,
             percentage: 60.0,
           ),
+          PlatformRevenue(
+            platformId: '2',
+            platformName: 'Booking',
+            color: 0xFF003580,
+            totalRevenue: 4000.0,
+            bookingCount: 10,
+            percentage: 40.0,
+          ),
         ],
         monthlyTrend: [
+          MonthlyRevenue(
+            month: '2026-01',
+            revenue: 8000.0,
+            bookingCount: 20,
+          ),
+          MonthlyRevenue(
+            month: '2026-02',
+            revenue: 9000.0,
+            bookingCount: 22,
+          ),
           MonthlyRevenue(
             month: '2026-03',
             revenue: 10000.0,
             bookingCount: 25,
           ),
         ],
-        yearOverYear: null,
+        yearOverYear: YearOverYearComparison(
+          year1: 2025,
+          year2: 2026,
+          year1Monthly: List.generate(12, (i) => 8000.0 + i * 100),
+          year2Monthly: List.generate(12, (i) => 10000.0 + i * 100),
+        ),
       );
 
       when(() => mockRepository.getStatistics(any()))
@@ -202,6 +230,108 @@ void main() {
       );
 
       expect(find.byKey(const Key('statistics_view')), findsOneWidget);
+    });
+
+    testWidgets('all 4 charts displayed on page', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            statisticsRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+          child: const MaterialApp(
+            home: StatisticsPage(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Should display all 4 chart widgets
+      expect(find.byType(YearOverYearChart), findsOneWidget);
+      expect(find.byType(PlatformRevenueChart), findsOneWidget);
+      expect(find.byType(MonthlyTrendChart), findsOneWidget);
+      expect(find.byType(PlatformBookingsChart), findsOneWidget);
+    });
+
+    testWidgets('charts receive correct data from provider', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            statisticsRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+          child: const MaterialApp(
+            home: StatisticsPage(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify chart titles are visible
+      expect(find.text('Confronto Annuale'), findsOneWidget);
+      expect(find.text('Fatturato per Piattaforma'), findsOneWidget);
+      expect(find.text('Trend Mensile'), findsOneWidget);
+      expect(find.text('Prenotazioni per Piattaforma'), findsOneWidget);
+    });
+
+    testWidgets('charts layout responsively', (tester) async {
+      // Test with wide screen (should show side-by-side layout)
+      await tester.binding.setSurfaceSize(const Size(800, 600));
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            statisticsRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+          child: const MaterialApp(
+            home: StatisticsPage(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Should display all charts
+      expect(find.byType(YearOverYearChart), findsOneWidget);
+      expect(find.byType(PlatformRevenueChart), findsOneWidget);
+      expect(find.byType(MonthlyTrendChart), findsOneWidget);
+      expect(find.byType(PlatformBookingsChart), findsOneWidget);
+
+      // Reset surface size
+      await tester.binding.setSurfaceSize(null);
+    });
+
+    testWidgets('empty states show when yearOverYear is null', (tester) async {
+      final emptyStatsRepository = MockStatisticsRepository();
+      final emptyStats = AggregateStatistics(
+        totalRevenue: 0.0,
+        occupancyRate: 0.0,
+        averageStayDuration: 0.0,
+        totalBookings: 0,
+        totalGuests: 0,
+        platformBreakdown: [],
+        monthlyTrend: [],
+        yearOverYear: null,
+      );
+      when(() => emptyStatsRepository.getStatistics(any()))
+          .thenAnswer((_) async => emptyStats);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            statisticsRepositoryProvider.overrideWithValue(emptyStatsRepository),
+          ],
+          child: const MaterialApp(
+            home: StatisticsPage(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Should show empty state messages for charts with no data
+      expect(find.text('Dati insufficienti per il confronto'), findsOneWidget);
+      expect(find.text('Nessun dato disponibile'), findsWidgets);
     });
   });
 }

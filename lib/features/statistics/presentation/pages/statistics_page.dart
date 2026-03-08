@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/providers/statistics_provider.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/widgets/kpi_card.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/widgets/period_filter_selector.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/year_over_year_chart.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/platform_revenue_chart.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/monthly_trend_chart.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/widgets/platform_bookings_chart.dart';
 import 'package:app_prenotazioni/features/statistics/domain/entities/period_filter.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/full_screen_loading_widget.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/inline_error_message.dart';
@@ -95,16 +99,83 @@ class StatisticsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           _buildKpiGrid(context, statistics),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
-          // Charts Section (placeholder for Wave 4)
+          // Charts Section
           Text(
-            'Grafici',
+            'Analisi',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 12),
-          const Center(
-            child: Text('I grafici saranno implementati nella prossima wave'),
+
+          // Year-over-Year Chart
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: YearOverYearChart(data: statistics.yearOverYear),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Platform Revenue and Bookings (side by side on wide screens)
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 600) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: PlatformRevenueChart(
+                              data: statistics.platformBreakdown),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: PlatformBookingsChart(
+                              data: statistics.platformBreakdown),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: PlatformRevenueChart(
+                            data: statistics.platformBreakdown),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: PlatformBookingsChart(
+                            data: statistics.platformBreakdown),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Monthly Trend Chart
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: MonthlyTrendChart(data: statistics.monthlyTrend),
+            ),
           ),
         ],
       ),
