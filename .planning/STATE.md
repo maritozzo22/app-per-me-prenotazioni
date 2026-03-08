@@ -10,11 +10,11 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 ## Project Status
 
-**Status**: 🔄 Phase 11 Statistics Feature - Plan 01 Complete
+**Status**: 🔄 Phase 11 Statistics Feature - Plan 03 Complete
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
-**Current Phase**: Phase 11 - Statistics Feature (Plan 01/05 complete)
-**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 Plan 01 complete
+**Current Phase**: Phase 11 - Statistics Feature (Plan 03/05 complete)
+**Progress**: Phase 9 complete, Phase 10 in progress, Phase 11 Plans 01-03 complete
 
 ## Milestone 2 Context
 
@@ -36,6 +36,42 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `share_plus: ^7.2.1` (for CSV export)
 
 ## Recent Activity
+
+### 2026-03-08: Phase 11 Plan 03 Complete - Statistics Presentation Layer
+
+**Completed**:
+- [x] Created statisticsFilterProvider (StateProvider with default month period)
+- [x] Created statisticsProvider (AsyncNotifierProvider with loading/error states)
+- [x] Created StatisticsNotifier with refresh() and updateFilter() methods
+- [x] Integrated cache service invalidation on refresh
+- [x] Created KpiCard widget with 4 format types (number, currency, percentage, days)
+- [x] Created PeriodFilterSelector with 4 period options (Mese, Trimestre, Anno, Personalizzato)
+- [x] Updated StatisticsPage with responsive KPI grid (2/5 columns)
+- [x] Added refresh button in AppBar
+- [x] 29 presentation layer tests passing
+
+**Commits**:
+- `4321d9d` test(11-03): add failing tests for statistics providers
+- `ff41c16` feat(11-03): implement KpiCard widget with 4 format types
+- `0ebea3b` feat(11-03): implement PeriodFilterSelector widget
+- `cba3f77` feat(11-03): implement StatisticsPage with responsive layout
+- `3e586e1` chore(11-03): integrate cache service with statistics provider
+
+**Files Created** (9 files):
+- `lib/core/providers/statistics_providers.dart`
+- `lib/features/statistics/presentation/providers/statistics_provider.dart`
+- `lib/features/statistics/presentation/widgets/kpi_card.dart`
+- `lib/features/statistics/presentation/widgets/period_filter_selector.dart`
+- `test/features/statistics/presentation/providers/statistics_provider_test.dart`
+- `test/features/statistics/presentation/widgets/kpi_card_test.dart`
+- `test/features/statistics/presentation/widgets/period_filter_selector_test.dart`
+- `test/features/statistics/presentation/pages/statistics_page_test.dart`
+
+**Files Modified**:
+- `lib/features/statistics/presentation/pages/statistics_page.dart`
+
+**Next Steps**:
+- Plan 11-04: Chart widgets (Year-over-Year, Platform Revenue, Monthly Trend, Platform Bookings)
 
 ### 2026-03-08: Phase 11 Plan 01 Complete - Statistics Domain Layer
 
