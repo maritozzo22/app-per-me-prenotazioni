@@ -3,10 +3,6 @@ import 'package:uuid/uuid.dart';
 import 'package:app_prenotazioni/features/inventory/domain/entities/inventory_item.dart';
 import 'package:app_prenotazioni/features/inventory/domain/entities/inventory_category.dart';
 import 'package:app_prenotazioni/features/inventory/domain/repositories/inventory_repository.dart';
-import 'package:app_prenotazioni/features/inventory/data/repositories/inventory_repository_impl.dart';
-import 'package:app_prenotazioni/core/database/database_helper.dart';
-import 'package:app_prenotazioni/features/inventory/data/datasources/inventory_local_data_source.dart';
-import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 
 /// Provider for InventoryRepository
 ///
