@@ -10,7 +10,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 ## Project Status
 
-**Status**: Phase 12 Calendar Enhancements - COMPLETE
+**Status**: Phase 12 Calendar Enhancements - COMPLETE, Phase 15 added
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
 **Current Phase**: Phase 12 - Calendar Enhancements (Complete)
@@ -328,6 +328,11 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] Created global error handler with error type categorization
 - [x] Created reusable error display widgets
 - [x] 213 tests passing (2 pre-existing failures unrelated to changes)
+
+## Accumulated Context
+
+### Roadmap Evolution
+- Phase 15 added: Sistema Gestione Magazzino Inventario
 
 ## Decisions Log
 
