@@ -3,7 +3,7 @@ class DatabaseSchema {
   DatabaseSchema._();
 
   static const String name = 'reservations.db';
-  static const int version = 7;
+  static const int version = 8;
 
   // Table names
   static const String tableRooms = 'rooms';
@@ -12,8 +12,10 @@ class DatabaseSchema {
   static const String tableNotificationSchedules = 'notification_schedules';
   static const String tableNotificationSettings = 'notification_settings';
   static const String tableNotificationLogs = 'notification_logs';
+  static const String tableInventoryItems = 'inventory_items';
+  static const String tableInventoryMovements = 'inventory_movements';
 
-  // Room columns
+  // Inventory columns
   static const String roomId = 'id';
   static const String roomName = 'name';
   static const String roomType = 'type';
@@ -68,6 +70,23 @@ class DatabaseSchema {
   static const String notificationLogSuccess = 'success';
   static const String notificationLogErrorMessage = 'error_message';
   static const String notificationLogIsTest = 'is_test';
+
+  // Inventory item columns
+  static const String inventoryItemId = 'id';
+  static const String inventoryItemName = 'name';
+  static const String inventoryItemCategory = 'category';
+  static const String inventoryItemQuantity = 'quantity';
+  static const String inventoryItemExpiryDate = 'expiry_date';
+  static const String inventoryItemNotes = 'notes';
+  static const String inventoryItemCreatedAt = 'created_at';
+  static const String inventoryItemUpdatedAt = 'updated_at';
+
+  // Inventory movement columns
+  static const String inventoryMovementId = 'id';
+  static const String inventoryMovementItemId = 'item_id';
+  static const String inventoryMovementDelta = 'quantity_delta';
+  static const String inventoryMovementDate = 'movement_date';
+  static const String inventoryMovementCreatedAt = 'created_at';
 
   /// SQL to create rooms table.
   static const String createRoomsTable = '''
@@ -205,4 +224,38 @@ class DatabaseSchema {
   /// SQL to create index on notification_logs sent_at (version 6 -> 7).
   static const String createNotificationLogsSentAtIndex =
       'CREATE INDEX IF NOT EXISTS idx_notification_logs_sent_at ON $tableNotificationLogs ($notificationLogSentAt DESC)';
+
+  /// SQL to create inventory_items table (version 7 -> 8).
+  static const String createInventoryItemsTable = '''
+    CREATE TABLE IF NOT EXISTS $tableInventoryItems (
+      $inventoryItemId TEXT PRIMARY KEY,
+      $inventoryItemName TEXT NOT NULL,
+      $inventoryItemCategory TEXT NOT NULL,
+      $inventoryItemQuantity INTEGER NOT NULL DEFAULT 0,
+      $inventoryItemExpiryDate TEXT,
+      $inventoryItemNotes TEXT,
+      $inventoryItemCreatedAt TEXT NOT NULL,
+      $inventoryItemUpdatedAt TEXT
+    )
+  ''';
+
+  /// SQL to create inventory_movements table (version 7 -> 8).
+  static const String createInventoryMovementsTable = '''
+    CREATE TABLE IF NOT EXISTS $tableInventoryMovements (
+      $inventoryMovementId TEXT PRIMARY KEY,
+      $inventoryMovementItemId TEXT NOT NULL,
+      $inventoryMovementDelta INTEGER NOT NULL,
+      $inventoryMovementDate TEXT NOT NULL,
+      $inventoryMovementCreatedAt TEXT NOT NULL,
+      FOREIGN KEY ($inventoryMovementItemId) REFERENCES $tableInventoryItems ($inventoryItemId) ON DELETE CASCADE
+    )
+  ''';
+
+  /// SQL to create index on inventory_items expiry_date (version 7 -> 8).
+  static const String createInventoryItemsExpiryDateIndex =
+      'CREATE INDEX IF NOT EXISTS idx_inventory_expiry_date ON $tableInventoryItems ($inventoryItemExpiryDate)';
+
+  /// SQL to create index on inventory_movements item_id (version 7 -> 8).
+  static const String createInventoryMovementsItemIndex =
+      'CREATE INDEX IF NOT EXISTS idx_inventory_movements_item ON $tableInventoryMovements ($inventoryMovementItemId, $inventoryMovementDate DESC)';
 }
