@@ -9,10 +9,10 @@ part 'inventory_movement_model.g.dart';
 class InventoryMovementModel with _$InventoryMovementModel {
   const factory InventoryMovementModel({
     required String id,
-    required String itemId,
-    required int delta,
-    required String date, // ISO8601 string
-    required String createdAt,
+    @JsonKey(name: 'item_id') required String itemId,
+    @JsonKey(name: 'quantity_delta') required int delta,
+    @JsonKey(name: 'movement_date') required String date, // ISO8601 string
+    @JsonKey(name: 'created_at') required String createdAt,
   }) = _InventoryMovementModel;
 
   factory InventoryMovementModel.fromJson(Map<String, dynamic> json) =>

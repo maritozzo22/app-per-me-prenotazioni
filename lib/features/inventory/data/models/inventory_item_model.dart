@@ -8,6 +8,7 @@ part 'inventory_item_model.g.dart';
 /// Database model for inventory items
 @freezed
 class InventoryItemModel with _$InventoryItemModel {
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory InventoryItemModel({
     required String id,
     required String name,
