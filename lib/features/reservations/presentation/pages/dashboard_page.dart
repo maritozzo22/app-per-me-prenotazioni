@@ -38,7 +38,6 @@ class DashboardPage extends ConsumerWidget {
                 MaterialPageRoute(builder: (context) => const SettingsPage()),
               );
             },
-            semanticLabel: 'Apri impostazioni',
           ),
         ],
       ),

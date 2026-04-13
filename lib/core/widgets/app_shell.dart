@@ -5,12 +5,9 @@ import 'package:app_prenotazioni/features/reservations/presentation/pages/dashbo
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/pages/statistics_page.dart';
-import 'package:app_prenotazioni/core/presentation/pages/settings_page.dart';
 import 'package:app_prenotazioni/features/inventory/presentation/pages/inventory_page.dart';
-import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
-import 'package:app_prenotazioni/core/utils/animations.dart';
 
 /// State for tracking current tab index
 final currentTabProvider = StateProvider<int>((ref) => 0);
