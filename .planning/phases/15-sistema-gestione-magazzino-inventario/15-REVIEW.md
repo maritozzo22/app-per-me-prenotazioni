@@ -1,8 +1,8 @@
 ---
 phase: 15-sistema-gestione-magazzino-inventario
-reviewed: 2026-04-12T00:00:00Z
+reviewed: 2026-04-13T12:00:00Z
 depth: standard
-files_reviewed: 16
+files_reviewed: 31
 files_reviewed_list:
   - lib/core/database/database_helper_native.dart
   - lib/core/database/database_schema.dart
@@ -21,455 +21,190 @@ files_reviewed_list:
   - lib/features/inventory/presentation/widgets/inventory_filter_chips.dart
   - lib/features/inventory/presentation/widgets/inventory_item_card.dart
   - lib/features/inventory/presentation/widgets/inventory_movement_history_sheet.dart
+  - test/features/inventory/data/datasources/inventory_local_data_source_test.dart
+  - test/features/inventory/data/models/inventory_item_model_test.dart
+  - test/features/inventory/data/models/inventory_movement_model_test.dart
+  - test/features/inventory/data/repositories/inventory_repository_impl_test.dart
+  - test/features/inventory/domain/entities/inventory_category_test.dart
+  - test/features/inventory/domain/entities/inventory_item_test.dart
+  - test/features/inventory/domain/entities/inventory_movement_test.dart
+  - test/features/inventory/presentation/pages/inventory_page_test.dart
+  - test/features/inventory/presentation/providers/inventory_provider_test.dart
+  - test/features/inventory/presentation/widgets/add_edit_inventory_item_dialog_test.dart
+  - test/features/inventory/presentation/widgets/expiry_indicator_test.dart
+  - test/features/inventory/presentation/widgets/inventory_filter_chips_test.dart
+  - test/features/inventory/presentation/widgets/inventory_item_card_test.dart
+  - test/features/inventory/presentation/widgets/inventory_movement_history_sheet_test.dart
 findings:
-  critical: 2
-  warning: 6
+  critical: 1
+  warning: 4
   info: 3
-  total: 11
+  total: 8
 status: issues_found
 ---
 
 # Phase 15: Code Review Report
 
-**Reviewed:** 2026-04-12T00:00:00Z
+**Reviewed:** 2026-04-13T12:00:00Z
 **Depth:** standard
-**Files Reviewed:** 16
+**Files Reviewed:** 31
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the inventory management system implementation across all architectural layers (domain, data, presentation). The codebase demonstrates good separation of concerns with clean architecture patterns, proper use of Freezed for immutable models, and comprehensive SQLite schema design. However, several issues were identified that require attention before release, including race conditions in movement tracking, missing error handling, and potential null pointer exceptions.
+Reviewed the inventory management feature (Magazzino) implementation across all architectural layers: database schema, data layer (data source, models, repository), domain layer (entities, repository interface), presentation layer (providers, pages, widgets), and all associated test files. The codebase follows clean architecture with proper Freezed-generated immutable models and entities, transactional data operations, and Riverpod state management.
+
+One critical issue was found: a race condition in `addMovement` where the item quantity is read outside the transactional boundary, allowing concurrent movements to corrupt the quantity. Several warnings address type safety (`dynamic` usage), unhandled errors in `.then()` callbacks, a notification ID mismatch between scheduling and cancellation, and a misleading test helper. The test suite is well-structured with good coverage of domain logic, model conversions, and widget rendering.
 
 ## Critical Issues
 
-### CR-01: Race Condition in Inventory Movement Addition
+### CR-01: Race condition in addMovement -- item quantity read outside transaction
 
-**File:** `lib/features/inventory/data/repositories/inventory_repository_impl.dart:52-75`
+**File:** `lib/features/inventory/data/repositories/inventory_repository_impl.dart:53-75`
 
-**Issue:** The `addMovement` method has a race condition between reading the current item quantity (line 65) and updating it (line 74). Between these two operations, another movement could be added, causing the new quantity calculation to be based on stale data.
+**Issue:** In `addMovement()`, the current item is fetched via `getItemById()` (line 65), then the new quantity is computed (line 70), and finally both the movement insert and quantity update are committed in a transaction inside `_dataSource.addMovement()`. The read of the current quantity happens *before* the transaction starts. If two movements are added concurrently for the same item, both will read the same original quantity, compute different `newQuantity` values, and the second transaction will overwrite the first, losing one delta entirely.
 
-```dart
-// Line 65: Read current quantity
-final item = await getItemById(itemId);
-if (item == null) {
-  throw Exception('Item not found: $itemId');
-}
-final newQuantity = item.quantity + delta;
-
-// Line 73-74: Update with potentially stale quantity
-final movementModel = InventoryMovementModel.fromDomain(movement);
-await _dataSource.addMovement(movementModel, newQuantity);
+```
+Thread A: reads quantity=5, computes newQuantity=8 (delta=+3)
+Thread B: reads quantity=5, computes newQuantity=3 (delta=-2)
+Thread A: writes movement + sets quantity=8
+Thread B: writes movement + sets quantity=3  <-- should be 6, lost Thread A's delta
 ```
 
-**Fix:** Move the quantity calculation inside the database transaction to ensure atomicity:
+**Fix:** Move the quantity read inside the transaction. Use a SQL-level atomic update so the database handles concurrency:
 
 ```dart
-@override
-Future<void> addMovement(String itemId, int delta) async {
-  final now = DateTime.now();
-  final movement = InventoryMovement(
-    id: _uuid.v4(),
-    itemId: itemId,
-    delta: delta,
-    date: now,
-    createdAt: now,
-  );
-
-  final movementModel = InventoryMovementModel.fromDomain(movement);
-  
-  // Pass delta instead of pre-calculated quantity
-  await _dataSource.addMovementAtomic(movementModel, delta);
-}
-```
-
-Then update the data source to calculate within transaction:
-
-```dart
-Future<void> addMovementAtomic(
-  InventoryMovementModel movement,
-  int delta,
-) async {
+// In inventory_local_data_source.dart, change addMovement to accept only delta:
+Future<void> addMovement(InventoryMovementModel movement, int delta) async {
   await _db.transaction((txn) async {
-    // Get current quantity within transaction
-    final results = await txn.query(
-      DatabaseSchema.tableInventoryItems,
-      where: '${DatabaseSchema.inventoryItemId} = ?',
-      whereArgs: [movement.itemId],
-    );
-    
-    if (results.isEmpty) {
-      throw Exception('Item not found: ${movement.itemId}');
-    }
-    
-    final currentQuantity = results.first[DatabaseSchema.inventoryItemQuantity] as int;
-    final newQuantity = currentQuantity + delta;
-    
-    // Insert movement record
     await txn.insert(
       DatabaseSchema.tableInventoryMovements,
       movement.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-
-    // Update item quantity
-    await txn.update(
-      DatabaseSchema.tableInventoryItems,
-      {
-        DatabaseSchema.inventoryItemQuantity: newQuantity,
-        DatabaseSchema.inventoryItemUpdatedAt: DateTime.now().toIso8601String(),
-      },
-      where: '${DatabaseSchema.inventoryItemId} = ?',
-      whereArgs: [movement.itemId],
+    await txn.rawUpdate(
+      'UPDATE ${DatabaseSchema.tableInventoryItems} '
+      'SET ${DatabaseSchema.inventoryItemQuantity} = ${DatabaseSchema.inventoryItemQuantity} + ?, '
+      '${DatabaseSchema.inventoryItemUpdatedAt} = ? '
+      'WHERE ${DatabaseSchema.inventoryItemId} = ?',
+      [delta, DateTime.now().toIso8601String(), movement.itemId],
     );
   });
 }
 ```
 
-### CR-02: Unvalidated Date Parsing Can Throw Exceptions
-
-**File:** `lib/features/inventory/data/models/inventory_item_model.dart:49`
-
-**Issue:** The `toDomain()` method uses `DateTime.parse()` without validation, which can throw `FormatException` if the database contains malformed date strings.
+Then in the repository, pass `delta` instead of `newQuantity`:
 
 ```dart
-expiryDate: expiryDate != null ? DateTime.parse(expiryDate!) : null,
-createdAt: DateTime.parse(createdAt),
-updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
-```
-
-**Fix:** Add safe parsing with fallback or validation:
-
-```dart
-DateTime? safeParseDateTime(String? value) {
-  if (value == null || value.isEmpty) return null;
-  try {
-    return DateTime.parse(value);
-  } on FormatException catch (_) {
-    // Log error and return current time as fallback
-    return DateTime.now();
-  }
-}
-
-InventoryItem toDomain() {
-  return InventoryItem(
-    id: id,
-    name: name,
-    category: _parseCategory(category),
-    quantity: quantity,
-    expiryDate: safeParseDateTime(expiryDate),
-    notes: notes,
-    createdAt: safeParseDateTime(createdAt) ?? DateTime.now(),
-    updatedAt: safeParseDateTime(updatedAt),
-  );
-}
-```
-
-Same issue in `inventory_movement_model.dart:40-41`:
-
-```dart
-date: safeParseDateTime(date) ?? DateTime.now(),
-createdAt: safeParseDateTime(createdAt) ?? DateTime.now(),
+await _dataSource.addMovement(movementModel, delta);
 ```
 
 ## Warnings
 
-### WR-01: Missing Error Handling in InventoryNotifier
+### WR-01: Mismatched notification ID between scheduling and cancellation
 
-**File:** `lib/features/inventory/presentation/providers/inventory_provider.dart:84`
+**File:** `lib/features/inventory/application/inventory_notification_scheduler.dart:32,55-56`
 
-**Issue:** Notification scheduling failures are silently ignored, which could leave users without expiry notifications.
+**Issue:** When scheduling, the `NotificationSchedule` uses a string ID `'inventory_${item.id}'` (line 32). When cancelling, the code computes `'inventory_${item.id}'.hashCode` (an `int`) and passes it to `cancelNotification()` (line 56). The `scheduleNotification` method receives the whole `NotificationSchedule` object and may derive its own platform notification ID differently. If `scheduleNotification` and `cancelNotification` do not use the same ID derivation internally, scheduled expiry notifications will never be cancelled. Additionally, passing `PaymentStatus.received` as a placeholder (line 48) indicates this call is forced into a reservation-shaped API.
+
+**Fix:** Verify that `NotificationService.scheduleNotification` and `cancelNotification` use the same ID derivation mechanism. If `cancelNotification` takes an integer hash, confirm that `scheduleNotification` also uses `.id.hashCode` when registering with the platform. If there is a mismatch, both must use the same derivation. Long-term, consider creating an inventory-specific scheduling method rather than reusing the reservation notification path.
+
+### WR-02: `dynamic` type used instead of `InventoryItem` in InventoryPage methods
+
+**File:** `lib/features/inventory/presentation/pages/inventory_page.dart:127,160,175`
+
+**Issue:** The methods `_showEditDialog(dynamic item)`, `_showMovementHistory(dynamic item)`, and `_confirmDelete(dynamic item)` accept `dynamic` instead of `InventoryItem`. This bypasses Dart's type safety -- a caller could pass any object, causing runtime crashes when accessing `.id`, `.name`, or `.copyWith()`.
+
+**Fix:** Replace `dynamic` with `InventoryItem`:
 
 ```dart
-await repo.addItem(item);
-
-// Schedule expiry notification for food items per D-05
-await scheduler.scheduleExpiryNotification(item);
-
-return repo.getAllItems();
+void _showEditDialog(InventoryItem item) { ... }
+void _showMovementHistory(InventoryItem item) { ... }
+void _confirmDelete(InventoryItem item) { ... }
 ```
 
-**Fix:** Wrap notification scheduling in try-catch and log errors:
+### WR-03: `.then()` callbacks used without error handling -- failures silently swallowed
+
+**File:** `lib/features/inventory/presentation/pages/inventory_page.dart:115-124,148-155`
+
+**Issue:** The `addItem` and `updateItem` calls use `.then()` callbacks to show SnackBars but do not handle errors (no `.catchError()` or `try/catch`). If the repository throws, the error is silently swallowed. The user gets no feedback about the failure, and the SnackBar confirmation never appears, leaving the UI in an inconsistent state.
+
+**Fix:** Use async/await with try/catch:
 
 ```dart
-await repo.addItem(item);
-
-// Schedule expiry notification for food items per D-05
-try {
-  await scheduler.scheduleExpiryNotification(item);
-} catch (e) {
-  // Log error but don't fail the operation
-  debugPrint('Failed to schedule expiry notification: $e');
-}
-
-return repo.getAllItems();
-```
-
-Same issue at lines 99, 114 for update and delete operations.
-
-### WR-02: Generic Exception Type Throws
-
-**File:** `lib/features/inventory/data/repositories/inventory_repository_impl.dart:67`
-
-**Issue:** Throwing generic `Exception` makes error handling difficult for callers.
-
-```dart
-if (item == null) {
-  throw Exception('Item not found: $itemId');
-}
-```
-
-**Fix:** Use specific exception types:
-
-```dart
-if (item == null) {
-  throw ItemNotFoundException(itemId);
-}
-```
-
-Create a custom exception:
-
-```dart
-class ItemNotFoundException implements Exception {
-  final String itemId;
-  ItemNotFoundException(this.itemId);
-  
-  @override
-  String toString() => 'Item not found: $itemId';
-}
-```
-
-### WR-03: Potential Null Pointer in _showMovementHistory
-
-**File:** `lib/features/inventory/presentation/pages/inventory_page.dart:160-162`
-
-**Issue:** The method uses `inventoryRepositoryProvider` directly without null checks, but this provider could theoretically throw or return null in error states.
-
-```dart
-void _showMovementHistory(dynamic item) async {
-  final movements =
-      await ref.read(inventoryRepositoryProvider).getMovementsByItemId(item.id);
-```
-
-**Fix:** Add error handling:
-
-```dart
-void _showMovementHistory(dynamic item) async {
-  try {
-    final repo = ref.read(inventoryRepositoryProvider);
-    final movements = await repo.getMovementsByItemId(item.id);
-
-    if (!mounted) return;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => InventoryMovementHistorySheet(
-        movements: movements,
-      ),
-    );
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Errore caricamento storico: $e')),
-      );
-    }
-  }
-}
-```
-
-### WR-04: Missing Input Validation for Quantity Range
-
-**File:** `lib/features/inventory/presentation/widgets/add_edit_inventory_item_dialog.dart:125-134`
-
-**Issue:** The quantity validator accepts any integer, including extremely large values that could cause overflow or UI issues.
-
-```dart
-validator: (value) {
-  if (value == null || value.isEmpty) {
-    return 'Inserisci la quantità';
-  }
-  final quantity = int.tryParse(value);
-  if (quantity == null) {
-    return 'Inserisci un numero valido';
-  }
-  return null;
-},
-```
-
-**Fix:** Add range validation:
-
-```dart
-validator: (value) {
-  if (value == null || value.isEmpty) {
-    return 'Inserisci la quantità';
-  }
-  final quantity = int.tryParse(value);
-  if (quantity == null) {
-    return 'Inserisci un numero valido';
-  }
-  if (quantity < -999999 || quantity > 999999) {
-    return 'Quantità deve essere tra -999999 e 999999';
-  }
-  return null;
-},
-```
-
-### WR-05: Memory Leak in TextEditingController
-
-**File:** `lib/features/inventory/presentation/widgets/add_edit_inventory_item_dialog.dart:146-150`
-
-**Issue:** A new `TextEditingController` is created in build without being disposed, causing a memory leak.
-
-```dart
-TextFormField(
-  decoration: InputDecoration(
-    labelText: 'Data scadenza *',
-    hintText: 'Seleziona data',
-    suffixIcon: const Icon(Icons.calendar_today),
-  ),
-  readOnly: true,
-  onTap: _pickExpiryDate,
-  controller: TextEditingController(  // Created every build
-    text: _expiryDate != null
-        ? '${_expiryDate!.day}/${_expiryDate!.month}/${_expiryDate!.year}'
-        : '',
-  ),
-```
-
-**Fix:** Create a controller in initState and update its text when expiry date changes:
-
-```dart
-late TextEditingController _expiryDateController;
-
-@override
-void initState() {
-  super.initState();
-  _nameController = TextEditingController(text: widget.item?.name ?? '');
-  _quantityController = TextEditingController(
-    text: widget.item?.quantity.toString() ?? '1',
+void _showAddDialog() {
+  showDialog(
+    context: context,
+    builder: (context) => AddEditInventoryItemDialog(
+      onSubmit: ({...}) async {
+        try {
+          await ref.read(inventoryProvider.notifier).addItem(...);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Articolo aggiunto')),
+            );
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Errore: $e')),
+            );
+          }
+        }
+      },
+    ),
   );
-  _notesController = TextEditingController(text: widget.item?.notes ?? '');
-  _expiryDateController = TextEditingController(
-    text: widget.item?.expiryDate != null
-        ? '${widget.item!.expiryDate!.day}/${widget.item!.expiryDate!.month}/${widget.item!.expiryDate!.year}'
-        : '',
-  );
-  _selectedCategory = widget.item?.category;
-  _expiryDate = widget.item?.expiryDate;
-}
-
-@override
-void dispose() {
-  _nameController.dispose();
-  _quantityController.dispose();
-  _notesController.dispose();
-  _expiryDateController.dispose();
-  super.dispose();
-}
-
-// In _pickExpiryDate, update the controller text:
-if (picked != null) {
-  setState(() {
-    _expiryDate = picked;
-    _expiryDateController.text = 
-        '${picked.day}/${picked.month}/${picked.year}';
-  });
 }
 ```
 
-Then use `_expiryDateController` in the TextFormField.
+### WR-04: DatabaseHelper.forTesting() returns the same singleton instance
 
-### WR-06: Missing Null Check in inventory_page.dart
+**File:** `lib/core/database/database_helper_native.dart:15`
 
-**File:** `lib/features/inventory/presentation/pages/inventory_page.dart:127`
+**Issue:** The `DatabaseHelper.forTesting()` factory constructor calls `DatabaseHelper._internal()`, which returns the same singleton instance as `DatabaseHelper()`. Tests using `forTesting()` share state with any code using the default constructor, which could cause test pollution between suites. The method name implies it provides isolation, but it does not.
 
-**Issue:** The `_showEditDialog` and `_showMovementHistory` methods accept `dynamic` instead of `InventoryItem`, losing type safety.
+**Fix:** Either create a truly separate instance for testing by accepting a custom database path, or remove the factory and document that tests must override the provider with a separate database:
 
 ```dart
-void _showEditDialog(dynamic item) {
+// Option: Named constructor with path override
+DatabaseHelper._withPath(this._dbPath);
+factory DatabaseHelper.forTesting() => DatabaseHelper._withPath(inMemoryDatabasePath);
 ```
-
-**Fix:** Use proper type:
-
-```dart
-void _showEditDialog(InventoryItem item) {
-```
-
-Same for line 160 and 175.
 
 ## Info
 
-### IN-01: Inconsistent Error Message Language
-
-**File:** `lib/features/inventory/presentation/pages/inventory_page.dart:75`
-
-**Issue:** Error messages are in English while the rest of the UI is in Italian.
-
-```dart
-Text('Errore: $error'),
-```
-
-**Fix:** Use Italian for consistency:
-
-```dart
-Text('Si è verificato un errore: $error'),
-```
-
-### IN-02: Magic Number in Expiry Calculation
+### IN-01: Expiry date calculation uses `Duration(days: 4)` for "3 days" threshold
 
 **File:** `lib/features/inventory/domain/entities/inventory_item.dart:55`
 
-**Issue:** The value `4` is used for "3 days" calculation without explanation.
+**Issue:** The comment says "3 days means within next 3 days" but the code uses `Duration(days: 4)`. The logic is technically correct (comparing normalized-to-midnight dates, day 0 through day 3 inclusive spans 4 calendar days), but the magic number 4 without explanation is confusing. The `<= 3` check in `_formatExpiryDate` (inventory_item_card.dart line 93) also refers to "3 days" in the UI text.
 
-```dart
-final threeDaysFromNow = today.add(const Duration(days: 4)); // 3 days means within next 3 days
-```
-
-**Fix:** Use a named constant:
+**Fix:** Extract the threshold into a named constant with a clarifying comment:
 
 ```dart
 static const int _expiryWarningDays = 3;
+// +1 day because we compare at midnight: "within 3 days" spans 4 calendar days
 final threeDaysFromNow = today.add(Duration(days: _expiryWarningDays + 1));
 ```
 
-### IN-03: Redundant Null Check in InventoryItemCard
+### IN-02: Unused import and dead code in inventory_provider_test.dart
 
-**File:** `lib/features/inventory/presentation/widgets/inventory_item_card.dart:84-95`
+**File:** `test/features/inventory/presentation/providers/inventory_provider_test.dart:8,12`
 
-**Issue:** The `_formatExpiryDate` method checks for null twice (once before calling, once inside).
+**Issue:** `import 'package:sqflite/sqflite.dart';` is imported and `FakeDatabase extends Fake implements Database` is declared (line 12), but `FakeDatabase` is never used in any test. This is dead code that adds unnecessary dependencies to the test file.
 
-```dart
-if (item.expiryDate != null)
-  Text(
-    _formatExpiryDate(),
-    ...
-  ),
-```
+**Fix:** Remove the unused import and the `FakeDatabase` class definition.
 
-And in the method:
+### IN-03: Cross-feature dependency on PaymentStatus for inventory notifications
 
-```dart
-String _formatExpiryDate() {
-  if (item.expiryDate == null) return '';
-  ...
-}
-```
+**File:** `lib/features/inventory/application/inventory_notification_scheduler.dart:5`
 
-**Fix:** Remove the null check in the method since the caller ensures it's not null:
+**Issue:** `import 'package:app_prenotazioni/features/reservations/domain/value_objects/payment_status.dart';` is imported only to pass `PaymentStatus.received` as a placeholder argument on line 48. This creates a cross-feature dependency that exists solely because `scheduleNotification` requires a `PaymentStatus` parameter irrelevant for inventory notifications.
 
-```dart
-String _formatExpiryDate() {
-  final days = item.daysUntilExpiry!;
-  if (days < 0) return 'Scaduto il ${_formatDate(item.expiryDate!)}';
-  if (days == 0) return 'Scade oggi';
-  if (days == 1) return 'Scade domani';
-  if (days <= 3) return 'Scade tra $days giorni';
-  return 'Scade il ${_formatDate(item.expiryDate!)}';
-}
-```
+**Fix:** Consider refactoring `NotificationService.scheduleNotification` to not require a `PaymentStatus`, or create an inventory-specific scheduling interface that does not carry reservation-domain concepts. This is a design improvement rather than a bug.
 
 ---
 
-_Reviewed: 2026-04-12T00:00:00Z_
+_Reviewed: 2026-04-13T12:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
