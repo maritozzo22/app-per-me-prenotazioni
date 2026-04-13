@@ -3,6 +3,8 @@ import 'package:uuid/uuid.dart';
 import 'package:app_prenotazioni/features/inventory/domain/entities/inventory_item.dart';
 import 'package:app_prenotazioni/features/inventory/domain/entities/inventory_category.dart';
 import 'package:app_prenotazioni/features/inventory/domain/repositories/inventory_repository.dart';
+import 'package:app_prenotazioni/features/inventory/application/inventory_notification_scheduler.dart';
+import 'package:app_prenotazioni/features/notifications/presentation/providers/notification_permission_provider.dart';
 
 /// Provider for InventoryRepository
 ///
@@ -11,6 +13,12 @@ final inventoryRepositoryProvider = Provider<InventoryRepository>((ref) {
   throw UnimplementedError(
     'inventoryRepositoryProvider must be overridden in main.dart or tests',
   );
+});
+
+/// Provider for InventoryNotificationScheduler
+final inventoryNotificationSchedulerProvider = Provider<InventoryNotificationScheduler>((ref) {
+  final notificationService = ref.watch(notificationServiceProvider);
+  return InventoryNotificationScheduler(notificationService);
 });
 
 /// Selected category filter (null = show all per D-02)
@@ -58,6 +66,8 @@ class InventoryNotifier extends AsyncNotifier<List<InventoryItem>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final repo = ref.watch(inventoryRepositoryProvider);
+      final scheduler = ref.watch(inventoryNotificationSchedulerProvider);
+
       final item = InventoryItem(
         id: _uuid.v4(),
         name: name,
@@ -67,7 +77,12 @@ class InventoryNotifier extends AsyncNotifier<List<InventoryItem>> {
         notes: notes,
         createdAt: DateTime.now(),
       );
+
       await repo.addItem(item);
+
+      // Schedule expiry notification for food items per D-05
+      await scheduler.scheduleExpiryNotification(item);
+
       return repo.getAllItems();
     });
   }
@@ -76,7 +91,13 @@ class InventoryNotifier extends AsyncNotifier<List<InventoryItem>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final repo = ref.watch(inventoryRepositoryProvider);
+      final scheduler = ref.watch(inventoryNotificationSchedulerProvider);
+
       await repo.updateItem(item);
+
+      // Reschedule notification if expiry date changed
+      await scheduler.rescheduleExpiryNotification(item);
+
       return repo.getAllItems();
     });
   }
@@ -85,6 +106,14 @@ class InventoryNotifier extends AsyncNotifier<List<InventoryItem>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final repo = ref.watch(inventoryRepositoryProvider);
+      final scheduler = ref.watch(inventoryNotificationSchedulerProvider);
+
+      // Get item before deletion to cancel notification
+      final item = await repo.getItemById(id);
+      if (item != null) {
+        await scheduler.cancelItemNotification(item);
+      }
+
       await repo.deleteItem(id);
       return repo.getAllItems();
     });
