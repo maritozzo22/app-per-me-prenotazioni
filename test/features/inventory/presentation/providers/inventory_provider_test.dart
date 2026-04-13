@@ -99,6 +99,7 @@ void main() {
 
     test('deleteItem deletes item and refreshes', () async {
       when(() => mockRepo.getAllItems()).thenAnswer((_) async => []);
+      when(() => mockRepo.getItemById(any())).thenAnswer((_) async => null); // Stub getItemById to return null (item not found)
       when(() => mockRepo.deleteItem('1')).thenAnswer((_) async {});
 
       final notifier = container.read(inventoryProvider.notifier);
