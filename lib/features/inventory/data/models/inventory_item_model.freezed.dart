@@ -26,10 +26,12 @@ mixin _$InventoryItemModel {
   String get category =>
       throw _privateConstructorUsedError; // Stored as string enum value
   int get quantity => throw _privateConstructorUsedError;
-  String? get expiryDate =>
-      throw _privateConstructorUsedError; // ISO8601 string or null
+  @JsonKey(name: 'expiry_date')
+  String? get expiryDate => throw _privateConstructorUsedError; // ISO8601 string or null
   String? get notes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this InventoryItemModel to a JSON map.
@@ -54,10 +56,10 @@ abstract class $InventoryItemModelCopyWith<$Res> {
     String name,
     String category,
     int quantity,
-    String? expiryDate,
+    @JsonKey(name: 'expiry_date') String? expiryDate,
     String? notes,
-    String createdAt,
-    String? updatedAt,
+    @JsonKey(name: 'created_at') String createdAt,
+    @JsonKey(name: 'updated_at') String? updatedAt,
   });
 }
 
@@ -139,10 +141,10 @@ abstract class _$$InventoryItemModelImplCopyWith<$Res>
     String name,
     String category,
     int quantity,
-    String? expiryDate,
+    @JsonKey(name: 'expiry_date') String? expiryDate,
     String? notes,
-    String createdAt,
-    String? updatedAt,
+    @JsonKey(name: 'created_at') String createdAt,
+    @JsonKey(name: 'updated_at') String? updatedAt,
   });
 }
 
@@ -216,10 +218,10 @@ class _$InventoryItemModelImpl extends _InventoryItemModel {
     required this.name,
     required this.category,
     required this.quantity,
-    this.expiryDate,
+    @JsonKey(name: 'expiry_date') this.expiryDate,
     this.notes,
-    required this.createdAt,
-    this.updatedAt,
+    @JsonKey(name: 'created_at') required this.createdAt,
+    @JsonKey(name: 'updated_at') this.updatedAt,
   }) : super._();
 
   factory _$InventoryItemModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -235,13 +237,16 @@ class _$InventoryItemModelImpl extends _InventoryItemModel {
   @override
   final int quantity;
   @override
+  @JsonKey(name: 'expiry_date')
   final String? expiryDate;
   // ISO8601 string or null
   @override
   final String? notes;
   @override
+  @JsonKey(name: 'created_at')
   final String createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final String? updatedAt;
 
   @override
@@ -306,10 +311,10 @@ abstract class _InventoryItemModel extends InventoryItemModel {
     required final String name,
     required final String category,
     required final int quantity,
-    final String? expiryDate,
+    @JsonKey(name: 'expiry_date') final String? expiryDate,
     final String? notes,
-    required final String createdAt,
-    final String? updatedAt,
+    @JsonKey(name: 'created_at') required final String createdAt,
+    @JsonKey(name: 'updated_at') final String? updatedAt,
   }) = _$InventoryItemModelImpl;
   const _InventoryItemModel._() : super._();
 
@@ -325,12 +330,15 @@ abstract class _InventoryItemModel extends InventoryItemModel {
   @override
   int get quantity;
   @override
+  @JsonKey(name: 'expiry_date')
   String? get expiryDate; // ISO8601 string or null
   @override
   String? get notes;
   @override
+  @JsonKey(name: 'created_at')
   String get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   String? get updatedAt;
 
   /// Create a copy of InventoryItemModel

@@ -8,16 +8,15 @@ part 'inventory_item_model.g.dart';
 /// Database model for inventory items
 @freezed
 class InventoryItemModel with _$InventoryItemModel {
-  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory InventoryItemModel({
     required String id,
     required String name,
     required String category, // Stored as string enum value
     required int quantity,
-    String? expiryDate, // ISO8601 string or null
+    @JsonKey(name: 'expiry_date') String? expiryDate, // ISO8601 string or null
     String? notes,
-    required String createdAt,
-    String? updatedAt,
+    @JsonKey(name: 'created_at') required String createdAt,
+    @JsonKey(name: 'updated_at') String? updatedAt,
   }) = _InventoryItemModel;
 
   factory InventoryItemModel.fromJson(Map<String, dynamic> json) =>

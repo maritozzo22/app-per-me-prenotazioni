@@ -13,10 +13,10 @@ _$InventoryItemModelImpl _$$InventoryItemModelImplFromJson(
   name: json['name'] as String,
   category: json['category'] as String,
   quantity: (json['quantity'] as num).toInt(),
-  expiryDate: json['expiryDate'] as String?,
+  expiryDate: json['expiry_date'] as String?,
   notes: json['notes'] as String?,
-  createdAt: json['createdAt'] as String,
-  updatedAt: json['updatedAt'] as String?,
+  createdAt: json['created_at'] as String,
+  updatedAt: json['updated_at'] as String?,
 );
 
 Map<String, dynamic> _$$InventoryItemModelImplToJson(
@@ -26,8 +26,8 @@ Map<String, dynamic> _$$InventoryItemModelImplToJson(
   'name': instance.name,
   'category': instance.category,
   'quantity': instance.quantity,
-  'expiryDate': instance.expiryDate,
+  'expiry_date': instance.expiryDate,
   'notes': instance.notes,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
+  'created_at': instance.createdAt,
+  'updated_at': instance.updatedAt,
 };
