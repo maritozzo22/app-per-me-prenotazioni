@@ -6,6 +6,7 @@ import 'package:app_prenotazioni/features/reservations/presentation/pages/calend
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
 import 'package:app_prenotazioni/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:app_prenotazioni/core/presentation/pages/settings_page.dart';
+import 'package:app_prenotazioni/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
@@ -37,7 +38,7 @@ class AppShellState extends ConsumerState<AppShell> {
     const CalendarPage(),
     const ReservationsListPage(),
     const StatisticsPage(),
-    const SettingsPage(),
+    const InventoryPage(), // Changed from SettingsPage per D-11
   ];
 
   /// Navigate to calendar tab programmatically.
@@ -131,8 +132,8 @@ class AppShellState extends ConsumerState<AppShell> {
               label: 'Statistiche',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings, semanticLabel: 'Impostazioni'),
-              label: 'Impostazioni',
+              icon: Icon(Icons.inventory_2_outlined, semanticLabel: 'Magazzino, gestisci articoli e scadenze'),
+              label: 'Magazzino', // Changed from 'Impostazioni' per D-13
             ),
           ],
         ),
