@@ -7,6 +7,7 @@ import 'package:app_prenotazioni/features/reservations/presentation/widgets/dash
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/next_event_countdown_card.dart';
 import 'package:app_prenotazioni/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
 import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
+import 'package:app_prenotazioni/core/presentation/pages/settings_page.dart';
 import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Dashboard page showing reservation statistics and overview.
@@ -27,6 +28,19 @@ class DashboardPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Dashboard'),
         elevation: 2,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Impostazioni',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
+            semanticLabel: 'Apri impostazioni',
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(dashboardProvider.notifier).refresh(),
@@ -88,6 +102,7 @@ class DashboardPage extends ConsumerWidget {
                 RoomOccupancyGrid(
                   key: const Key('occupancy_grid'),
                   roomOccupancy: state.roomOccupancy,
+                  nextReservations: state.nextReservations,
                 ),
               ],
             ),
@@ -164,7 +179,7 @@ class DashboardPage extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: 8),
-                RoomOccupancyGrid(roomOccupancy: state.roomOccupancy),
+                RoomOccupancyGrid(roomOccupancy: state.roomOccupancy, nextReservations: state.nextReservations),
                 const SizedBox(height: 24),
                 IncomeBreakdownCard(
                   received: state.statistics?.monthlyIncomeReceived ?? 0,
