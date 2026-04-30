@@ -32,6 +32,20 @@ class AndroidNotificationService implements NotificationService {
       initializationSettings,
       onDidReceiveNotificationResponse: _handleNotificationTap,
     );
+
+    // Explicitly create notification channel for Android 8+ (API 26)
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+
+    if (androidPlugin != null) {
+      const channel = AndroidNotificationChannel(
+        'reservation_reminders',
+        'Promemoria Prenotazioni',
+        description: 'Notifiche per i promemoria delle prenotazioni',
+        importance: Importance.high,
+      );
+      await androidPlugin.createNotificationChannel(channel);
+    }
   }
 
   @override

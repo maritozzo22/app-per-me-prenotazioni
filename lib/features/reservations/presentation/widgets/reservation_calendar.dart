@@ -239,27 +239,57 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
               );
             },
 
-            // Default today marker
+            // Today marker - combined with reservation styling when bookings exist
             todayBuilder: (context, day, focusedDay) {
               final normalizedDay = DateTime(day.year, day.month, day.day);
               final reservations = calendarState.reservationsByDate[normalizedDay] ?? [];
 
-              // Combine today marker with reservation marker
+              if (reservations.isEmpty) {
+                // No reservations - show default today indicator
+                return Container(
+                  margin: const EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.blue,
+                      width: 1,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${day.day}',
+                      style: TextStyle(
+                        color: Colors.blue[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              // Reservations present - combine today border with platform color
+              final platform = BookingPlatform.defaultPlatforms.firstWhere(
+                (p) => p.id == reservations.first.platformId,
+                orElse: () => BookingPlatform.defaultPlatforms.first,
+              );
+              final platformColor = platform.color;
+
               return Container(
                 margin: const EdgeInsets.all(6.0),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.2),
-                  shape: BoxShape.circle,
+                  color: platformColor.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(8.0),
                   border: Border.all(
                     color: Colors.blue,
-                    width: reservations.isEmpty ? 1 : 2,
+                    width: 2,
                   ),
                 ),
                 child: Center(
                   child: Text(
                     '${day.day}',
                     style: TextStyle(
-                      color: Colors.blue[700],
+                      color: platformColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

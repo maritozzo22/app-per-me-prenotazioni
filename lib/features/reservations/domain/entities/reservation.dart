@@ -30,7 +30,12 @@ class Reservation {
   });
 
   /// Calculates the number of nights for this reservation.
-  int get numberOfNights => checkOut.difference(checkIn).inDays;
+  /// Normalizes dates to midnight to avoid time-component truncation errors.
+  int get numberOfNights {
+    final checkInDate = DateTime(checkIn.year, checkIn.month, checkIn.day);
+    final checkOutDate = DateTime(checkOut.year, checkOut.month, checkOut.day);
+    return checkOutDate.difference(checkInDate).inDays;
+  }
 
   /// Checks if this reservation overlaps with a given date range.
   ///
