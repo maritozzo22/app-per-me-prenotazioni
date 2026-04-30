@@ -58,6 +58,21 @@ class DatabaseHelper {
     await db.execute(DatabaseSchema.createNotificationSchedulesScheduledDateIndex);
     await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
 
+    // Create performance indexes for reservations (V4->V5)
+    await db.execute(DatabaseSchema.migrationV4ToV5AddCheckInIndex);
+    await db.execute(DatabaseSchema.migrationV4ToV5AddCheckOutIndex);
+    await db.execute(DatabaseSchema.migrationV4ToV5AddCreatedAtIndex);
+
+    // Create additional performance indexes (V5->V6)
+    await db.execute(DatabaseSchema.migrationV5ToV6AddPlatformIndex);
+    await db.execute(DatabaseSchema.migrationV5ToV6AddRoomIndex);
+    await db.execute(DatabaseSchema.migrationV5ToV6AddDateRangeIndex);
+
+    // Create notification settings and logs tables (V6->V7)
+    await db.execute(DatabaseSchema.createNotificationSettingsTable);
+    await db.execute(DatabaseSchema.createNotificationLogsTable);
+    await db.execute(DatabaseSchema.createNotificationLogsSentAtIndex);
+
     // Insert default data
     await _insertDefaultRooms(db);
     await _insertDefaultPlatforms(db);
@@ -164,8 +179,22 @@ class DatabaseHelper {
       await db.execute(DatabaseSchema.createNotificationSchedulesIsSentIndex);
     }
     if (oldVersion < 5) {
-      // Add performance indexes for reservations
-      await db.execute(DatabaseSchema.migrationV4ToV5AddIndexes);
+      // Add performance indexes for reservations (check_in, check_out, created_at)
+      await db.execute(DatabaseSchema.migrationV4ToV5AddCheckInIndex);
+      await db.execute(DatabaseSchema.migrationV4ToV5AddCheckOutIndex);
+      await db.execute(DatabaseSchema.migrationV4ToV5AddCreatedAtIndex);
+    }
+    if (oldVersion < 6) {
+      // Add additional performance indexes (platform_id, room_id, composite date range)
+      await db.execute(DatabaseSchema.migrationV5ToV6AddPlatformIndex);
+      await db.execute(DatabaseSchema.migrationV5ToV6AddRoomIndex);
+      await db.execute(DatabaseSchema.migrationV5ToV6AddDateRangeIndex);
+    }
+    if (oldVersion < 7) {
+      // Create notification_settings and notification_logs tables
+      await db.execute(DatabaseSchema.createNotificationSettingsTable);
+      await db.execute(DatabaseSchema.createNotificationLogsTable);
+      await db.execute(DatabaseSchema.createNotificationLogsSentAtIndex);
     }
   }
 

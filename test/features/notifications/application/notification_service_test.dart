@@ -50,6 +50,11 @@ void main() {
       final granted = await webService.requestPermissions();
       expect(granted, false);
     });
+
+    test('should return false for sendTestNotification', () async {
+      final result = await webService.sendTestNotification();
+      expect(result, false);
+    });
   });
 
   group('createNotificationService', () {

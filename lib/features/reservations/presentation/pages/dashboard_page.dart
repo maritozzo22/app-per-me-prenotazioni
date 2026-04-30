@@ -4,7 +4,10 @@ import 'package:app_prenotazioni/features/reservations/presentation/providers/da
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/room_occupancy_grid.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/income_breakdown_card.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/upcoming_reservations_card.dart';
-import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/calendar_access_card.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/dashboard/next_event_countdown_card.dart';
+import 'package:app_prenotazioni/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
+import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Dashboard page showing reservation statistics and overview.
 class DashboardPage extends ConsumerWidget {
@@ -20,6 +23,7 @@ class DashboardPage extends ConsumerWidget {
     final dashboardState = ref.watch(dashboardProvider);
 
     return Scaffold(
+      key: const Key('dashboard_view'),
       appBar: AppBar(
         title: const Text('Dashboard'),
         elevation: 2,
@@ -37,13 +41,14 @@ class DashboardPage extends ConsumerWidget {
     DashboardState state,
   ) {
     if (state.isLoading && state.statistics == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const DashboardSkeleton();
     }
 
     if (state.error != null && state.statistics == null) {
-      return _buildError(context, ref, state.error!);
+      return ErrorDisplayWidget(
+        error: state.error!,
+        onRetry: () => ref.read(dashboardProvider.notifier).refresh(),
+      );
     }
 
     return LayoutBuilder(
@@ -59,33 +64,6 @@ class DashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildError(BuildContext context, WidgetRef ref, String error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
-          const SizedBox(height: 16),
-          Text(
-            'Errore nel caricamento',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            error,
-            style: Theme.of(context).textTheme.bodySmall,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () => ref.read(dashboardProvider.notifier).refresh(),
-            child: const Text('Riprova'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMobileLayout(BuildContext context, DashboardState state) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -94,41 +72,73 @@ class DashboardPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Room occupancy section
-          Text(
-            'Stanze Oggi',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: Duration.zero,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Stanze Oggi',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
+                const SizedBox(height: 8),
+                RoomOccupancyGrid(
+                  key: const Key('occupancy_grid'),
+                  roomOccupancy: state.roomOccupancy,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
-          RoomOccupancyGrid(roomOccupancy: state.roomOccupancy),
           const SizedBox(height: 24),
 
           // Income card
-          IncomeBreakdownCard(
-            received: state.statistics?.monthlyIncomeReceived ?? 0,
-            pending: state.statistics?.monthlyIncomePending ?? 0,
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 100),
+            child: IncomeBreakdownCard(
+              key: const Key('income_card'),
+              received: state.statistics?.monthlyIncomeReceived ?? 0,
+              pending: state.statistics?.monthlyIncomePending ?? 0,
+            ),
           ),
           const SizedBox(height: 24),
 
-          // Calendar access card
-          CalendarAccessCard(
-            onTap: onCalendarTap ?? () {},
+          // Next event countdown card
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 200),
+            child: NextEventCountdownCard(
+              upcomingCheckIns: state.statistics?.upcomingCheckIns ?? [],
+              upcomingCheckOuts: state.statistics?.upcomingCheckOuts ?? [],
+            ),
           ),
           const SizedBox(height: 24),
 
           // Upcoming check-ins
-          UpcomingReservationsCard(
-            title: 'Prossimi Arrivi',
-            reservations: state.statistics?.upcomingCheckIns ?? [],
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 300),
+            child: UpcomingReservationsCard(
+              key: const Key('check_ins_card'),
+              title: 'Prossimi Arrivi',
+              reservations: state.statistics?.upcomingCheckIns ?? [],
+            ),
           ),
           const SizedBox(height: 16),
 
           // Upcoming check-outs
-          UpcomingReservationsCard(
-            title: 'Prossime Partenze',
-            reservations: state.statistics?.upcomingCheckOuts ?? [],
-            showCheckOutDate: true,
+          FadeIn(
+            slide: SlideDirection.up,
+            delay: const Duration(milliseconds: 400),
+            child: UpcomingReservationsCard(
+              key: const Key('check_outs_card'),
+              title: 'Prossime Partenze',
+              reservations: state.statistics?.upcomingCheckOuts ?? [],
+              showCheckOutDate: true,
+            ),
           ),
           const SizedBox(height: 24),
         ],
@@ -168,8 +178,9 @@ class DashboardPage extends ConsumerWidget {
           Expanded(
             child: Column(
               children: [
-                CalendarAccessCard(
-                  onTap: onCalendarTap ?? () {},
+                NextEventCountdownCard(
+                  upcomingCheckIns: state.statistics?.upcomingCheckIns ?? [],
+                  upcomingCheckOuts: state.statistics?.upcomingCheckOuts ?? [],
                 ),
                 const SizedBox(height: 24),
                 UpcomingReservationsCard(

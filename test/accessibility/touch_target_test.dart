@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_prenotazioni/main.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
+// Test navigator key
+final testNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   // Initialize locale data for tests
@@ -12,7 +14,7 @@ void main() {
   });
 
   testWidgets('All buttons meet 48x48dp minimum touch target', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pumpAndSettle();
@@ -40,7 +42,7 @@ void main() {
   });
 
   testWidgets('IconButtons meet size requirements', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pumpAndSettle();
@@ -68,7 +70,7 @@ void main() {
   });
 
   testWidgets('App loads and has interactive elements', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MyApp()));
+    await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pumpAndSettle();

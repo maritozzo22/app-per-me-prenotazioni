@@ -19,6 +19,10 @@ Future<void> initializeNotifications(
   await notificationService.initialize();
   print('Notification service initialized on ${PlatformService.platformName}');
 
+  // Request notification permissions (required on Android 13+)
+  final permissionGranted = await notificationService.requestPermissions();
+  print('Notification permission granted: $permissionGranted');
+
   // Reschedule any pending notifications from the database
   // This ensures notifications persist across app restarts and device reboots
   try {

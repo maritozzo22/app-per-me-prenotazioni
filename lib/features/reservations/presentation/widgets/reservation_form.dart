@@ -11,6 +11,8 @@ import 'package:app_prenotazioni/features/reservations/domain/services/validatio
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/room_dropdown.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/platform_dropdown.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/payment_status_toggle.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
+import 'package:app_prenotazioni/core/shortcuts/app_shortcuts.dart';
 import 'package:uuid/uuid.dart';
 
 class ReservationForm extends StatefulWidget {
@@ -35,12 +37,13 @@ class ReservationForm extends StatefulWidget {
   State<ReservationForm> createState() => _ReservationFormState();
 }
 
-class _ReservationFormState extends State<ReservationForm> {
+class _ReservationFormState extends State<ReservationForm> with FocusManagerMixin {
   final _formKey = GlobalKey<FormBuilderState>();
   final _uuid = const Uuid();
 
   // Form state
   String? _selectedRoomId;
+  String? _selectedPlatformId;
   DateTime? _checkIn;
   DateTime? _checkOut;
   PaymentStatus _paymentStatus = PaymentStatus.pending;
@@ -49,6 +52,11 @@ class _ReservationFormState extends State<ReservationForm> {
   // Validation state
   String? _dateError;
   bool _isSubmitting = false;
+  bool _shouldShake = false;
+  String? _screenReaderAnnouncement;
+
+  // Focus nodes
+  late List<FocusNode> _focusNodes;
 
   bool get _isEditing => widget.existingReservation != null;
 
@@ -57,19 +65,27 @@ class _ReservationFormState extends State<ReservationForm> {
     super.initState();
     if (widget.existingReservation != null) {
       _selectedRoomId = widget.existingReservation!.roomId;
+      _selectedPlatformId = widget.existingReservation!.platformId;
       _checkIn = widget.existingReservation!.checkIn;
       _checkOut = widget.existingReservation!.checkOut;
       _paymentStatus = widget.existingReservation!.paymentStatus;
     }
+
+    // Create focus nodes for form fields
+    _focusNodes = createFocusNodes(7); // Room, CheckIn, CheckOut, Platform, Guest, Phone, Amount
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: FormBuilder(
-        key: _formKey,
-        child: Column(
+    return ShakeAnimation(
+      trigger: _shouldShake,
+      duration: const Duration(milliseconds: 500),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            key: const Key('reservation_form'),
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Room selection
@@ -77,6 +93,7 @@ class _ReservationFormState extends State<ReservationForm> {
               label: 'Seleziona stanza',
               hint: 'Scegli la stanza per questa prenotazione',
               child: RoomDropdown(
+                key: const Key('room_field'),
                 value: _selectedRoomId,
                 rooms: widget.rooms,
                 checkIn: _checkIn,
@@ -106,6 +123,7 @@ class _ReservationFormState extends State<ReservationForm> {
                     label: 'Data check-in',
                     hint: 'Seleziona la data di arrivo',
                     child: FormBuilderDateTimePicker(
+                      key: const Key('check_in_field'),
                       name: 'checkIn',
                       initialValue: _checkIn,
                       decoration: const InputDecoration(
@@ -133,6 +151,7 @@ class _ReservationFormState extends State<ReservationForm> {
                     label: 'Data check-out',
                     hint: 'Seleziona la data di partenza',
                     child: FormBuilderDateTimePicker(
+                      key: const Key('check_out_field'),
                       name: 'checkOut',
                       initialValue: _checkOut,
                       decoration: const InputDecoration(
@@ -158,11 +177,15 @@ class _ReservationFormState extends State<ReservationForm> {
             ),
             if (_dateError != null) ...[
               const SizedBox(height: 8),
-              Text(
-                _dateError!,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                  fontSize: 12,
+              FadeIn(
+                slide: SlideDirection.down,
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  _dateError!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ],
@@ -173,9 +196,14 @@ class _ReservationFormState extends State<ReservationForm> {
               label: 'Seleziona piattaforma',
               hint: 'Scegli la piattaforma di prenotazione',
               child: PlatformDropdown(
-                value: widget.existingReservation?.platformId,
+                key: const Key('platform_field'),
+                value: _selectedPlatformId,
                 platforms: widget.platforms,
-                onChanged: (value) {},
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPlatformId = value;
+                  });
+                },
                 validator: FormBuilderValidators.required(
                   errorText: 'Seleziona una piattaforma',
                 ),
@@ -188,6 +216,7 @@ class _ReservationFormState extends State<ReservationForm> {
               label: 'Nome ospite',
               hint: 'Inserisci il nome completo dell\'ospite',
               child: FormBuilderTextField(
+                key: const Key('guest_name_field'),
                 name: 'guestName',
                 initialValue: widget.existingReservation?.guest.name,
                 decoration: const InputDecoration(
@@ -206,6 +235,7 @@ class _ReservationFormState extends State<ReservationForm> {
               label: 'Telefono ospite',
               hint: 'Inserisci il numero di telefono dell\'ospite',
               child: FormBuilderTextField(
+                key: const Key('phone_field'),
                 name: 'guestPhone',
                 initialValue: widget.existingReservation?.guest.phone,
                 decoration: const InputDecoration(
@@ -227,6 +257,7 @@ class _ReservationFormState extends State<ReservationForm> {
                     label: 'Importo prenotazione',
                     hint: 'Inserisci l\'importo totale della prenotazione',
                     child: FormBuilderTextField(
+                      key: const Key('price_field'),
                       name: 'amount',
                       initialValue: widget.existingReservation?.amount?.toString(),
                       decoration: const InputDecoration(
@@ -249,6 +280,7 @@ class _ReservationFormState extends State<ReservationForm> {
                       const Text('Stato pagamento'),
                       const SizedBox(height: 8),
                       PaymentStatusToggle(
+                        key: const Key('payment_status_field'),
                         value: _paymentStatus,
                         onChanged: (status) {
                           setState(() {
@@ -268,6 +300,7 @@ class _ReservationFormState extends State<ReservationForm> {
               label: 'Note prenotazione',
               hint: 'Aggiungi note aggiuntive sulla prenotazione (opzionale)',
               child: FormBuilderTextField(
+                key: const Key('notes_field'),
                 name: 'notes',
                 initialValue: widget.existingReservation?.notes,
                 decoration: const InputDecoration(
@@ -281,26 +314,35 @@ class _ReservationFormState extends State<ReservationForm> {
             const SizedBox(height: 24),
 
             // Submit button
-            FilledButton(
-              onPressed: _canSubmit() && !_isSubmitting ? _submit : null,
-              child: _isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(_isEditing ? 'Aggiorna' : 'Crea prenotazione'),
+            Semantics(
+              label: _isEditing ? 'Aggiorna prenotazione' : 'Crea prenotazione',
+              button: true,
+              enabled: _canSubmit() && !_isSubmitting,
+              hint: _canSubmit()
+                  ? 'Salva la prenotazione'
+                  : 'Compila tutti i campi obbligatori',
+              child: FilledButton(
+                key: const Key('save_button'),
+                onPressed: _canSubmit() && !_isSubmitting ? _submit : null,
+                child: _isSubmitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(_isEditing ? 'Aggiorna' : 'Crea prenotazione'),
+              ),
             ),
           ],
         ),
       ),
-    );
+    ));
   }
 
   bool _canSubmit() {
-    return _formKey.currentState?.isValid == true &&
-        _dateError == null &&
+    return _dateError == null &&
         _selectedRoomId != null &&
+        _selectedPlatformId != null &&
         _checkIn != null &&
         _checkOut != null;
   }
@@ -349,7 +391,21 @@ class _ReservationFormState extends State<ReservationForm> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.saveAndValidate()) return;
+    if (!_formKey.currentState!.saveAndValidate()) {
+      // Trigger shake animation for visual feedback
+      setState(() {
+        _shouldShake = true;
+      });
+      // Reset shake trigger after animation
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          setState(() {
+            _shouldShake = false;
+          });
+        }
+      });
+      return;
+    }
 
     setState(() => _isSubmitting = true);
 
@@ -360,7 +416,7 @@ class _ReservationFormState extends State<ReservationForm> {
       final reservation = Reservation(
         id: widget.existingReservation?.id ?? _uuid.v4(),
         roomId: _selectedRoomId!,
-        platformId: values['platform'] as String,
+        platformId: _selectedPlatformId!,
         guest: Guest(
           name: values['guestName'] as String,
           phone: values['guestPhone'] as String?,

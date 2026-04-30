@@ -195,3 +195,412 @@
 | A11Y-01 | Phase 4 |
 | A11Y-02 | Phase 6 |
 | A11Y-03 | Phase 6 |
+
+---
+
+## Versione 2.0 - Milestone 2: Performance & Feature Expansion
+
+**Status**: Active
+**Created**: 2026-03-07
+**Based on**: PRIORITY_FEATURES_TASK.md
+
+### Overview
+
+Milestone 2 focuses on performance optimization, enhanced statistics, UI/UX improvements, and new features requested after MVP completion. Target: scale to 1000+ reservations while maintaining performance.
+
+**Total New Requirements**: 42
+**Critical**: 5 | **High**: 15 | **Medium**: 14 | **Low**: 8
+
+---
+
+### Phase 9: Performance Optimization (CRITICO)
+
+#### PERF-01: Lazy Loading Reservation List
+**Priority**: CRITICAL
+**Type**: Performance
+
+- [ ] Initial load shows only first 20 reservations
+- [ ] Load more triggered at 80% scroll position
+- [ ] Loading indicator shown during fetch
+- [ ] Query uses `LIMIT` and `OFFSET` in SQL
+- [ ] Scrolling remains smooth with 500+ reservations loaded
+- [ ] Test with 1000 reservations passes
+
+#### PERF-02: Intelligent Period Filters
+**Priority**: CRITICAL
+**Type**: Performance + UX
+
+- [ ] Filters: Future only, Last 30/90/180 days, Year 2025/2024, Custom range
+- [ ] Additional filters: Payment status, Platform, Room
+- [ ] Filters use SQL WHERE clauses (not Dart filtering)
+- [ ] Filter UI uses FilterChip/ChoiceChip widgets
+- [ ] Filter preferences saved to SharedPreferences
+- [ ] Result counter shows "X of Y reservations"
+- [ ] All filter combinations tested
+
+#### PERF-03: Calendar Query Optimization
+**Priority**: CRITICAL
+**Type**: Performance
+
+- [ ] Load only visible month + previous/next month
+- [ ] Reload when user swipes to different month
+- [ ] Debounce reload (300ms) to avoid query spam
+- [ ] Test with 3+ years of historical data
+- [ ] Month change < 300ms on mid-range device
+
+#### PERF-04: Database Index Optimization
+**Priority**: CRITICAL
+**Type**: Performance
+
+- [ ] Verify existing indexes on `check_in`, `check_out`, `created_at`
+- [ ] Add index on `platform_id` if missing
+- [ ] Add index on `payment_status` if missing
+- [ ] Add composite index `(check_in, platform_id)` if beneficial
+- [ ] Test with `EXPLAIN QUERY PLAN` to verify index usage
+- [ ] Document query performance before/after
+
+#### PERF-05: Statistics Caching (24h)
+**Priority**: CRITICAL
+**Type**: Performance
+
+- [ ] Cache statistics in SharedPreferences or SQLite
+- [ ] Cache valid for 24 hours
+- [ ] Invalidate cache when reservation added/modified/deleted
+- [ ] Show last update timestamp ("Updated: 7 Mar 2025, 10:30")
+- [ ] "Refresh now" button to force recalculation
+- [ ] Test with 100+ reservations, verify cache hit/miss
+
+---
+
+### Phase 10: UI/UX Restructuring
+
+#### UI-10: Simplified Dashboard
+**Priority**: HIGH
+**Type**: UX
+
+- [ ] Remove "Calendar Access Card" (calendar is already a tab)
+- [ ] Keep: Room Occupancy Grid, Income Breakdown, Upcoming Reservations
+- [ ] Add: Next Event Countdown Card (e.g., "Next check-in: 2 days - Mario Rossi")
+- [ ] Test responsive layout on mobile/tablet
+- [ ] No regression in existing dashboard tests
+
+#### UI-11: Statistics Tab Creation
+**Priority**: HIGH
+**Type**: Feature
+
+- [ ] New "Statistics" tab replaces "Platforms" tab in navigation
+- [ ] Tab order: Dashboard → Calendar → Reservations → Statistics → Settings
+- [ ] Statistics page shows time period filters
+- [ ] Statistics page shows KPI cards and charts
+- [ ] Navigation works correctly
+- [ ] Test tab switching performance
+
+#### UI-12: Platforms Moved to Settings
+**Priority**: HIGH
+**Type**: UX
+
+- [ ] Remove Platforms tab from bottom navigation
+- [ ] Add "Platform Management" tile in Settings page
+- [ ] Navigation to platforms page works from Settings
+- [ ] Deep links to platforms still work (if any)
+- [ ] Test navigation flow
+
+#### UI-13: Initial Tab Configuration
+**Priority**: LOW
+**Type**: UX
+
+- [ ] Dashboard remains default initial tab for now
+- [ ] Future consideration: Settings option to choose initial tab
+- [ ] Document decision in code comments
+
+---
+
+### Phase 11: Statistics Feature
+
+#### STAT-01: Statistics Domain Layer
+**Priority**: HIGH
+**Type**: Feature
+
+- [ ] Entity: `DashboardStatistics` with period, revenue, occupancy, etc.
+- [ ] Entity: `PlatformRevenue` with platform breakdown
+- [ ] Entity: `MonthlyRevenue` for trend data
+- [ ] Entity: `YearOverYearComparison` for YoY analysis
+- [ ] Repository interface: `StatisticsRepository`
+- [ ] All entities use freezed for immutability
+
+#### STAT-02: Statistics Data Layer
+**Priority**: HIGH
+**Type**: Feature
+
+- [ ] `StatisticsRepositoryImpl` implements calculations
+- [ ] SQL queries for platform revenue breakdown
+- [ ] SQL queries for monthly revenue trends
+- [ ] SQL queries for year-over-year comparison
+- [ ] Occupancy rate calculation (occupied days / total available days)
+- [ ] Average stay duration calculation
+- [ ] Test calculations with known dataset
+- [ ] Verify correctness (manual calculation spot-check)
+
+#### STAT-03: Statistics Presentation Layer
+**Priority**: HIGH
+**Type**: Feature
+
+- [ ] `StatisticsProvider` with Riverpod state management
+- [ ] `StatisticsPage` with responsive layout
+- [ ] Period filter selector (month, quarter, year, custom)
+- [ ] KPI cards: Revenue, Occupancy %, Avg Stay, Booking Count, Guest Count
+- [ ] Test all time period filters
+- [ ] Loading states and error handling
+
+#### STAT-04: Year-over-Year Comparison Chart
+**Priority**: HIGH
+**Type**: Feature
+
+- [ ] Bar chart with side-by-side bars (2024 vs 2025)
+- [ ] X-axis: months (Jan-Dec)
+- [ ] Y-axis: revenue in €
+- [ ] Legend showing which color is which year
+- [ ] Tooltips on tap/hover showing exact values
+- [ ] Test with 2+ years of data
+
+#### STAT-05: Platform Revenue Pie Chart
+**Priority**: HIGH
+**Type**: Feature
+
+- [ ] Pie chart showing revenue share per platform
+- [ ] Platform colors match app theme (Booking=blue, Airbnb=red, etc.)
+- [ ] Percentage labels on chart sections
+- [ ] Legend with platform name and € amount
+- [ ] Test with 3+ platforms having data
+- [ ] Handle case with 0 revenue gracefully
+
+#### STAT-06: Monthly Trend Line Chart
+**Priority**: HIGH
+**Type**: Feature
+
+- [ ] Line chart with months on X-axis, revenue on Y-axis
+- [ ] Smooth curve or straight lines connecting data points
+- [ ] Grid lines for easier reading
+- [ ] Optional: overlay previous year trend (dashed line)
+- [ ] Tooltips showing month and amount
+- [ ] Test with 12+ months of data
+
+#### STAT-07: Platform Bookings Bar Chart
+**Priority**: MEDIUM
+**Type**: Feature
+
+- [ ] Bar chart with platforms on X-axis, booking count on Y-axis
+- [ ] Bars colored by platform color
+- [ ] Value labels on top of bars
+- [ ] Sorted by booking count (descending)
+- [ ] Test with 3+ platforms
+
+#### STAT-08: FL Chart Integration
+**Priority**: HIGH
+**Type**: Technical
+
+- [ ] Add `fl_chart: ^0.66.0` to pubspec.yaml
+- [ ] Verify compatibility with Flutter 3.38.9+
+- [ ] Test rendering on web (Chrome) and Android
+- [ ] Test chart animations and interactions
+- [ ] Document chart color schemes and styling
+
+---
+
+### Phase 12: Calendar Enhancements
+
+#### CAL-10: Reservation Tap in Bottom Sheet
+**Priority**: MEDIUM
+**Type**: UX
+
+- [ ] Tap on reservation in day bottom sheet opens edit page
+- [ ] Bottom sheet closes before navigation
+- [ ] Reservation data passed to edit form
+- [ ] Return to calendar after save/cancel
+- [ ] Test navigation flow
+
+#### CAL-11: Multiple Reservation Indicators
+**Priority**: MEDIUM
+**Type**: UX
+
+- [ ] Show up to 4 colored dots (one per reservation) at bottom of day cell
+- [ ] If >4 reservations, show "+X" badge in corner
+- [ ] Dots use platform colors
+- [ ] Test with days having 1, 4, and 10+ reservations
+- [ ] Layout doesn't overlap day number
+
+#### CAL-12: Swipe Gesture for Month Navigation
+**Priority**: LOW
+**Type**: UX
+
+- [ ] Horizontal swipe changes month
+- [ ] Swipe left: next month
+- [ ] Swipe right: previous month
+- [ ] Smooth animation
+- [ ] No conflict with day tap gesture
+- [ ] Test gesture recognition
+
+---
+
+### Phase 13: Notifications 2.0
+
+#### NOT-10: Test Notification Button
+**Priority**: MEDIUM
+**Type**: Feature
+
+- [ ] "Send Test Notification" button in Settings
+- [ ] Button triggers immediate local notification
+- [ ] Notification appears within 5 seconds
+- [ ] Snackbar confirms "Notification sent!"
+- [ ] Handle case where notifications disabled (show dialog to enable)
+- [ ] Test on Android device
+
+#### NOT-11: Notification Log
+**Priority**: MEDIUM
+**Type**: Feature
+
+- [ ] Database table `notification_logs` created
+- [ ] Log entry for every scheduled notification
+- [ ] Fields: id, reservation_id, type, scheduled_date, sent_date, status, error_message
+- [ ] UI shows log history (date, time, type, status)
+- [ ] Status icons: ✓ sent, ⏱ pending, ✗ failed
+- [ ] Test logging for all notification types
+
+#### NOT-12: Customizable Notification Days
+**Priority**: MEDIUM
+**Type**: Feature
+
+- [ ] Settings UI with checkboxes for each day option
+- [ ] Options: 5, 3, 2, 1 day(s) before, same day
+- [ ] Preferences saved to SharedPreferences
+- [ ] NotificationScheduler reads preferences before scheduling
+- [ ] Default: all options enabled
+- [ ] Test with various combinations
+
+#### NOT-13: Customizable Notification Time
+**Priority**: MEDIUM
+**Type**: Feature
+
+- [ ] Time picker in settings
+- [ ] Time range validation: 9:00-10:00
+- [ ] If outside range, clamp to min/max
+- [ ] Saved to SharedPreferences
+- [ ] NotificationScheduler uses custom time
+- [ ] Default: 9:00
+- [ ] Test with different times
+
+---
+
+### Phase 14: Data Export
+
+#### EXP-01: Reservation CSV Export
+**Priority**: LOW
+**Type**: Feature
+
+- [ ] Export button in reservations list AppBar
+- [ ] Generates CSV with all filtered reservations
+- [ ] CSV format: ID, Guest, Phone, Room, Platform, Check-in, Check-out, Amount, Payment Status, Notes, Created
+- [ ] Proper CSV escaping (quotes, commas)
+- [ ] Share dialog to save/send file
+- [ ] Test CSV opens correctly in Excel
+- [ ] Italian localization (comma decimal separator)
+
+#### EXP-02: Statistics CSV Export
+**Priority**: LOW
+**Type**: Feature
+
+- [ ] Export button in statistics page
+- [ ] CSV with KPI summary + platform breakdown + monthly breakdown
+- [ ] Multi-section CSV format
+- [ ] Share dialog
+- [ ] Test CSV opens in Excel
+
+---
+
+### Cross-Cutting Requirements
+
+#### TEST-10: Performance Testing Suite
+**Priority**: HIGH
+**Type**: Testing
+
+- [ ] Test dataset with 1000+ reservations
+- [ ] Automated tests for load times (list, calendar, statistics)
+- [ ] Performance benchmarks documented
+- [ ] Regression tests for performance
+
+#### TEST-11: Milestone 2 Integration Tests
+**Priority**: HIGH
+**Type**: Testing
+
+- [ ] Integration test for statistics page (filter → view → chart interaction)
+- [ ] Integration test for CSV export flow
+- [ ] Integration test for notification customization
+- [ ] All tests pass on web and Android
+
+---
+
+### Dependencies
+
+**New Packages Required**:
+- `fl_chart: ^0.66.0` - Charting library
+- `share_plus: ^7.2.1` - File sharing for CSV export
+
+---
+
+### Success Criteria - Milestone 2
+
+**Performance Targets**:
+- [ ] App remains responsive with 1000+ reservations
+- [ ] List initial load < 500ms with filters
+- [ ] Calendar month change < 300ms
+- [ ] Statistics calculation < 1s (with cache: instant)
+- [ ] CSV export of 500 reservations < 2s
+
+**UX Targets**:
+- [ ] All new features have loading states
+- [ ] Error messages are user-friendly
+- [ ] Charts are readable on mobile screens
+- [ ] Navigation is intuitive
+- [ ] No feature regressions from Milestone 1
+
+**Quality Targets**:
+- [ ] Test coverage maintained > 80%
+- [ ] Zero critical bugs at milestone completion
+- [ ] All acceptance criteria met
+- [ ] Documentation updated
+- [ ] Both web and Android tested
+
+---
+
+### Phase Tracking - Milestone 2
+
+| REQ-ID | Phase | Priority |
+|--------|-------|----------|
+| PERF-01 | Phase 9 | CRITICAL |
+| PERF-02 | Phase 9 | CRITICAL |
+| PERF-03 | Phase 9 | CRITICAL |
+| PERF-04 | Phase 9 | CRITICAL |
+| PERF-05 | Phase 9 | CRITICAL |
+| UI-10 | Phase 10 | HIGH |
+| UI-11 | Phase 10 | HIGH |
+| UI-12 | Phase 10 | HIGH |
+| UI-13 | Phase 10 | LOW |
+| STAT-01 | Phase 11 | HIGH |
+| STAT-02 | Phase 11 | HIGH |
+| STAT-03 | Phase 11 | HIGH |
+| STAT-04 | Phase 11 | HIGH |
+| STAT-05 | Phase 11 | HIGH |
+| STAT-06 | Phase 11 | HIGH |
+| STAT-07 | Phase 11 | MEDIUM |
+| STAT-08 | Phase 11 | HIGH |
+| CAL-10 | Phase 12 | MEDIUM |
+| CAL-11 | Phase 12 | MEDIUM |
+| CAL-12 | Phase 12 | LOW |
+| NOT-10 | Phase 13 | MEDIUM |
+| NOT-11 | Phase 13 | MEDIUM |
+| NOT-12 | Phase 13 | MEDIUM |
+| NOT-13 | Phase 13 | MEDIUM |
+| EXP-01 | Phase 14 | LOW |
+| EXP-02 | Phase 14 | LOW |
+| TEST-10 | Cross-cutting | HIGH |
+| TEST-11 | Cross-cutting | HIGH |

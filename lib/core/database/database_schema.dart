@@ -3,13 +3,15 @@ class DatabaseSchema {
   DatabaseSchema._();
 
   static const String name = 'reservations.db';
-  static const int version = 5;
+  static const int version = 7;
 
   // Table names
   static const String tableRooms = 'rooms';
   static const String tablePlatforms = 'platforms';
   static const String tableReservations = 'reservations';
   static const String tableNotificationSchedules = 'notification_schedules';
+  static const String tableNotificationSettings = 'notification_settings';
+  static const String tableNotificationLogs = 'notification_logs';
 
   // Room columns
   static const String roomId = 'id';
@@ -46,6 +48,26 @@ class DatabaseSchema {
   static const String notificationScheduleScheduledDate = 'scheduled_date';
   static const String notificationScheduleIsSent = 'is_sent';
   static const String notificationScheduleCreatedAt = 'created_at';
+
+  // Notification settings columns
+  static const String notificationSettingsId = 'id';
+  static const String notificationSettingsEnabled = 'enabled';
+  static const String notificationSettingsDaysBefore = 'days_before';
+  static const String notificationSettingsHour = 'notification_hour';
+  static const String notificationSettingsMinute = 'notification_minute';
+  static const String notificationSettingsUpdatedAt = 'updated_at';
+
+  // Notification log columns
+  static const String notificationLogId = 'id';
+  static const String notificationLogReservationId = 'reservation_id';
+  static const String notificationLogGuestName = 'guest_name';
+  static const String notificationLogRoomLabel = 'room_label';
+  static const String notificationLogDaysBefore = 'days_before';
+  static const String notificationLogScheduledTime = 'scheduled_time';
+  static const String notificationLogSentAt = 'sent_at';
+  static const String notificationLogSuccess = 'success';
+  static const String notificationLogErrorMessage = 'error_message';
+  static const String notificationLogIsTest = 'is_test';
 
   /// SQL to create rooms table.
   static const String createRoomsTable = '''
@@ -133,14 +155,54 @@ class DatabaseSchema {
   ''';
 
   /// Migration to add performance indexes for reservations (version 4 -> 5).
-  static const String migrationV4ToV5AddIndexes = '''
-    -- Index on reservations check_in for date range queries
-    CREATE INDEX IF NOT EXISTS idx_reservations_check_in ON $tableReservations ($reservationCheckIn);
+  static const String migrationV4ToV5AddCheckInIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_check_in ON $tableReservations ($reservationCheckIn)';
 
-    -- Index on reservations check_out for date range queries
-    CREATE INDEX IF NOT EXISTS idx_reservations_check_out ON $tableReservations ($reservationCheckOut);
+  static const String migrationV4ToV5AddCheckOutIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_check_out ON $tableReservations ($reservationCheckOut)';
 
-    -- Index on reservations created_at for sorting
-    CREATE INDEX IF NOT EXISTS idx_reservations_created_at ON $tableReservations ($reservationCreatedAt DESC);
+  static const String migrationV4ToV5AddCreatedAtIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_created_at ON $tableReservations ($reservationCreatedAt DESC)';
+
+  /// Migration to add additional performance indexes (version 5 -> 6).
+  static const String migrationV5ToV6AddPlatformIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_platform_id ON $tableReservations ($reservationPlatformId)';
+
+  static const String migrationV5ToV6AddRoomIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_room_id ON $tableReservations ($reservationRoomId)';
+
+  static const String migrationV5ToV6AddDateRangeIndex =
+      'CREATE INDEX IF NOT EXISTS idx_reservations_date_range ON $tableReservations ($reservationCheckIn, $reservationCheckOut)';
+
+  /// SQL to create notification_settings table (version 6 -> 7).
+  static const String createNotificationSettingsTable = '''
+    CREATE TABLE IF NOT EXISTS $tableNotificationSettings (
+      $notificationSettingsId INTEGER PRIMARY KEY CHECK ($notificationSettingsId = 1),
+      $notificationSettingsEnabled INTEGER NOT NULL DEFAULT 1,
+      $notificationSettingsDaysBefore TEXT NOT NULL DEFAULT '[5,3,2,1,0]',
+      $notificationSettingsHour INTEGER NOT NULL DEFAULT 9,
+      $notificationSettingsMinute INTEGER NOT NULL DEFAULT 0,
+      $notificationSettingsUpdatedAt TEXT NOT NULL
+    )
   ''';
+
+  /// SQL to create notification_logs table (version 6 -> 7).
+  static const String createNotificationLogsTable = '''
+    CREATE TABLE IF NOT EXISTS $tableNotificationLogs (
+      $notificationLogId TEXT PRIMARY KEY,
+      $notificationLogReservationId TEXT,
+      $notificationLogGuestName TEXT,
+      $notificationLogRoomLabel TEXT,
+      $notificationLogDaysBefore INTEGER NOT NULL DEFAULT 0,
+      $notificationLogScheduledTime TEXT NOT NULL,
+      $notificationLogSentAt TEXT NOT NULL,
+      $notificationLogSuccess INTEGER NOT NULL DEFAULT 1,
+      $notificationLogErrorMessage TEXT,
+      $notificationLogIsTest INTEGER NOT NULL DEFAULT 0
+    )
+  ''';
+
+  /// SQL to create index on notification_logs sent_at (version 6 -> 7).
+  static const String createNotificationLogsSentAtIndex =
+      'CREATE INDEX IF NOT EXISTS idx_notification_logs_sent_at ON $tableNotificationLogs ($notificationLogSentAt DESC)';
 }

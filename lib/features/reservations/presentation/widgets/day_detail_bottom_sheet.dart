@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_day_card.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Bottom sheet displaying reservations for a specific day.
 class DayDetailBottomSheet extends StatelessWidget {
   final DateTime day;
   final List<Reservation> reservations;
+  final void Function(Reservation)? onReservationTap;
 
   const DayDetailBottomSheet({
     super.key,
     required this.day,
     required this.reservations,
+    this.onReservationTap,
   });
 
   /// Show the bottom sheet for a specific day.
@@ -19,6 +22,7 @@ class DayDetailBottomSheet extends StatelessWidget {
     BuildContext context, {
     required DateTime day,
     required List<Reservation> reservations,
+    void Function(Reservation)? onReservationTap,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -29,6 +33,7 @@ class DayDetailBottomSheet extends StatelessWidget {
       builder: (context) => DayDetailBottomSheet(
         day: day,
         reservations: reservations,
+        onReservationTap: onReservationTap,
       ),
     );
   }
@@ -49,13 +54,17 @@ class DayDetailBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: SafeArea(
-        child: Column(
+    return FadeIn(
+      slide: SlideDirection.up,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Drag handle
@@ -142,7 +151,7 @@ class DayDetailBottomSheet extends StatelessWidget {
                 ),
               )
             else
-              // Reservations list
+              // Reservations list with staggered animations
               Flexible(
                 child: ListView.separated(
                   shrinkWrap: true,
@@ -151,8 +160,17 @@ class DayDetailBottomSheet extends StatelessWidget {
                   itemCount: reservations.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 4),
                   itemBuilder: (context, index) {
-                    return ReservationDayCard(
-                      reservation: reservations[index],
+                    return FadeIn(
+                      slide: SlideDirection.up,
+                      duration: const Duration(milliseconds: 250),
+                      delay: Duration(milliseconds: 50 * index),
+                      curve: Curves.easeOut,
+                      child: ReservationDayCard(
+                        reservation: reservations[index],
+                        onTap: onReservationTap != null
+                            ? () => onReservationTap!(reservations[index])
+                            : null,
+                      ),
                     );
                   },
                 ),
@@ -162,6 +180,6 @@ class DayDetailBottomSheet extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }

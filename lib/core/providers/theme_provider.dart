@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app_prenotazioni/core/error/error_handler.dart';
 
 /// Key for storing theme preference
 const String _themePreferenceKey = 'theme_mode';
@@ -21,9 +22,9 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
         final themeMode = _parseThemeMode(themeModeString);
         state = themeMode;
       }
-    } catch (e) {
+    } catch (e, stack) {
       // If loading fails, keep system theme
-      debugPrint('Error loading theme preference: $e');
+      ErrorHandler.logError(e, stack);
     }
   }
 
@@ -58,8 +59,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_themePreferenceKey, _themeModeToString(themeMode));
-    } catch (e) {
-      debugPrint('Error saving theme preference: $e');
+    } catch (e, stack) {
+      ErrorHandler.logError(e, stack);
     }
   }
 

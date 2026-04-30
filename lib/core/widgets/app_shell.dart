@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:app_prenotazioni/core/utils/animations.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/dashboard_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
-import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
-import 'package:app_prenotazioni/core/widgets/theme_toggle_button.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/pages/statistics_page.dart';
+import 'package:app_prenotazioni/core/presentation/pages/settings_page.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
+import 'package:app_prenotazioni/core/utils/animations.dart';
+
+/// State for tracking current tab index
+final currentTabProvider = StateProvider<int>((ref) => 0);
 
 /// Main navigation shell with bottom navigation bar.
 ///
 /// Uses IndexedStack to preserve page state across tab switches.
 /// This prevents rebuilding pages when switching tabs.
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
   @override
-  State<AppShell> createState() => AppShellState();
+  ConsumerState<AppShell> createState() => AppShellState();
 }
 
 /// Public state class for programmatic navigation.
-class AppShellState extends State<AppShell> {
+class AppShellState extends ConsumerState<AppShell> {
   int _currentIndex = 0;
 
   // Pages are created once and kept in memory via IndexedStack
@@ -27,7 +36,8 @@ class AppShellState extends State<AppShell> {
     ),
     const CalendarPage(),
     const ReservationsListPage(),
-    const PlatformsListPage(),
+    const StatisticsPage(),
+    const SettingsPage(),
   ];
 
   /// Navigate to calendar tab programmatically.
@@ -51,41 +61,81 @@ class AppShellState extends State<AppShell> {
     });
   }
 
+  /// Refresh providers when switching to a tab
+  void _onTabChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    // Update the provider
+    ref.read(currentTabProvider.notifier).state = index;
+
+    // Trigger refresh for specific tabs
+    if (index == 0) {
+      // Dashboard - refresh statistics
+      ref.read(dashboardProvider.notifier).refresh();
+    } else if (index == 1) {
+      // Calendar - refresh reservations
+      ref.read(calendarProvider.notifier).refresh();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+      body: AnimatedSwitcher(
+        duration: AppAnimations.shouldReduceMotion(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 300),
+        switchInCurve: Curves.easeInOut,
+        switchOutCurve: Curves.easeInOut,
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
         },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+        child: Container(
+          key: ValueKey(_currentIndex),
+          child: IndexedStack(
+            key: const Key('indexed_stack'),
+            index: _currentIndex,
+            children: _pages,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendario',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Prenotazioni',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.hotel),
-            label: 'Piattaforme',
-          ),
-        ],
+        ),
+      ),
+      bottomNavigationBar: Semantics(
+        label: 'Barra di navigazione',
+        child: BottomNavigationBar(
+          key: const Key('bottom_nav'),
+          currentIndex: _currentIndex,
+          onTap: _onTabChanged,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
+          unselectedItemColor: Colors.grey,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard, semanticLabel: 'Dashboard'),
+              label: 'Dashboard',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today, semanticLabel: 'Calendario'),
+              label: 'Calendario',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list, semanticLabel: 'Lista prenotazioni'),
+              label: 'Prenotazioni',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart, semanticLabel: 'Statistiche'),
+              label: 'Statistiche',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings, semanticLabel: 'Impostazioni'),
+              label: 'Impostazioni',
+            ),
+          ],
+        ),
       ),
     );
   }

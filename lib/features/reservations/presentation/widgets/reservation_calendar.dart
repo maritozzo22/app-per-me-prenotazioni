@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
-import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_day_cell.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/day_detail_bottom_sheet.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/multi_reservation_indicator.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
+import 'package:app_prenotazioni/core/platform/platform_service.dart';
 
 /// Calendar widget showing reservations with platform-colored days.
 class ReservationCalendar extends ConsumerStatefulWidget {
@@ -26,6 +29,7 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
   late CalendarFormat _calendarFormat;
   late DateTime _selectedDay;
   late DateTime _focusedDay;
+  DateTime? _previousMonth; // Track for haptic feedback
 
   @override
   void initState() {
@@ -33,12 +37,23 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
     _calendarFormat = CalendarFormat.month;
     _selectedDay = DateTime.now();
     _focusedDay = DateTime.now();
+    _previousMonth = DateTime.now();
   }
 
   @override
   Widget build(BuildContext context) {
     final calendarState = ref.watch(calendarProvider);
     final calendarNotifier = ref.read(calendarProvider.notifier);
+
+    // Show error state if there's an error
+    if (calendarState.error != null) {
+      return _buildErrorState(calendarState.error!, calendarNotifier);
+    }
+
+    // Show loading state
+    if (calendarState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     // Update focused day when provider changes
     if (_focusedDay != calendarState.focusedDay) {
@@ -87,6 +102,18 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
                 context,
                 day: selectedDay,
                 reservations: reservations,
+                onReservationTap: (reservation) {
+                  // Close bottom sheet first
+                  Navigator.of(context).pop();
+
+                  // Navigate to edit page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditReservationPage(reservation: reservation),
+                    ),
+                  );
+                },
               );
             });
           },
@@ -101,6 +128,15 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
 
           // Page navigation
           onPageChanged: (focusedDay) {
+            final newMonth = DateTime(focusedDay.year, focusedDay.month);
+            final oldMonth = _previousMonth ?? DateTime(_focusedDay.year, _focusedDay.month);
+
+            // Trigger haptic feedback on month change (Android only)
+            if (newMonth != oldMonth && PlatformService.isAndroid) {
+              HapticFeedback.lightImpact();
+            }
+
+            _previousMonth = newMonth;
             _focusedDay = focusedDay;
             calendarNotifier.changeMonth(focusedDay);
             widget.onPageChanged?.call();
@@ -211,30 +247,25 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
 
             // Marker builder for multiple reservations
             markerBuilder: (context, day, events) {
-              if (events.length <= 1) return const SizedBox.shrink();
+              if (events.isEmpty) return const SizedBox.shrink();
 
               final reservations = events as List<Reservation>;
 
-              // Show colored dots for additional platforms (max 3)
+              // Only show indicator if more than 1 reservation
+              // (single reservation is shown via day cell background)
+              if (reservations.length <= 1) return const SizedBox.shrink();
+
               return Positioned(
                 bottom: 4,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: reservations.take(3).map((reservation) {
-                    final platform = BookingPlatform.defaultPlatforms.firstWhere(
-                      (p) => p.id == reservation.platformId,
-                      orElse: () => BookingPlatform.defaultPlatforms.first,
-                    );
-                    return Container(
-                      width: 6,
-                      height: 6,
-                      margin: const EdgeInsets.symmetric(horizontal: 1),
-                      decoration: BoxDecoration(
-                        color: platform.color,
-                        shape: BoxShape.circle,
-                      ),
-                    );
-                  }).toList(),
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: MultiReservationIndicator(
+                    reservations: reservations,
+                    maxDots: 4,
+                    dotSize: 5.0,
+                    spacing: 1.0,
+                  ),
                 ),
               );
             },
@@ -300,7 +331,45 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
 
           // Week starts on Monday (Italy standard)
           startingDayOfWeek: StartingDayOfWeek.monday,
+
+          // Enable horizontal swipe only for month navigation
+          availableGestures: AvailableGestures.horizontalSwipe,
         ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String error, CalendarNotifier notifier) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red.shade300,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Errore nel caricamento',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () => notifier.retry(),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Riprova'),
+            ),
+          ],
         ),
       ),
     );

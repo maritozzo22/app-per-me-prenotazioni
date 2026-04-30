@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:app_prenotazioni/core/database/database_helper.dart';
+import 'package:app_prenotazioni/core/database/database_schema.dart';
 import 'package:app_prenotazioni/features/reservations/data/repositories/reservation_repository_impl.dart';
 import 'package:app_prenotazioni/features/reservations/data/datasources/local/reservation_local_data_source.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
@@ -22,8 +23,8 @@ void main() {
     Reservation _createTestReservation(int index) {
       return Reservation(
         id: 'perf-test-$index',
-        roomId: 'room-1',
-        platformId: 'airbnb',
+        roomId: 'perf-room-1', // Custom test room
+        platformId: 'perf-platform-1', // Custom test platform
         guest: const Guest(name: 'Performance Test Guest', phone: '+39 123 456 7890'),
         checkIn: DateTime(2026, 1, 1).add(Duration(days: index)),
         checkOut: DateTime(2026, 1, 5).add(Duration(days: index)),
@@ -44,10 +45,38 @@ void main() {
       await repository.insertReservationsBatch(reservations);
     }
 
+    Future<void> _seedRoomsAndPlatforms(DatabaseHelper dbHelper) async {
+      final db = await dbHelper.database;
+      // Clear existing data
+      await db.delete(DatabaseSchema.tableReservations);
+      await db.delete(DatabaseSchema.tableRooms);
+      await db.delete(DatabaseSchema.tablePlatforms);
+
+      // Insert test room
+      await db.insert(DatabaseSchema.tableRooms, {
+        'id': 'perf-room-1',
+        'name': 'Performance Test Room',
+        'type': 'double',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      // Insert test platform
+      await db.insert(DatabaseSchema.tablePlatforms, {
+        'id': 'perf-platform-1',
+        'name': 'Test Platform',
+        'color_value': 0xFFFF0000,
+        'is_default': 0,
+        'is_system': 0,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    }
+
     setUp(() async {
       databaseHelper = DatabaseHelper.forTesting();
       final dataSource = ReservationLocalDataSource(databaseHelper: databaseHelper);
       repository = ReservationRepositoryImpl(dataSource: dataSource);
+
+      // Seed rooms and platforms first (required for foreign key constraints)
+      await _seedRoomsAndPlatforms(databaseHelper);
 
       // Seed database with test data
       await _seedTestData(repository, 100);
@@ -92,7 +121,7 @@ void main() {
     test('should insert reservations in batch efficiently', () async {
       final reservations = List.generate(
         50,
-        (i) => _createTestReservation(i),
+        (i) => _createTestReservation(i + 1000), // Use different IDs to avoid conflicts
       );
 
       final stopwatch = Stopwatch()..start();

@@ -6,7 +6,7 @@ import 'package:app_prenotazioni/core/widgets/app_shell.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/dashboard_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/calendar_page.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/reservations_list_page.dart';
-import 'package:app_prenotazioni/features/platforms/presentation/pages/platforms_list_page.dart';
+import 'package:app_prenotazioni/features/statistics/presentation/pages/statistics_page.dart';
 
 void main() {
   group('AppShell', () {
@@ -36,7 +36,7 @@ void main() {
       expect(find.text('Dashboard'), findsWidgets);
       expect(find.text('Calendario'), findsOneWidget);
       expect(find.text('Prenotazioni'), findsOneWidget);
-      expect(find.text('Piattaforme'), findsOneWidget);
+      expect(find.text('Statistiche'), findsOneWidget);
     });
 
     testWidgets('navigates to Calendar when tab tapped', (tester) async {
@@ -118,7 +118,7 @@ void main() {
       expect(find.byType(CalendarPage), findsOneWidget);
     });
 
-    testWidgets('all four pages are accessible via navigation', (tester) async {
+    testWidgets('all five pages are accessible via navigation', (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(home: AppShell()),
@@ -140,10 +140,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(ReservationsListPage), findsOneWidget);
 
-      // Navigate to Platforms (index 3)
-      await tester.tap(find.text('Piattaforme'));
+      // Navigate to Statistics (index 3)
+      await tester.tap(find.text('Statistiche'));
       await tester.pumpAndSettle();
-      expect(find.byType(PlatformsListPage), findsOneWidget);
+      expect(find.byType(StatisticsPage), findsOneWidget);
     });
   });
 }

@@ -9,6 +9,7 @@ import 'package:app_prenotazioni/features/reservations/data/models/guest_model.d
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/paginated_result.dart';
 
 class MockReservationDataSource extends Mock implements ReservationDataSource {}
 
@@ -175,6 +176,71 @@ void main() {
         expect(result.length, 1);
         expect(result.first, isA<BookingPlatform>());
         expect(result.first.id, 'booking');
+      });
+    });
+
+    group('getReservationsPaginated', () {
+      test('should return PaginatedResult with correct page and metadata', () async {
+        when(() => mockDataSource.getReservationsPaginated(any(), any()))
+            .thenAnswer((_) async => [testReservationModel]);
+        when(() => mockDataSource.getTotalReservationsCount())
+            .thenAnswer((_) async => 100);
+
+        final result = await repository.getReservationsPaginated(
+          page: 1,
+          pageSize: 20,
+        );
+
+        expect(result, isA<PaginatedResult<Reservation>>());
+        expect(result.items.length, 1);
+        expect(result.totalCount, 100);
+        expect(result.currentPage, 1);
+        expect(result.pageSize, 20);
+        expect(result.hasMore, isTrue);
+      });
+
+      test('should calculate correct offset from page and pageSize', () async {
+        when(() => mockDataSource.getReservationsPaginated(any(), any()))
+            .thenAnswer((_) async => []);
+        when(() => mockDataSource.getTotalReservationsCount())
+            .thenAnswer((_) async => 0);
+
+        // Page 3, pageSize 20 -> offset = (3-1) * 20 = 40
+        await repository.getReservationsPaginated(page: 3, pageSize: 20);
+
+        final captured = verify(() =>
+          mockDataSource.getReservationsPaginated(captureAny(), captureAny())
+        ).captured;
+
+        expect(captured[0], 20); // limit (pageSize)
+        expect(captured[1], 40); // offset
+      });
+
+      test('should return PaginatedResult with hasMore = false on last page', () async {
+        when(() => mockDataSource.getReservationsPaginated(any(), any()))
+            .thenAnswer((_) async => [testReservationModel]);
+        when(() => mockDataSource.getTotalReservationsCount())
+            .thenAnswer((_) async => 5);
+
+        // Total 5 items, page 1, pageSize 5 -> hasMore = false
+        final result = await repository.getReservationsPaginated(
+          page: 1,
+          pageSize: 5,
+        );
+
+        expect(result.hasMore, isFalse);
+      });
+
+      test('should use default values when page and pageSize not specified', () async {
+        when(() => mockDataSource.getReservationsPaginated(any(), any()))
+            .thenAnswer((_) async => []);
+        when(() => mockDataSource.getTotalReservationsCount())
+            .thenAnswer((_) async => 0);
+
+        final result = await repository.getReservationsPaginated();
+
+        expect(result.currentPage, 1);
+        expect(result.pageSize, 20);
       });
     });
   });

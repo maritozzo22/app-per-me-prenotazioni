@@ -1,6 +1,8 @@
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/paginated_result.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/reservation_filter.dart';
 
 /// Repository interface for reservation data access.
 abstract class ReservationRepository {
@@ -30,4 +32,28 @@ abstract class ReservationRepository {
 
   /// Inserts multiple reservations in a batch for performance.
   Future<void> insertReservationsBatch(List<Reservation> reservations);
+
+  /// Gets a paginated list of reservations.
+  ///
+  /// [page] - Page number (1-indexed).
+  /// [pageSize] - Number of items per page.
+  ///
+  /// Returns a [PaginatedResult] containing the items and pagination metadata.
+  Future<PaginatedResult<Reservation>> getReservationsPaginated({
+    int page = 1,
+    int pageSize = 20,
+  });
+
+  /// Gets a filtered and paginated list of reservations.
+  ///
+  /// [filter] - Filter criteria (only non-null values are applied).
+  /// [page] - Page number (1-indexed).
+  /// [pageSize] - Number of items per page.
+  ///
+  /// Returns a [PaginatedResult] containing the filtered items and pagination metadata.
+  Future<PaginatedResult<Reservation>> getReservationsFiltered({
+    required ReservationFilter filter,
+    int page = 1,
+    int pageSize = 20,
+  });
 }

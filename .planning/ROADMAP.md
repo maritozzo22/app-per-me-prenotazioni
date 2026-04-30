@@ -250,7 +250,7 @@ Plans:
 
 ---
 
-## Phase Summary
+## Phase Summary - Milestone 1
 
 | Phase | Name | Requirements | Est. Complexity |
 |-------|------|--------------|-----------------|
@@ -262,6 +262,270 @@ Plans:
 | 6 | Android Optimization | 7 | High |
 | 7 | Polish & Documentation | 0 (polish) | Low |
 | 8 | Deployment & Verification | 0 (deployment) | Low |
+
+---
+
+## Milestone 2: Performance & Feature Expansion
+
+**Status**: Active
+**Started**: 2026-03-07
+**Focus**: Scale to 1000+ reservations, enhanced statistics, UX improvements
+
+---
+
+### Phase 9: Performance Optimization (CRITICO)
+**Goal**: Ottimizzare performance per gestire 1000+ prenotazioni senza rallentamenti
+
+**Requirements**: PERF-01/02/03/04/05
+
+**Success Criteria**:
+1. Lista prenotazioni carica prime 20, poi lazy loading
+2. Filtri intelligenti SQL-based funzionanti
+3. Calendario carica solo mese visibile + adiacenti
+4. Indici database ottimizzati e verificati
+5. Statistiche cached per 24h con invalidazione automatica
+6. Tutti i test performance passano (1000+ prenotazioni)
+
+**Deliverables**:
+- Paginazione lista prenotazioni (LIMIT/OFFSET)
+- FilterSheet con tutti i filtri (periodo, stato, piattaforma, camera)
+- Calendar optimization (range query + debounce)
+- Database migration con nuovi indici
+- StatisticsCacheService con cache 24h
+- Performance test suite (1000+ reservations)
+
+**Estimated Duration**: 3-4 days
+**Plans**: 5 plans in 5 waves
+
+Plans:
+- [ ] 09-01-PLAN.md — Database migration + pagination infrastructure (Wave 1)
+- [ ] 09-02-PLAN.md — Infinite scroll + filter UI (Wave 2)
+- [ ] 09-03-PLAN.md — Calendar lazy loading (Wave 3)
+- [ ] 09-04-PLAN.md — Statistics caching (Wave 4)
+- [ ] 09-05-PLAN.md — Performance testing suite (Wave 5)
+
+---
+
+### Phase 10: UI/UX Restructuring
+**Goal**: Semplificare dashboard e creare spazio per statistiche
+
+**Requirements**: UI-10/11/12/13
+
+**Success Criteria**:
+1. Dashboard rimossa card ridondante "Calendario"
+2. Nuova tab "Statistiche" nella navigazione
+3. Tab "Piattaforme" spostata in Impostazioni
+4. Navigazione funziona correttamente
+5. Layout responsive testato
+
+**Deliverables**:
+- Dashboard semplificata (remove CalendarAccessCard, add NextEventCountdownCard)
+- Nuova tab Statistiche (placeholder inizialmente)
+- Piattaforme accessibile da Settings
+- Navigazione aggiornata (5 tab)
+
+**Estimated Duration**: 1-2 days
+**Plans**: 3 plans in 3 waves
+
+Plans:
+- [ ] 10-01-PLAN.md — Statistics tab in navigation (Wave 1)
+- [ ] 10-02-PLAN.md — NextEventCountdownCard on dashboard (Wave 2)
+- [ ] 10-03-PLAN.md — Platforms in Settings + verification (Wave 3)
+
+---
+
+### Phase 11: Statistics Feature ✅ COMPLETED
+**Goal**: Implementare completa feature statistiche con grafici
+
+**Requirements**: STAT-01/02/03/04/05/06/07/08/09/10
+
+**Completed**: 2026-03-08
+
+**Success Criteria**:
+1. ✅ Entita statistiche definite (DashboardStatistics, PlatformRevenue, etc.)
+2. ✅ Repository calcola tutte le metriche correttamente
+3. ✅ StatisticsPage con filtri temporali funziona
+4. ✅ 4 grafici FL Chart implementati e testati
+5. ✅ Year-over-Year comparison funzionante
+6. ✅ Platform revenue pie chart corretto
+7. ✅ Monthly trend line chart leggibile
+8. ✅ Platform bookings bar chart chiaro
+9. ✅ Test con dati reali passano
+10. ✅ Device verification completata (OnePlus DN2103)
+
+**Deliverables**:
+- ✅ Feature `statistics` completa (domain, data, presentation)
+- ✅ FL Chart integration (fl_chart ^0.66.2)
+- ✅ 4 chart widgets (YoY bar, pie, line, bar)
+- ✅ StatisticsProvider con state management
+- ✅ KPI cards (Revenue, Occupancy, Avg Stay, Bookings, Guests)
+- ✅ Period filter selector (Mese, Trimestre, Anno, Personalizzato)
+- ✅ Cache invalidation on CRUD operations
+- ✅ Integration tests
+- ✅ Device verification passed
+
+**Actual Duration**: 2 hours (code was already complete)
+**Plans**: 5 plans in 5 waves
+
+Plans:
+- [x] 11-01-PLAN.md — FL Chart integration + Domain entities (Wave 1)
+- [x] 11-02-PLAN.md — Data layer + SQL queries (Wave 2)
+- [x] 11-03-PLAN.md — Presentation layer foundation (Wave 3)
+- [x] 11-04-PLAN.md — Charts implementation (Wave 4)
+- [x] 11-05-PLAN.md — Integration testing + cache hooks (Wave 5)
+
+---
+
+### Phase 12: Calendar Enhancements ✅ COMPLETED
+**Goal**: Migliorare interattivita e feedback visivo calendario
+
+**Requirements**: CAL-10/11/12
+
+**Completed**: 2026-03-08
+
+**Success Criteria**:
+1. ✅ Tap su prenotazione nel bottom sheet apre modifica
+2. ✅ Giorni con piu prenotazioni mostrano indicatori multipli (4 dots + "+X")
+3. ✅ Swipe orizzontale cambia mese
+4. ✅ Navigazione fluida (haptic feedback su Android)
+
+**Deliverables**:
+- ✅ Bottom sheet prenotazioni tappabile
+- ✅ Indicatori multipli (fino a 4 dots, poi "+X")
+- ✅ Swipe gestures abilitate con haptic feedback
+- ✅ Integration tests per navigazione
+
+**Actual Duration**: 1 day
+
+Plans:
+- [x] 12-01-PLAN.md — Tappable bottom sheet (Wave 1)
+- [x] 12-02-PLAN.md — Multi-reservation indicators (Wave 2)
+- [x] 12-03-PLAN.md — Swipe gestures and testing (Wave 3)
+
+---
+
+### Phase 13: Notifications 2.0 ✅ COMPLETED
+**Goal**: Migliorare sistema notifiche con test e personalizzazione
+
+**Requirements**: NOT-10/11/12/13
+
+**Completed**: 2026-03-08
+
+**Success Criteria**:
+1. ✅ Tasto "Test Notifica" funziona
+2. ✅ Log notifiche traccia invii
+3. ✅ Giorni prima personalizzabili
+4. ✅ Orario personalizzabile (9:00-10:00)
+5. ✅ Tutte le preferenze salvate
+
+**Deliverables**:
+- ✅ NotificationSettingsPage con test button
+- ✅ NotificationLog entity + database table
+- ✅ NotificationLogsPage con storico
+- ✅ NotificationSettings entity
+- ✅ UI per personalizzazione giorni e orario
+- ✅ 57 notification tests passing
+
+**Actual Duration**: 1 day
+**Plans**: 3 plans in 3 waves
+
+Plans:
+- [x] 13-01-PLAN.md — NotificationSettings entity + repository + provider (Wave 1)
+- [x] 13-02-PLAN.md — NotificationLog entity + test notification (Wave 2)
+- [x] 13-03-PLAN.md — Settings UI + logs page + integration (Wave 3)
+
+---
+
+### Phase 14: Data Export
+**Goal**: Permettere esportazione dati in CSV
+
+**Requirements**: EXP-01/02
+
+**Success Criteria**:
+1. Export CSV prenotazioni filtrate funziona
+2. CSV si apre correttamente in Excel
+3. Format italiano (virgola decimale)
+4. Share dialog per salvare/inviare
+
+**Deliverables**:
+- ReservationExportService
+- Export button in reservations list
+- CSV generation con escaping corretto
+- Share dialog con share_plus
+- (Opzionale) StatisticsExportService
+
+**Estimated Duration**: 1 day
+
+---
+
+## Phase Summary - Milestone 2
+
+| Phase | Name | Requirements | Priority | Status | Duration |
+|-------|------|--------------|----------|--------|----------|
+| 9 | Performance Optimization | 5 | CRITICAL | ✅ DONE | 3-4 days |
+| 10 | UI/UX Restructuring | 4 | HIGH | ✅ DONE | 1-2 days |
+| 11 | Statistics Feature | 10 | HIGH | ✅ DONE | 2 hours |
+| 12 | Calendar Enhancements | 3 | MEDIUM | ✅ DONE | 1 day |
+| 13 | Notifications 2.0 | 4 | MEDIUM | ✅ DONE | 1 day |
+| 14 | Data Export | 2 | LOW | Pending | 1 day |
+| **Total** | **28 requirements** | | | **5/6 done** | **13-18 days** |
+
+---
+
+## Parallelization Strategy - Milestone 2
+
+**Critical Path**:
+1. **Phase 9 (Performance)** MUST complete first - foundation for scaling
+2. **Phase 10 (UI Restructuring)** can start after Phase 9 or partially parallel
+3. **Phase 11 (Statistics)** depends on Phase 10 (needs tab) and Phase 9 (needs cache)
+4. **Phases 12, 13, 14** can be developed in parallel after Phase 11
+
+**Recommended Order**:
+- Sequential: 9 -> 10 -> 11
+- Parallel: 12, 13, 14 (after Phase 11 complete)
+
+**Dependencies**:
+- Phase 11 needs FL Chart package (add in Phase 9 or 10)
+- Phase 14 needs share_plus package
+- Phase 9 needs performance test data generator
+
+---
+
+## Risk Mitigation - Milestone 2
+
+**High Risk Areas**:
+1. **Performance targets** (Phase 9): Test early with 1000+ synthetic reservations
+2. **FL Chart complexity** (Phase 11): Start with simple charts, iterate
+3. **SQL query optimization** (Phase 9): Use EXPLAIN QUERY PLAN, verify indexes
+4. **Cache invalidation** (Phase 9): Ensure all CRUD operations invalidate cache
+
+**Mitigation**:
+- Create test data generator early (Phase 9 start)
+- Performance benchmarks after each optimization
+- Manual testing with real-world scenarios
+- Fallback: disable cache if bugs found
+
+---
+
+## Definition of Done - Milestone 2
+
+Per ogni phase:
+- [ ] Tutti i requirements implementati
+- [ ] Tutti i test (unit, widget, integration) passano
+- [ ] Performance targets raggiunti (se applicabile)
+- [ ] Code review passata
+- [ ] Documentation aggiornata
+- [ ] Zero bug critici
+- [ ] Testato su web (Chrome) e Android
+
+Per il milestone completo:
+- [ ] Tutte le 6 phase completate
+- [ ] Performance con 1000+ prenotazioni verificata
+- [ ] Statistiche funzionanti con grafici
+- [ ] Notifiche testate e personalizzabili
+- [ ] Export CSV funzionante
+- [ ] Documentazione aggiornata
+- [ ] Pronto per deploy aggiornamento
 
 ## Parallelization Strategy
 

@@ -14,6 +14,15 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
 
+      // Page transitions
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+        },
+      ),
+
       // Accessibility: Enforce 48x48dp minimum touch targets
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -48,6 +57,15 @@ class AppTheme {
       ),
       useMaterial3: true,
       brightness: Brightness.dark,
+
+      // Page transitions
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+        },
+      ),
 
       // Accessibility: Enforce 48x48dp minimum touch targets
       elevatedButtonTheme: ElevatedButtonThemeData(

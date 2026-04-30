@@ -6,6 +6,9 @@ import 'package:app_prenotazioni/main.dart';
 import 'package:app_prenotazioni/core/platform/platform_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+// Test navigator key
+final testNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   // Initialize locale data for tests
   setUpAll(() async {
@@ -14,7 +17,7 @@ void main() {
 
   group('Android Platform Integration', () {
     testWidgets('App launches without crashes', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Verify app loaded without crashes
@@ -22,7 +25,7 @@ void main() {
     });
 
     testWidgets('Can create and view reservation', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Navigate to new reservation form
@@ -48,7 +51,7 @@ void main() {
     });
 
     testWidgets('Back button behavior works with PopScope', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Find FAB
@@ -82,7 +85,7 @@ void main() {
     });
 
     testWidgets('Theme applies 48x48dp minimum touch targets', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Verify theme is accessible
@@ -90,7 +93,7 @@ void main() {
     });
 
     testWidgets('Semantics labels are present', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Find all Semantics widgets
@@ -105,7 +108,7 @@ void main() {
     });
 
     testWidgets('Reservation list is accessible', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Verify reservations tab exists
@@ -114,7 +117,7 @@ void main() {
     });
 
     testWidgets('Dashboard displays correctly', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Verify dashboard tab exists
@@ -123,7 +126,7 @@ void main() {
     });
 
     testWidgets('Calendar is interactive', (tester) async {
-      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpWidget(ProviderScope(child: MyApp(navigatorKey: testNavigatorKey)));
       await tester.pumpAndSettle();
 
       // Navigate to calendar tab

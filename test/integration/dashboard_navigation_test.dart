@@ -13,6 +13,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/guest.dart';
 
+// Test navigator key
+final testNavigatorKey = GlobalKey<NavigatorState>();
+
 class MockReservationRepository extends Mock implements ReservationRepository {}
 
 void main() {
@@ -47,7 +50,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepository),
           ],
-          child: const MyApp(),
+          child: MyApp(navigatorKey: testNavigatorKey),
         ),
       );
 
@@ -112,7 +115,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepository),
           ],
-          child: const MyApp(),
+          child: MyApp(navigatorKey: testNavigatorKey),
         ),
       );
 
@@ -146,7 +149,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepository),
           ],
-          child: const MyApp(),
+          child: MyApp(navigatorKey: testNavigatorKey),
         ),
       );
 
@@ -156,7 +159,7 @@ void main() {
       expect(find.text('Dashboard'), findsWidgets);
       expect(find.text('Calendario'), findsWidgets);
       expect(find.text('Prenotazioni'), findsWidgets);
-      expect(find.text('Piattaforme'), findsWidgets);
+      expect(find.text('Statistiche'), findsWidgets);
 
       // Verify semantic labels exist for accessibility
       // (BottomNavigationBarItem provides these via label property)
@@ -167,7 +170,7 @@ void main() {
       expect(bottomNavBar.items[0].label, 'Dashboard');
       expect(bottomNavBar.items[1].label, 'Calendario');
       expect(bottomNavBar.items[2].label, 'Prenotazioni');
-      expect(bottomNavBar.items[3].label, 'Piattaforme');
+      expect(bottomNavBar.items[3].label, 'Statistiche');
     });
   });
 }

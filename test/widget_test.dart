@@ -10,6 +10,9 @@ import 'package:mocktail/mocktail.dart';
 
 class MockReservationRepository extends Mock implements ReservationRepository {}
 
+// Test navigator key
+final testNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   // Initialize intl for Italian locale
   setUpAll(() async {
@@ -28,7 +31,7 @@ void main() {
         overrides: [
           reservationRepositoryProvider.overrideWithValue(mockRepository),
         ],
-        child: const MyApp(),
+        child: MyApp(navigatorKey: testNavigatorKey),
       ),
     );
 

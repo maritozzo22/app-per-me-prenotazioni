@@ -12,7 +12,13 @@ final notificationRepositoryProvider = Provider<NotificationRepositoryImpl>((ref
 });
 
 /// Provider for the notification service instance.
+/// Returns the globally initialized instance from main.dart, or creates a new one as fallback.
 final notificationServiceProvider = Provider<NotificationService>((ref) {
+  final instance = getNotificationServiceInstance();
+  if (instance != null) {
+    return instance;
+  }
+  // Fallback: create new instance (should not happen in normal flow)
   return createNotificationService();
 });
 

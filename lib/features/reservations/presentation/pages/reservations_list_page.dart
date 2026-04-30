@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/room.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
+import 'package:app_prenotazioni/features/reservations/domain/services/reservation_validation_service.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_provider.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/reservation_list_provider.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/providers/dashboard_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservations_list/reservation_list_tile.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_list_skeleton.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/filter_sheet.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/pages/edit_reservation_page.dart';
+import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_form.dart';
 import 'package:app_prenotazioni/features/search/presentation/providers/search_provider.dart';
 import 'package:app_prenotazioni/features/search/presentation/widgets/search_bar_widget.dart';
 import 'package:app_prenotazioni/core/widgets/theme_toggle_button.dart';
 import 'package:app_prenotazioni/core/platform/platform_service.dart';
 import 'package:app_prenotazioni/features/notifications/application/reservation_notification_scheduler.dart';
 import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart';
-import 'package:app_prenotazioni/features/notifications/application/notification_service.dart';
 import 'package:app_prenotazioni/features/notifications/domain/services/notification_scheduler_service.dart' show NotificationSchedulerServiceImpl;
 import 'package:app_prenotazioni/features/notifications/presentation/providers/notification_permission_provider.dart';
+import 'package:app_prenotazioni/core/presentation/widgets/error_display_widget.dart';
+import 'package:app_prenotazioni/core/presentation/widgets/empty_state_widget.dart';
+import 'package:app_prenotazioni/core/presentation/error/error_snackbar.dart';
+import 'package:app_prenotazioni/core/widgets/animations.dart';
 
 /// Provider for notification scheduler
 final reservationNotificationSchedulerProvider = Provider<ReservationNotificationScheduler>((ref) {
@@ -36,43 +47,17 @@ class ReservationsListPage extends ConsumerStatefulWidget {
 }
 
 class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
-  List<Reservation>? _reservations;
-  bool _isLoading = true;
-  String? _error;
-
   @override
   void initState() {
     super.initState();
-    _loadReservations();
+    // Load initial reservations using the provider
+    Future.microtask(() {
+      ref.read(reservationListProvider.notifier).loadInitial();
+    });
   }
 
-  Future<void> _loadReservations() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final repository = ref.read(reservationRepositoryProvider);
-      final reservations = await repository.getAllReservations();
-
-      // Sort by check-in date ascending (nearest first)
-      reservations.sort((a, b) => a.checkIn.compareTo(b.checkIn));
-
-      if (mounted) {
-        setState(() {
-          _reservations = reservations;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = e.toString();
-          _isLoading = false;
-        });
-      }
-    }
+  Future<void> _refreshReservations() async {
+    await ref.read(reservationListProvider.notifier).loadInitial();
   }
 
   Future<void> _deleteReservation(Reservation reservation) async {
@@ -86,29 +71,26 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           await scheduler.cancelReservationNotifications(reservation.id);
         } catch (e) {
           // Don't fail the delete if notification cancellation fails
-          print('Error cancelling notifications: $e');
+          debugPrint('Error cancelling notifications: $e');
         }
       }
 
       await repository.deleteReservation(reservation.id);
 
+      // Invalidate dashboard cache (statistics changed)
+      final cacheService = ref.read(statisticsCacheServiceProvider);
+      await cacheService.invalidateCache();
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Prenotazione di ${reservation.guest.name} eliminata'),
-            backgroundColor: Colors.green,
-          ),
+        ErrorSnackbar.showSuccess(
+          context,
+          'Prenotazione di ${reservation.guest.name} eliminata',
         );
-        await _loadReservations();
+        await _refreshReservations();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Errore: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorSnackbar.show(context, 'Errore: $e');
       }
     }
   }
@@ -122,20 +104,56 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
     );
 
     if (result == true && mounted) {
-      await _loadReservations();
+      await _refreshReservations();
     }
+  }
+
+  Future<void> _navigateToAdd() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const _AddReservationPage(),
+      ),
+    );
+
+    if (result == true && mounted) {
+      await _refreshReservations();
+    }
+  }
+
+  void _openFilterSheet() {
+    final state = ref.read(reservationListProvider);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => FilterSheet(
+        initialFilter: state.activeFilter,
+        platforms: BookingPlatform.defaultPlatforms,
+        rooms: Room.defaultRooms,
+        onApply: (filter) {
+          ref.read(reservationListProvider.notifier).applyFilter(filter);
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchProvider);
+    final listState = ref.watch(reservationListProvider);
 
     return Scaffold(
+      key: const Key('reservations_list'),
       appBar: AppBar(
         title: const Text('Prenotazioni'),
         elevation: 2,
-        actions: const [
-          ThemeToggleButton(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: _openFilterSheet,
+            tooltip: 'Filtri',
+          ),
+          const ThemeToggleButton(),
         ],
       ),
       body: Column(
@@ -143,6 +161,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SearchBarWidget(
+              key: const Key('search_field'),
               onChanged: (query) {
                 // Search is handled by the provider
               },
@@ -150,141 +169,141 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           ),
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _loadReservations,
-              child: _buildBody(searchState),
+              onRefresh: _refreshReservations,
+              child: _buildBody(searchState, listState),
             ),
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        key: const Key('add_reservation_fab'),
+        onPressed: _navigateToAdd,
+        tooltip: 'Aggiungi Prenotazione',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
-  Widget _buildBody(SearchState searchState) {
+  Widget _buildBody(SearchState searchState, ReservationListState listState) {
     // Determine which reservations to show
     final reservationsToShow = searchState.hasQuery
         ? searchState.results
-        : _reservations;
+        : listState.reservations;
 
-    if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
+    // Show loading skeleton for initial load
+    if (listState.isLoading && reservationsToShow.isEmpty) {
+      return const ReservationListSkeleton();
+    }
+
+    // Show error state
+    if (listState.error != null && reservationsToShow.isEmpty) {
+      return ErrorDisplayWidget(
+        error: listState.error!,
+        onRetry: _refreshReservations,
       );
     }
 
-    if (_error != null) {
-      return _buildError();
-    }
-
+    // Show empty search results
     if (searchState.hasQuery && searchState.isEmpty) {
-      return _buildSearchEmptyState();
+      return EmptyStates.noSearchResults();
     }
 
-    if (reservationsToShow == null || reservationsToShow.isEmpty) {
-      return _buildEmptyState();
+    // Show empty state
+    if (reservationsToShow.isEmpty) {
+      return EmptyStates.noReservations();
     }
 
-    return _buildList(reservationsToShow);
+    return _buildList(reservationsToShow, listState.hasMore, listState.isLoadingMore);
   }
 
-  Widget _buildError() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
-          const SizedBox(height: 16),
-          Text(
-            'Errore nel caricamento',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _loadReservations,
-            child: const Text('Riprova'),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildList(List<Reservation> reservations, bool hasMore, bool isLoadingMore) {
+    // Add 1 to item count for loading indicator if more pages exist
+    final itemCount = reservations.length + (hasMore ? 1 : 0);
 
-  Widget _buildEmptyState() {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height - 200,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.inbox_outlined,
-                  size: 64,
-                  color: Colors.grey.shade400,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Nessuna prenotazione',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey.shade600,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Le prenotazioni appariranno qui',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade500,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Nessuna prenotazione trovata',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.grey.shade600,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Prova con altri termini di ricerca',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade500,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildList(List<Reservation> reservations) {
     return ListView.builder(
-      itemCount: reservations.length,
+      itemCount: itemCount,
       cacheExtent: 500, // Pre-render 500px worth of items for smoother scrolling
       itemBuilder: (context, index) {
+        // Show loading indicator at the bottom
+        if (index == reservations.length) {
+          // Trigger load more when reaching the bottom
+          Future.microtask(() {
+            ref.read(reservationListProvider.notifier).loadMore();
+          });
+          return const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
         final reservation = reservations[index];
-        return ReservationListTile(
-          reservation: reservation,
-          onEdit: () => _navigateToEdit(reservation),
-          onDelete: () => _deleteReservation(reservation),
+        return FadeIn(
+          slide: SlideDirection.left,
+          delay: Duration(milliseconds: 50 * (index % 20)), // Cap delay for infinite scroll
+          child: ReservationListTile(
+            reservation: reservation,
+            onEdit: () => _navigateToEdit(reservation),
+            onDelete: () => _deleteReservation(reservation),
+          ),
         );
       },
+    );
+  }
+}
+
+/// Page for adding a new reservation
+class _AddReservationPage extends ConsumerWidget {
+  const _AddReservationPage();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.read(reservationRepositoryProvider);
+    final validationService = ReservationValidationService(repository);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Nuova Prenotazione'),
+        elevation: 2,
+      ),
+      body: ReservationForm(
+        existingReservation: null,
+        rooms: Room.defaultRooms,
+        platforms: BookingPlatform.defaultPlatforms,
+        validationService: validationService,
+        onSubmit: (newReservation) async {
+          try {
+            // Save the new reservation
+            await repository.saveReservation(newReservation);
+
+            // Invalidate dashboard cache (statistics changed)
+            final cacheService = ref.read(statisticsCacheServiceProvider);
+            await cacheService.invalidateCache();
+
+            // Schedule notifications (Android only)
+            if (PlatformService.notificationsSupported) {
+              try {
+                final scheduler = ref.read(reservationNotificationSchedulerProvider);
+                await scheduler.scheduleReservationNotifications(newReservation);
+              } catch (e) {
+                // Don't fail the save if notification scheduling fails
+                debugPrint('Error scheduling notifications: $e');
+              }
+            }
+
+            return true;
+          } catch (e) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Errore: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+            return false;
+          }
+        },
+      ),
     );
   }
 }

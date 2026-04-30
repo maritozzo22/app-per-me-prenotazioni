@@ -8,10 +8,12 @@ import 'package:app_prenotazioni/features/reservations/domain/value_objects/paym
 /// Card displaying reservation details in a compact format.
 class ReservationDayCard extends StatelessWidget {
   final Reservation reservation;
+  final VoidCallback? onTap;
 
   const ReservationDayCard({
     super.key,
     required this.reservation,
+    this.onTap,
   });
 
   /// Get room name by ID.
@@ -55,7 +57,7 @@ class ReservationDayCard extends StatelessWidget {
     final roomName = _getRoomName();
     final paymentData = _getPaymentStatusData();
 
-    return Card(
+    final card = Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -214,6 +216,17 @@ class ReservationDayCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+
+    // Wrap with InkWell for tap feedback if onTap is provided
+    if (onTap == null) {
+      return card;
+    }
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: card,
     );
   }
 }
