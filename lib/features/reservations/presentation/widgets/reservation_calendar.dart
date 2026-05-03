@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:app_prenotazioni/features/reservations/domain/entities/reservation.dart';
+import 'package:app_prenotazioni/features/reservations/domain/entities/platform.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/providers/calendar_provider.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/reservation_day_cell.dart';
 import 'package:app_prenotazioni/features/reservations/presentation/widgets/day_detail_bottom_sheet.dart';
@@ -232,15 +233,33 @@ class _ReservationCalendarState extends ConsumerState<ReservationCalendar> {
               final reservations = calendarState.reservationsByDate[normalizedDay] ?? [];
 
               if (reservations.isEmpty) {
-                // Use default styling for days without reservations
                 return null;
               }
 
-              // Use custom day cell with platform color
               return RepaintBoundary(
                 child: ReservationDayCell(
                   day: day,
                   reservations: reservations,
+                ),
+              );
+            },
+
+            // Outside days (from previous/next month visible in grid)
+            outsideBuilder: (context, day, focusedDay) {
+              final normalizedDay = DateTime(day.year, day.month, day.day);
+              final reservations = calendarState.reservationsByDate[normalizedDay] ?? [];
+
+              if (reservations.isEmpty) {
+                return null;
+              }
+
+              return RepaintBoundary(
+                child: Opacity(
+                  opacity: 0.5,
+                  child: ReservationDayCell(
+                    day: day,
+                    reservations: reservations,
+                  ),
                 ),
               );
             },

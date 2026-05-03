@@ -2,7 +2,6 @@ import 'package:app_prenotazioni/features/notifications/application/notification
 import 'package:app_prenotazioni/features/inventory/domain/entities/inventory_item.dart';
 import 'package:app_prenotazioni/features/inventory/domain/entities/inventory_category.dart';
 import 'package:app_prenotazioni/features/notifications/domain/entities/notification_schedule.dart';
-import 'package:app_prenotazioni/features/reservations/domain/value_objects/payment_status.dart';
 
 /// Schedules expiry notifications for inventory items (per D-05)
 ///
@@ -45,14 +44,13 @@ class InventoryNotificationScheduler {
       schedule,
       title,
       body,
-      PaymentStatus.received, // Not applicable, using placeholder
     );
   }
 
   /// Cancel notification for a specific item
   Future<void> cancelItemNotification(InventoryItem item) async {
     // Calculate the notification ID
-    final notificationId = 'inventory_${item.id}'.hashCode;
+    final notificationId = 'inventory_${item.id}';
 
     await _notificationService.cancelNotification(notificationId);
   }

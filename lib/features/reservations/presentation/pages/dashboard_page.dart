@@ -101,7 +101,6 @@ class DashboardPage extends ConsumerWidget {
                 RoomOccupancyGrid(
                   key: const Key('occupancy_grid'),
                   roomOccupancy: state.roomOccupancy,
-                  nextReservations: state.nextReservations,
                 ),
               ],
             ),
@@ -178,7 +177,7 @@ class DashboardPage extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: 8),
-                RoomOccupancyGrid(roomOccupancy: state.roomOccupancy, nextReservations: state.nextReservations),
+                RoomOccupancyGrid(roomOccupancy: state.roomOccupancy),
                 const SizedBox(height: 24),
                 IncomeBreakdownCard(
                   received: state.statistics?.monthlyIncomeReceived ?? 0,
