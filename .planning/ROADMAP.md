@@ -505,6 +505,16 @@ Plans:
 - Manual testing with real-world scenarios
 - Fallback: disable cache if bugs found
 
+### Phase 15: Sistema Gestione Magazzino Inventario
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 14
+**Plans:** 7/7 plans complete
+
+Plans:
+- [x] TBD (run /gsd-plan-phase 15 to break down) (completed 2026-04-13)
+
 ---
 
 ## Definition of Done - Milestone 2

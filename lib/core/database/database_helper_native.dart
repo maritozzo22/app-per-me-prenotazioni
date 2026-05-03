@@ -69,6 +69,12 @@ class DatabaseHelper {
     await db.execute(DatabaseSchema.createNotificationLogsTable);
     await db.execute(DatabaseSchema.createNotificationLogsSentAtIndex);
 
+    // Create inventory tables (V7->V8)
+    await db.execute(DatabaseSchema.createInventoryItemsTable);
+    await db.execute(DatabaseSchema.createInventoryMovementsTable);
+    await db.execute(DatabaseSchema.createInventoryItemsExpiryDateIndex);
+    await db.execute(DatabaseSchema.createInventoryMovementsItemIndex);
+
     // Insert default data
     await _insertDefaultRooms(db);
     await _insertDefaultPlatforms(db);
@@ -191,6 +197,13 @@ class DatabaseHelper {
       await db.execute(DatabaseSchema.createNotificationSettingsTable);
       await db.execute(DatabaseSchema.createNotificationLogsTable);
       await db.execute(DatabaseSchema.createNotificationLogsSentAtIndex);
+    }
+    if (oldVersion < 8) {
+      // Create inventory_items and inventory_movements tables
+      await db.execute(DatabaseSchema.createInventoryItemsTable);
+      await db.execute(DatabaseSchema.createInventoryMovementsTable);
+      await db.execute(DatabaseSchema.createInventoryItemsExpiryDateIndex);
+      await db.execute(DatabaseSchema.createInventoryMovementsItemIndex);
     }
   }
 

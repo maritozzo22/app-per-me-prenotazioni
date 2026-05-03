@@ -149,4 +149,4 @@ Un'applicazione Flutter per la gestione personale delle prenotazioni di un appar
 
 ---
 
-*Last updated: 2026-03-07 after Milestone 2 planning*
+*Last updated: 2026-04-13 after Phase 15 completion*

@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-04-13T15:51:06.927Z"
+progress:
+  total_phases: 15
+  completed_phases: 8
+  total_plans: 59
+  completed_plans: 40
+  percent: 68
+---
+
 # Project State - App Prenotazioni Airbnb
 
 ## Project Reference
@@ -10,7 +24,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 ## Project Status
 
-**Status**: Phase 12 Calendar Enhancements - COMPLETE
+**Status**: Phase 12 Calendar Enhancements - COMPLETE, Phase 15 added
 
 **Milestone**: Milestone 2: Performance & Feature Expansion
 **Current Phase**: Phase 12 - Calendar Enhancements (Complete)
@@ -24,6 +38,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 **Focus**: Scale to 1000+ reservations, statistics with charts, UX improvements
 
 **Critical Path**:
+
 1. Phase 9: Performance Optimization (CRITICAL) - 3-4 days
 2. Phase 10: UI/UX Restructuring - 1-2 days
 3. Phase 11: Statistics Feature - 5-7 days
@@ -32,6 +47,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 **Total Estimated Duration**: 13-18 days
 
 **New Dependencies**:
+
 - `fl_chart: ^0.66.0` (for statistics charts)
 - `share_plus: ^7.2.1` (for CSV export)
 
@@ -40,6 +56,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 ### 2026-03-08: Phase 12 Plan 03 Complete - Swipe Gestures and Testing
 
 **Completed**:
+
 - [x] Added haptic feedback on month change (Android only)
 - [x] Added availableGestures configuration for horizontal swipe
 - [x] Improved calendar page layout with Column + Expanded
@@ -48,25 +65,30 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] Updated ROADMAP with Phase 12 completion
 
 **Commits**:
+
 - `3b0626c` feat(12-03): add haptic feedback and horizontal swipe to calendar
 - `615773b` feat(12-03): improve calendar page layout for smooth gestures
 - `67802f3` test(12-03): add integration tests for calendar navigation
 - `53fd7c0` docs(12-03): update ROADMAP with Phase 12 completion
 
 **Files Created** (1 file):
+
 - `integration_test/test/calendar_navigation_test.dart`
 
 **Files Modified** (3 files):
+
 - `lib/features/reservations/presentation/widgets/reservation_calendar.dart`
 - `lib/features/reservations/presentation/pages/calendar_page.dart`
 - `.planning/ROADMAP.md`
 
 **Next Steps**:
+
 - Phase 13: Notifications 2.0 or Phase 14: Data Export
 
 ### 2026-03-08: Phase 12 Plan 02 Complete - Multi-Reservation Indicators
 
 **Completed**:
+
 - [x] Created MultiReservationIndicator widget with configurable parameters
 - [x] Shows up to 4 colored dots instead of previous 3
 - [x] Shows "+X" indicator when more than 4 reservations
@@ -77,27 +99,32 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] 15 tests passing (7 widget tests + 4 integration tests + 4 day cell tests)
 
 **Commits**:
+
 - `1f2546e` feat(12-02): create MultiReservationIndicator widget
 - `4bfd868` feat(12-02): update markerBuilder to use MultiReservationIndicator
 - `931d6a7` feat(12-02): update ReservationDayCell to show multi-reservation indicator
 - `9b5b352` fix(12-02): replace deprecated withOpacity with withValues
 
 **Files Created** (3 files):
+
 - `lib/features/reservations/presentation/widgets/multi_reservation_indicator.dart`
 - `test/features/reservations/presentation/widgets/multi_reservation_indicator_test.dart`
 - `test/features/reservations/presentation/widgets/reservation_calendar_indicator_test.dart`
 
 **Files Modified** (3 files):
+
 - `lib/features/reservations/presentation/widgets/reservation_calendar.dart`
 - `lib/features/reservations/presentation/widgets/reservation_day_cell.dart`
 - `test/features/reservations/presentation/widgets/reservation_day_cell_test.dart`
 
 **Next Steps**:
+
 - Continue with remaining Phase 12 plans
 
 ### 2026-03-08: Phase 12 Plan 01 Complete - Tappable Reservation Cards
 
 **Completed**:
+
 - [x] Added onTap callback to ReservationDayCard widget
 - [x] Added onReservationTap callback to DayDetailBottomSheet
 - [x] Wired navigation from calendar to EditReservationPage
@@ -105,25 +132,30 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] 8 new widget tests passing (4 for card, 4 for navigation flow)
 
 **Commits**:
+
 - `5635095` feat(12-01): add onTap callback to ReservationDayCard
 - `4ab4e74` feat(12-01): add onReservationTap callback to DayDetailBottomSheet
 - `9c70e5b` feat(12-01): wire navigation from calendar to EditReservationPage
 - `8f47a1b` test(12-01): add widget tests for calendar navigation flow
 
 **Files Modified** (3 files):
+
 - `lib/features/reservations/presentation/widgets/reservation_day_card.dart`
 - `lib/features/reservations/presentation/widgets/day_detail_bottom_sheet.dart`
 - `lib/features/reservations/presentation/widgets/reservation_calendar.dart`
 
 **Files Created** (1 file):
+
 - `test/features/reservations/presentation/widgets/reservation_calendar_navigation_test.dart`
 
 **Next Steps**:
+
 - Continue with remaining Phase 12 plans
 
 ### 2026-03-08: Phase 11 Plan 04 Complete - Chart Widgets
 
 **Completed**:
+
 - [x] Created YearOverYearChart widget (grouped bar chart, 2 years x 12 months)
 - [x] Created PlatformRevenueChart widget (pie chart with platform breakdown)
 - [x] Created MonthlyTrendChart widget (curved line chart with gradient fill)
@@ -136,6 +168,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] 29 new widget tests + 4 new page tests passing (58 total)
 
 **Commits**:
+
 - `ccdfe4e` feat(11-04): implement YearOverYearChart widget
 - `a004bab` feat(11-04): implement PlatformRevenueChart widget
 - `7d4bdfb` feat(11-04): implement MonthlyTrendChart widget
@@ -144,6 +177,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `26d1c3c` fix(11-04): replace deprecated withOpacity with withValues
 
 **Files Created** (8 files):
+
 - `lib/features/statistics/presentation/widgets/year_over_year_chart.dart`
 - `lib/features/statistics/presentation/widgets/platform_revenue_chart.dart`
 - `lib/features/statistics/presentation/widgets/monthly_trend_chart.dart`
@@ -154,15 +188,18 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `test/features/statistics/presentation/widgets/platform_bookings_chart_test.dart`
 
 **Files Modified**:
+
 - `lib/features/statistics/presentation/pages/statistics_page.dart`
 - `test/features/statistics/presentation/pages/statistics_page_test.dart`
 
 **Next Steps**:
+
 - Plan 11-05: Integration testing and performance verification
 
 ### 2026-03-08: Phase 11 Plan 03 Complete - Statistics Presentation Layer
 
 **Completed**:
+
 - [x] Created statisticsFilterProvider (StateProvider with default month period)
 - [x] Created statisticsProvider (AsyncNotifierProvider with loading/error states)
 - [x] Created StatisticsNotifier with refresh() and updateFilter() methods
@@ -174,6 +211,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] 29 presentation layer tests passing
 
 **Commits**:
+
 - `4321d9d` test(11-03): add failing tests for statistics providers
 - `ff41c16` feat(11-03): implement KpiCard widget with 4 format types
 - `0ebea3b` feat(11-03): implement PeriodFilterSelector widget
@@ -181,6 +219,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `3e586e1` chore(11-03): integrate cache service with statistics provider
 
 **Files Created** (9 files):
+
 - `lib/core/providers/statistics_providers.dart`
 - `lib/features/statistics/presentation/providers/statistics_provider.dart`
 - `lib/features/statistics/presentation/widgets/kpi_card.dart`
@@ -191,14 +230,17 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `test/features/statistics/presentation/pages/statistics_page_test.dart`
 
 **Files Modified**:
+
 - `lib/features/statistics/presentation/pages/statistics_page.dart`
 
 **Next Steps**:
+
 - Plan 11-04: Chart widgets (Year-over-Year, Platform Revenue, Monthly Trend, Platform Bookings)
 
 ### 2026-03-08: Phase 11 Plan 01 Complete - Statistics Domain Layer
 
 **Completed**:
+
 - [x] Added FL Chart ^0.66.2 and intl ^0.20.0 dependencies
 - [x] Created PeriodFilter enum (month, quarter, year, custom)
 - [x] Created StatisticsFilter entity with dateRange extension
@@ -210,6 +252,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] 29 tests passing (all entity tests)
 
 **Commits**:
+
 - `4ef03e9` chore(11-01): add FL Chart and intl dependencies
 - `abde45e` feat(11-01): add PeriodFilter enum and StatisticsFilter entity
 - `2361b57` feat(11-01): add PlatformRevenue entity
@@ -218,6 +261,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `4c73d92` feat(11-01): add StatisticsRepository interface and AggregateStatistics entity
 
 **Files Created** (11 files):
+
 - `lib/features/statistics/domain/entities/period_filter.dart`
 - `lib/features/statistics/domain/entities/statistics_filter.dart`
 - `lib/features/statistics/domain/entities/platform_revenue.dart`
@@ -228,32 +272,39 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - 4 test files for all entities
 
 **Files Modified**:
+
 - `pubspec.yaml`
 
 **Next Steps**:
+
 - Plan 11-02: Statistics Data Layer (SQL queries, repository implementation)
 
 ### 2026-03-07: Phase 10 Plan 03 Complete - Settings Gestione Section
 
 **Completed**:
+
 - [x] Added "Gestione" section to Settings page
 - [x] Added "Piattaforme di prenotazione" tile with navigation to PlatformsListPage
 - [x] Created 10 tests for Settings page (all passing)
 - [x] Settings structure: Aspetto > Gestione > Dati > Informazioni
 
 **Commits**:
+
 - `6a3d2f9` test(10-03): add failing tests for Settings Gestione section
 - `939ef4a` feat(10-03): add Gestione section with Platforms tile to SettingsPage
 
 **Files Modified**:
+
 - `lib/core/presentation/pages/settings_page.dart`
 
 **Files Created**:
+
 - `test/core/presentation/pages/settings_page_test.dart`
 
 ### 2026-03-07: Milestone 2 Planning Complete
 
 **Completed**:
+
 - [x] Analyzed PRIORITY_FEATURES_TASK.md requirements
 - [x] Created Milestone 2 REQUIREMENTS.md (42 requirements across 6 phases)
 - [x] Created Milestone 2 ROADMAP.md (phases 9-14)
@@ -262,12 +313,14 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] Defined success criteria and performance targets
 
 **Documents Updated**:
+
 - `.planning/REQUIREMENTS.md` - Added 42 requirements for Milestone 2
 - `.planning/ROADMAP.md` - Added 6 phases (9-14) for Milestone 2
 - `.planning/PROJECT.md` - Added Milestone 2 context and decisions
 - `.planning/STATE.md` - Reset for new milestone
 
 **Next Steps**:
+
 1. Add dependencies to pubspec.yaml (fl_chart, share_plus)
 2. Start Phase 9: Performance Optimization
 3. Create performance test data generator (1000+ reservations)
@@ -282,6 +335,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 ### 2026-03-06: Phase 7 Wave 2 Complete - Loading States & Error UI
 
 **Completed**:
+
 - [x] Created reusable loading widgets (full-screen, inline, skeleton)
 - [x] Created error UI widgets (inline messages, error snackbar utility)
 - [x] Created empty state widgets with pre-configured common states
@@ -292,6 +346,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] 214 tests passing (3 tests need updates for UI changes)
 
 **Commits**:
+
 - `0057551` feat(07-02): create reusable loading widgets
 - `5cdd249` feat(07-02): create error UI widgets and empty states
 - `0779a01` feat(07-02): integrate loading and error widgets into pages
@@ -299,6 +354,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `76cefec` docs(07-02): complete Wave 2 execution summary
 
 **Files Created** (7 files, 1,237 lines):
+
 - `lib/core/presentation/widgets/full_screen_loading_widget.dart`
 - `lib/core/presentation/widgets/inline_loading_widget.dart`
 - `lib/core/presentation/widgets/inline_error_message.dart`
@@ -308,12 +364,14 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - `lib/features/dashboard/presentation/widgets/dashboard_skeleton.dart`
 
 **Files Modified** (4 files):
+
 - `lib/features/reservations/presentation/pages/calendar_page.dart`
 - `lib/features/reservations/presentation/pages/dashboard_page.dart`
 - `lib/features/reservations/presentation/pages/reservations_list_page.dart`
 - `lib/features/platforms/presentation/pages/platforms_list_page.dart`
 
 **Next Steps**:
+
 - Wave 3: Animations & UX Polish (page transitions, form feedback, calendar animations, list animations)
 - Wave 4: Accessibility Enhancements (semantic labels, keyboard navigation, screen reader)
 - Wave 5: Documentation & Testing (README, code docs, edge case tests)
@@ -321,6 +379,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 ### 2026-03-06: Phase 7 Wave 1 Complete - TODO Fixes & Error Handling
 
 **Completed**:
+
 - [x] Fixed all TODO comments (0 remaining)
 - [x] Implemented notification tap navigation with reservation ID payloads
 - [x] Integrated platform provider with platforms list page
@@ -328,6 +387,12 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 - [x] Created global error handler with error type categorization
 - [x] Created reusable error display widgets
 - [x] 213 tests passing (2 pre-existing failures unrelated to changes)
+
+## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 15 added: Sistema Gestione Magazzino Inventario
 
 ## Decisions Log
 
@@ -368,11 +433,13 @@ See: `.planning/PROJECT.md` (updated 2026-03-07)
 
 **Active (66)**:
 All v1 requirements active - see REQUIREMENTS.md
+
 - Phase 1-6: ✅ Complete
 - Phase 7: 🔄 In Progress (Wave 2/5)
 - Phase 8: ⏸️ Not Started
 
 **Out of Scope (6)**:
+
 - Multi-user authentication
 - Play Store/App Store publishing
 - API integration with Booking/Airbnb
@@ -387,6 +454,7 @@ All v1 requirements active - see REQUIREMENTS.md
 
 **Active (42)**:
 All Milestone 2 requirements active - see REQUIREMENTS.md
+
 - Phase 9: ✅ Complete (5 requirements)
 - Phase 10: ✅ Complete (4 requirements)
 - Phase 11: ✅ Complete (8 requirements)
@@ -428,6 +496,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 **Past Blockers**: None
 
 **Known Issues**:
+
 - 3 integration tests need updates for calendar page UI changes (expected, functionality works correctly)
 - Search bar doesn't show loading indicator during search operations (low priority, can be enhanced later)
 
@@ -443,6 +512,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 ## Notes
 
 ### Development Approach
+
 1. Start with Chrome web development and testing
 2. Implement thorough TDD test coverage
 3. Only after everything works on web, optimize for Android
@@ -450,6 +520,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 5. Fix all bugs found during real device testing
 
 ### Testing Strategy
+
 - Unit tests for all data models and business logic
 - Widget tests for all UI components
 - Integration tests for complete user flows
@@ -457,6 +528,7 @@ All Milestone 2 requirements active - see REQUIREMENTS.md
 - Manual testing on Android device
 
 ### Platform Target Order
+
 1. **Primary**: Chrome Web Browser (development and initial testing)
 2. **Secondary**: Android (final optimization and device testing)
 
